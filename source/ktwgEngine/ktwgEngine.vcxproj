@@ -95,6 +95,11 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="socketaddress.cpp" />
+    <ClCompile Include="socketaddressfactory.cpp" />
+    <ClCompile Include="socketutility.cpp" />
+    <ClCompile Include="tcpsocket.cpp" />
+    <ClCompile Include="udpsocket.cpp" />
     <ClCompile Include="windowmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +117,12 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
+    <ClInclude Include="socketaddress.h" />
+    <ClInclude Include="socketaddressfactory.h" />
+    <ClInclude Include="sockets.h" />
+    <ClInclude Include="socketutility.h" />
+    <ClInclude Include="tcpsocket.h" />
+    <ClInclude Include="udpsocket.h" />
     <ClInclude Include="windowmanager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
