@@ -44,9 +44,9 @@ void ConnectionManager::Update()
       std::cout << "Fail Send To" << std::endl;
     }
     ZeroMemory(buf, BUFLEN);
-    if (socket->ReceiveFrom(buf, BUFLEN, server) < 0)
+    if (socket->ReceiveFrom(buf, BUFLEN, server) > 0)
     {
-      std::cout << "Fail Recieve From Probably server is down" << std::endl;
+      std::cout << "Server Sent you message" << std::endl;
     }
   }
 
@@ -114,6 +114,7 @@ void ConnectionManager::ConnectToServer()
       port = std::stoi(buf);
       std::cout << "Recieve new port to connect to as " << port << std::endl;
       then = std::chrono::system_clock::now();
+      socket->SetBlockingMode(1);
     }
   }
   else
@@ -121,6 +122,7 @@ void ConnectionManager::ConnectToServer()
     port = std::stoi(buf);
     std::cout << "Recieve new port to connect to as " << port << std::endl;
     then = std::chrono::system_clock::now();
+    socket->SetBlockingMode(1);
   }
 
 }
