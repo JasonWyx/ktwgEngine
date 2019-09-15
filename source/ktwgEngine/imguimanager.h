@@ -25,6 +25,8 @@ public:
   ImGuiManager();
   ~ImGuiManager();
 
+
+  void Update();
   void AddRenderable(ImGuiRenderable* renderable);
   void RemoveRenderable(ImGuiRenderable* renderable);
 

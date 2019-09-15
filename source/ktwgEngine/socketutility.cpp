@@ -1,7 +1,6 @@
 #include "SocketUtility.h"
 #include <iostream>
 
-
 bool SocketUtility::Init()
 {
 #if _WIN32

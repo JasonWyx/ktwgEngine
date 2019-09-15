@@ -48,6 +48,8 @@
     <ClCompile Include="gamerenderer.cpp">
       <Filter>renderers</Filter>
     </ClCompile>
+    <ClCompile Include="connectionmanager.h" />
+    <ClCompile Include="connectionmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">

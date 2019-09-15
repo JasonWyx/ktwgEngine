@@ -19,6 +19,7 @@ public:
   int Bind(const SocketAddress& inDestinationAddress);
   int SendTo(const void* inData, int inLen, const SocketAddress& inDestination);
   int ReceiveFrom(void* inBuffer, int inLen, SocketAddress& outFrom);
+  int SetBlockingMode(u_long blocking);
 };
 
 using UDPSocketPtr = std::shared_ptr<UDPSocket>;

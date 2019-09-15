@@ -13,7 +13,7 @@ SocketAddress::SocketAddress(int family, uint32_t address, uint16_t port)
   
   ptrSockAddrIn->sin_family = (ADDRESS_FAMILY)family;
 #if _WIN32
-  ptrSockAddrIn->sin_addr.S_un.S_addr = htonl(address);
+  ptrSockAddrIn->sin_addr.S_un.S_addr = address;
 #else
   ptrSockAddrIn->sin_addr.s_addr = htonl(address);
 #endif

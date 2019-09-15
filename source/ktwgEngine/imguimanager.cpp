@@ -26,6 +26,10 @@ ImGuiManager::~ImGuiManager()
 {
 }
 
+void ImGuiManager::Update()
+{
+}
+
 void ImGuiManager::InitializeInternal()
 {
   assert(WindowManager::GetInstance().IsInitialized());
@@ -410,6 +414,7 @@ void ImGuiManager::UpdateGamepads()
 
 void ImGuiManager::NewFrame()
 {
+  CreateFontsTexture();
   ImGuiIO& io = ImGui::GetIO();
   IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGuiManager::NewFrame().");
 

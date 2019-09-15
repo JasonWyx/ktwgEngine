@@ -72,3 +72,8 @@ int UDPSocket::ReceiveFrom(void * inBuffer, int inLen, SocketAddress & outFrom)
     return -SocketUtility::GetLastError();
   }
 }
+
+int UDPSocket::SetBlockingMode(u_long blocking)
+{
+  return ioctlsocket(socket_, FIONBIO, &blocking);
+}

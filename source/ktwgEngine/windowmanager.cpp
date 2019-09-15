@@ -43,7 +43,7 @@ void WindowManager::InitializeInternal()
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-  m_Window = glfwCreateWindow(1024, 1024, "ktwgEngine", nullptr, nullptr);
+  m_Window = glfwCreateWindow(1024, 768, "ktwgEngine", nullptr, nullptr);
 
   glfwSetCharCallback(m_Window, &WindowsCharCallbackFnInternal);
   glfwSetCursorPosCallback(m_Window, &WindowsCursorPosCallbackFnInternal);

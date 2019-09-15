@@ -1,4 +1,5 @@
 #pragma once
+#include "connectionmanager.h"
 #include "windowmanager.h"
 #include "imguimanager.h"
 #include "gamerenderer.h"
