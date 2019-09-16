@@ -32,8 +32,12 @@
 
 # Database files
 *.db
+*.opendb
 
 # Folders
-**/bin/**
-**/obj/**
+**/bin
+**/obj
 **/ipch
+
+# Imgui config
+imgui.ini

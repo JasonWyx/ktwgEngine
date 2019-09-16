@@ -26,17 +26,46 @@ ImGuiManager::~ImGuiManager()
 {
 }
 
-void ImGuiManager::Update()
-{
-}
-
-void ImGuiManager::InitializeInternal()
+// This late initialize is to allow other managers to register callbacks first without have this initialized
+void ImGuiManager::LateInitialize()
 {
   assert(WindowManager::GetInstance().IsInitialized());
 
   ImGui::CreateContext();
   InitGLFWStuff(WindowManager::GetInstance().GetWindow(), true);
   InitOpenGLStuff();
+}
+
+void ImGuiManager::Update()
+{
+  NewFrame();
+  ImGui::NewFrame();
+
+  if (ImGui::Begin("Debug Menu"))
+  {
+    if (ImGui::BeginTabBar("tabbar"))
+    {
+      for (Functor* callback : m_Callbacks)
+      {
+        if (ImGui::BeginTabItem(callback->GetTabHeader()))
+        {
+          callback->Invoke();
+          ImGui::EndTabItem();
+        }
+      }
+      ImGui::EndTabBar();
+    }
+  }
+  ImGui::End(); 
+
+  ImGui::EndFrame();
+  ImGui::Render();
+  RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiManager::InitializeInternal()
+{
+
 }
 
 void ImGuiManager::ShutdownInternal()
@@ -414,7 +443,11 @@ void ImGuiManager::UpdateGamepads()
 
 void ImGuiManager::NewFrame()
 {
-  CreateFontsTexture();
+  // OpenGL
+  if (!m_FontTexture)
+    ImGuiManager::CreateDeviceObjects();
+
+  //CreateFontsTexture();
   ImGuiIO& io = ImGui::GetIO();
   IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGuiManager::NewFrame().");
 
@@ -437,10 +470,6 @@ void ImGuiManager::NewFrame()
 
   // Update game controllers (if enabled and available)
   UpdateGamepads();
-
-  // OpenGL
-  if (!m_FontTexture)
-    ImGuiManager::CreateDeviceObjects();
 }
 
 bool ImGuiManager::CreateFontsTexture()

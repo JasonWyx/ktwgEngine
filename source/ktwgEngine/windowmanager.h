@@ -26,6 +26,8 @@ private:
   virtual void InitializeInternal() override;
   virtual void ShutdownInternal() override;
 
+  void OnImGui();
+
   GLFWwindow* m_Window;
   int m_WindowWidth;
   int m_WindowHeight;
