@@ -12,12 +12,12 @@ class SocketAddress
 
   sockaddr sockAddress_; // The socket address
 
-  sockaddr_in* GetAsSockAddrIn();
-
 public:
   SocketAddress(int family, uint32_t address, uint16_t port);
   SocketAddress(const sockaddr& sockAddr);
   
+  sockaddr_in* GetAsSockAddrIn();
+
   inline size_t GetSize() const
   {
     return sizeof(sockAddress_);
