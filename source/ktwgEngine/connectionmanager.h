@@ -24,6 +24,8 @@ class SocketWindowData
   float                   rtt;
   int                     windowSize = 1;
   int                     cumulativePktsSent = 0;
+  int                     dynamicRecvPkt = 0;
+  int                     recvAckSlip = 0;
   unsigned char           sentPkt = 0;
   unsigned char           ackPkt = 0;
   unsigned char           recvPkt = 0;
@@ -41,6 +43,7 @@ class SocketWindowData
 
   void ReceiveMessage();
   std::string PacketMessage(const std::string & msg, const unsigned char& startPkt);
+  void UpdateRecvAckSlip(int val, int size);
   int GetAcks();
 public:
   void DeliverMessage(); // to transfer to private

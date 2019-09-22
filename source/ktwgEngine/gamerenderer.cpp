@@ -41,7 +41,7 @@ void GameRenderer::InitializeInternal()
   std::vector<glm::vec2> circleVertices;
   constexpr unsigned segments = 24;
   constexpr float fullCircleRad = glm::radians(360.f);
-  for (int i = 0; i < segments; +i)
+  for (int i = 0; i < segments; ++i)
   {
     glm::vec2 vertex{ 0.f };
     vertex.x = glm::acos(fullCircleRad * i);

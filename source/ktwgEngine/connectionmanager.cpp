@@ -65,7 +65,7 @@ void ConnectionManager::InitializeInternal()
 void ConnectionManager::ShutdownInternal()
 {
   shutdown = 1;
-  serverThread.join();
+  // serverThread.join();
   SocketUtility::CleanUp();
 }
 
@@ -125,9 +125,6 @@ void ConnectionManager::ConnectToServer()
 
       mySocket.AddMessage(message);
       mySocket.AddMessage(message);
-      mySocket.AddMessage(message);
-      mySocket.AddMessage(message);
-
 
       u_short port = std::stoi(buf);
       std::cout << "Recieve new port to connect to as " << port << std::endl;
@@ -148,9 +145,6 @@ void ConnectionManager::ConnectToServer()
 
     mySocket.AddMessage(message);
     mySocket.AddMessage(message);
-    mySocket.AddMessage(message);
-    mySocket.AddMessage(message);
-
 
     u_short port = std::stoi(buf);
     std::cout << "Recieve new port to connect to as " << port << std::endl;
@@ -213,7 +207,8 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
 void SocketWindowData::ReadACKS(const int& acks)
 {
   if (sentPkt < ackPkt + 1) return; // Duplicate ACKS
-  int tmpWindowSize = cumulativePktsSent;
+  int tmpWindowSize = windowSize;
+  // int currWindowSize = windowSize;
   int bit = 0x1;
   int ackVal = acks;
   unsigned char tmpAckPkt = sentPkt - 1;
@@ -222,28 +217,30 @@ void SocketWindowData::ReadACKS(const int& acks)
   std::vector<unsigned char> nackSlip;
   while (tmpWindowSize)
   {
-    int currAck = ackVal | bit;
+    int currAck = ackVal & bit;
     if (!currAck)
     {
       nackSlip.push_back(tmpAckPkt);
       windowSize /= 2;
       if (windowSize <= 0) windowSize = 1;
       ss = false;
+      std::cout << (int)tmpAckPkt << " is Nacked" << std::endl;
     }
     else
     {
       std::cout << (int)tmpAckPkt << " is acked" << std::endl;
     }
-    bit = bit << 1;
     --tmpAckPkt;
     --tmpWindowSize;
+    bit = bit << 1;
   }
+
+  recvPkt += windowSize;
+  std::cout << "Recvied Pkts : " << (int)recvPkt << std::endl;
+  SlowStart(ss);
+  cumulativePktsSent = 0;
   // Send nackSlip to Stream Manager
-  if (cumulativePktsSent == windowSize)
-  {
-    SlowStart(ss);
-    cumulativePktsSent = 0;
-  }
+
   std::cout << "WindowSize : " << windowSize << std::endl;
 }
 
@@ -273,7 +270,8 @@ void SocketWindowData::DeliverMessage()
     ++cumulativePktsSent;
     ++sentPkt;
   }
-  ackSlip.clear();
+  // if(cumulativePktsSent == windowSize)
+  //   ackSlip.clear();
 }
 
 void SocketWindowData::ReceiveMessage()
@@ -283,7 +281,7 @@ void SocketWindowData::ReceiveMessage()
   SocketAddress sender{ AF_INET, inet_addr(SERVER), htons(PORT) };
   while (socket->ReceiveFrom(buffer, BUFLEN, sender) > 0)
   {
-
+    ++dynamicRecvPkt;
     if (sPort == 0)
     {
       sPort = ntohs(sender.GetAsSockAddrIn()->sin_port);
@@ -302,6 +300,7 @@ void SocketWindowData::ReceiveMessage()
     std::cout << "Recieved : Packet Number : " << portNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", Acks : " << Acks <<
       " Message : " << msg << std::endl;
 
+
     if (msg == "Hello Server")
       AddMessage(std::string("Hello Client"));
     else AddMessage("Hello Server");
@@ -310,21 +309,31 @@ void SocketWindowData::ReceiveMessage()
 
     int index = ((int)std::get<0>(message)) - ((int)std::get<1>(message));
     if (index < 0) return;
-    if (ackSlip.empty())
+    if (ackSlip.size() != std::get<2>(message))
     {
+      ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
       std::fill(ackSlip.begin(), ackSlip.end(), false);
     }
-    ackSlip[index] = true;
-
-    if (cumulativePktsSent == windowSize)
+    if (!(!(portNum % 3) && portNum != 0)) ackSlip[index] = true;
+    
+    std::cout << "ACK bits " << ackSlip.size() << " ";
+    for (auto b : ackSlip)
     {
-      recvPkt += windowSize;
-      std::cout << "Recvied Pkts : " << (int)recvPkt << std::endl;
+      if (b) std::cout << "1 ";
+      else std::cout << "0 ";
     }
-    // Send Message to streamManager
-    ReadACKS(std::get<3>(message));
+    std::cout << std::endl;
 
+    recvAckSlip = recvAckSlip | std::get<3>(message);
+
+    // Send Message to streamManager
+    if (dynamicRecvPkt == windowSize)
+    {
+      ReadACKS(recvAckSlip);
+      dynamicRecvPkt = 0;
+    }
+    
     std::cout << "MSG QUEUE : " << msgQueue.size() << std::endl;
     std::cout << std::endl;
 
@@ -351,12 +360,16 @@ std::string SocketWindowData::PacketMessage(const std::string& msg, const unsign
   return message;
 }
 
+void SocketWindowData::UpdateRecvAckSlip(int val, int size)
+{
+}
+
 std::tuple<unsigned char, unsigned char, int, int, char*> SocketWindowData::UnPackMessage(char* msg)
 {
   unsigned char pktNum = (unsigned char)(*msg);
   unsigned char startPkt = (unsigned char)(*(msg + 1));
   int sz = (int)(*(msg + 2));
-  int acks = (int)(*(msg + 3));
+  int acks = *((int*)(msg + 3));
   char* message = msg + 7;
   return std::make_tuple(pktNum, startPkt, sz, acks, message);
 }
