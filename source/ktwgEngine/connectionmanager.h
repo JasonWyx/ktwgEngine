@@ -26,6 +26,7 @@ class SocketWindowData
   int                     cumulativePktsSent = 0;
   int                     dynamicRecvPkt = 0;
   int                     recvAckSlip = 0;
+  unsigned char           senderStartPkt = 0;
   unsigned char           sentPkt = 0;
   unsigned char           ackPkt = 0;
   unsigned char           recvPkt = 0;

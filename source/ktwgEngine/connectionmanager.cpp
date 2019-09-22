@@ -215,6 +215,8 @@ void SocketWindowData::ReadACKS(const int& acks)
   ackPkt = tmpAckPkt;
   bool ss = true;
   std::vector<unsigned char> nackSlip;
+  std::cout << ackVal << std::endl;
+  recvPkt += windowSize;
   while (tmpWindowSize)
   {
     int currAck = ackVal & bit;
@@ -235,7 +237,6 @@ void SocketWindowData::ReadACKS(const int& acks)
     bit = bit << 1;
   }
 
-  recvPkt += windowSize;
   std::cout << "Recvied Pkts : " << (int)recvPkt << std::endl;
   SlowStart(ss);
   cumulativePktsSent = 0;
@@ -279,6 +280,7 @@ void SocketWindowData::ReceiveMessage()
   char buffer[BUFLEN];
   ZeroMemory(buffer, BUFLEN);
   SocketAddress sender{ AF_INET, inet_addr(SERVER), htons(PORT) };
+  bool b = true;
   while (socket->ReceiveFrom(buffer, BUFLEN, sender) > 0)
   {
     ++dynamicRecvPkt;
@@ -291,13 +293,13 @@ void SocketWindowData::ReceiveMessage()
 
     // Debugging
 
-    int portNum = (int)(std::get<0>(message));
+    int pktNum = (int)(std::get<0>(message));
     int startPkt = (int)(std::get<1>(message));
     int pwindowSize = std::get<2>(message);
     int Acks = std::get<3>(message);
     std::string msg = std::get<4>(message);
 
-    std::cout << "Recieved : Packet Number : " << portNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", Acks : " << Acks <<
+    std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", Acks : " << Acks <<
       " Message : " << msg << std::endl;
 
 
@@ -309,13 +311,14 @@ void SocketWindowData::ReceiveMessage()
 
     int index = ((int)std::get<0>(message)) - ((int)std::get<1>(message));
     if (index < 0) return;
-    if (ackSlip.size() != std::get<2>(message))
+    if (ackSlip.size() != std::get<2>(message) || senderStartPkt != startPkt)
     {
+      senderStartPkt = startPkt;
       ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
       std::fill(ackSlip.begin(), ackSlip.end(), false);
     }
-    if (!(!(portNum % 3) && portNum != 0)) ackSlip[index] = true;
+    if(!(pktNum != 0 && !(pktNum % 3))) ackSlip[index] = true;
     
     std::cout << "ACK bits " << ackSlip.size() << " ";
     for (auto b : ackSlip)
@@ -325,13 +328,15 @@ void SocketWindowData::ReceiveMessage()
     }
     std::cout << std::endl;
 
-    recvAckSlip = recvAckSlip | std::get<3>(message);
+    if(b) recvAckSlip = recvAckSlip | std::get<3>(message);
 
     // Send Message to streamManager
     if (dynamicRecvPkt == windowSize)
     {
       ReadACKS(recvAckSlip);
       dynamicRecvPkt = 0;
+      recvAckSlip = 0;
+      b = false;
     }
     
     std::cout << "MSG QUEUE : " << msgQueue.size() << std::endl;
