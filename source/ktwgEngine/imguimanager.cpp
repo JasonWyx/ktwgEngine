@@ -45,7 +45,7 @@ void ImGuiManager::Update()
   {
     if (ImGui::BeginTabBar("tabbar"))
     {
-      for (Functor* callback : m_Callbacks)
+      for (Functor* callback : m_OnImGuiCallbacks)
       {
         if (ImGui::BeginTabItem(callback->GetTabHeader()))
         {

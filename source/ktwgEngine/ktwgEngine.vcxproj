@@ -87,6 +87,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bitstream.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="gamerenderable.cpp" />
@@ -105,12 +106,12 @@
     <ClCompile Include="windowmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitstream.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="gamerenderable.h" />
     <ClInclude Include="gamerenderer.h" />
     <ClInclude Include="imguimanager.h" />
-    <ClInclude Include="imguirenderable.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_internal.h" />

@@ -50,6 +50,7 @@
     </ClCompile>
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="connectionmanager.cpp" />
+    <ClCompile Include="bitstream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -71,7 +72,6 @@
       <Filter>imgui lib</Filter>
     </ClInclude>
     <ClInclude Include="imguimanager.h" />
-    <ClInclude Include="imguirenderable.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="windowmanager.h" />
@@ -105,5 +105,6 @@
     <ClInclude Include="gamerenderer.h">
       <Filter>renderers</Filter>
     </ClInclude>
+    <ClInclude Include="bitstream.h" />
   </ItemGroup>
 </Project>
