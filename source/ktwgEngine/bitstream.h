@@ -19,9 +19,13 @@ public:
     BitStream();
     BitStream(size_t bytes);
     ~BitStream() = default;
+
+    // Declare default copy/move constructors/assignments
     BitStream(const BitStream&) = default;
-    BitStream(BitStream&&) = default;
-    
+    BitStream(BitStream&&) = default;    
+    BitStream& operator=(const BitStream&) = default;
+    BitStream& operator=(BitStream&&) = default;
+
     size_t GetBitLength() const     { return m_Buffer.size() * ByteInBits; }
     size_t GetByteLength() const    { return m_Buffer.size(); }
     size_t GetBitPosition() const   { return m_BitPosition; }
@@ -35,6 +39,9 @@ public:
     // Output stream
     template<typename T>    BitStream& operator>>(T& output);
     template<>              BitStream& operator>>(bool& output);
+
+    BitStream  operator+(const BitStream& rhs) const;
+    BitStream& operator+=(const BitStream& rhs);
 
 
 private:
