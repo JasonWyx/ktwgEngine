@@ -179,6 +179,8 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
       // std::cout << "Server: Recieve packet" << std::endl;
       // std::cout << "Server: Data : " << buffer << std::endl;
 
+      u_short cPort =ntohs(client.GetAsSockAddrIn()->sin_port);
+
       u_short newPort = startingPort;
       std::string message = std::to_string(startingPort++);
 
@@ -194,6 +196,7 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
         s->Bind(newServer);
         SocketWindowData tmp;
         tmp.SetSocket(s);
+        tmp.SetPort(cPort);
         serverSockets.push_back(tmp);
       }
     }
@@ -275,6 +278,7 @@ void SocketWindowData::DeliverMessage()
     --currWindowSize;
     ++cumulativePktsSent;
     ++sentPkt;
+    sentMsg = true;
   }
 }
 
@@ -283,13 +287,13 @@ void SocketWindowData::ReceiveMessage()
   char buffer[BUFLEN];
   ZeroMemory(buffer, BUFLEN);
   SocketAddress sender{ AF_INET, inet_addr(SERVER), htons(PORT) };
-  bool b = true;
   while (socket->ReceiveFrom(buffer, BUFLEN, sender) > 0)
   {
     ++dynamicRecvPkt;
     if (sPort == 0)
     {
       sPort = ntohs(sender.GetAsSockAddrIn()->sin_port);
+      std::cout << "MY PORT : " << sPort << std::endl;
     }
 
     auto message = UnPackMessage(buffer);
@@ -299,11 +303,12 @@ void SocketWindowData::ReceiveMessage()
     int pktNum = (int)(std::get<0>(message));
     int startPkt = (int)(std::get<1>(message));
     int pwindowSize = std::get<2>(message);
-    int Acks = std::get<3>(message);
-    std::string msg = std::get<4>(message);
+    int startAckPkt = (int)(std::get<3>(message));
+    int Acks = std::get<4>(message);
+    std::string msg = std::get<5>(message);
 
-    std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", Acks : " << Acks <<
-      " Message : " << msg << std::endl;
+    std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", startAckPkt : " << startAckPkt <<
+      ", Acks : " << Acks << " Message : " << msg << std::endl;
 
 
     if (msg == "Hello Server")
@@ -338,7 +343,6 @@ void SocketWindowData::ReceiveMessage()
       std::cout << "index : " << index << std::endl;
     }
     if (index < 0) return;
-    std::cout << (int)dynamicRecvPkt << std::endl;
     if (ackSlip.size() != std::get<2>(message) || senderStartPkt != startPkt)
     {
       senderStartPkt = startPkt;
@@ -352,6 +356,8 @@ void SocketWindowData::ReceiveMessage()
     if(!(pktNum != 0 && !(pktNum % 3)))
       ackSlip[index] = true;
 
+    std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
+
     std::cout << "ACK bits " << ackSlip.size() << " ";
     for (auto b : ackSlip)
     {
@@ -360,15 +366,27 @@ void SocketWindowData::ReceiveMessage()
     }
     std::cout << std::endl;
 
-    if(b) recvAckSlip = recvAckSlip | std::get<3>(message);
+    if (std::get<3>(message) != recvPkt) recvAckSlip = recvAckSlip | std::get<4>(message);
+    
+
+    // IMPT :
+    // Update ack slip here with timeout
+    // read the ackslip and update the dynamicRecvPkt, remove all previous dynamicRecvPkt
+    // after reading the ackslip we can cfm which pkts are recieved, for each recieved pkt increment dynamicRecvPkt
+    // once dynamicRecvPkt is full then we will ReadAcks and etc
+    // once timeout we will also increment dynamicRecvPkt
+    // may need another vector to keep track of recieved pkt, not only ack pkt
+    // so when timeout, we increment the dynamicRecvPkt, and we recieved the pkt later on, we will update as we recieved
+    // but wont increment the dynamicRecvPkt
 
     // Send Message to streamManager
-    if (dynamicRecvPkt == windowSize)
+
+    // tmp bool condition to make it work for now to be replace with the IMPT said before
+    if (dynamicRecvPkt >= windowSize && sentMsg)
     {
       ReadACKS(recvAckSlip);
       dynamicRecvPkt = 0;
       recvAckSlip = 0;
-      b = false;
     }
     
     std::cout << "MSG QUEUE : " << msgQueue.size() << std::endl;
@@ -385,6 +403,7 @@ std::string SocketWindowData::PacketMessage(const std::string& msg, const unsign
   message.push_back(sentPkt);
   message.push_back(startPkt);
   message.push_back((char)windowSize);
+  message.push_back(senderStartPkt);
   
   int acks = GetAcks();
   char* tmp = (char*)(&acks);
@@ -401,14 +420,15 @@ void SocketWindowData::UpdateRecvAckSlip(int val, int size)
 {
 }
 
-std::tuple<unsigned char, unsigned char, int, int, char*> SocketWindowData::UnPackMessage(char* msg)
+std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> SocketWindowData::UnPackMessage(char* msg)
 {
   unsigned char pktNum = (unsigned char)(*msg);
   unsigned char startPkt = (unsigned char)(*(msg + 1));
   int sz = (int)(*(msg + 2));
-  int acks = *((int*)(msg + 3));
-  char* message = msg + 7;
-  return std::make_tuple(pktNum, startPkt, sz, acks, message);
+  unsigned char startAckPkt = (unsigned char)(*(msg + 3));
+  int acks = *((int*)(msg + 4));
+  char* message = msg + 8;
+  return std::make_tuple(pktNum, startPkt, sz, startAckPkt, acks, message);
 }
 
 int SocketWindowData::GetAcks()

@@ -38,6 +38,7 @@ class SocketWindowData
   UDPSocketPtr            socket;
   std::vector<bool>       ackSlip;
   std::queue<std::string> msgQueue;
+  bool                    sentMsg = false;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
@@ -48,7 +49,7 @@ class SocketWindowData
   int GetAcks();
 public:
   void DeliverMessage(); // to transfer to private
-  std::tuple<unsigned char, unsigned char, int, int, char*> UnPackMessage(char* msg); // to transfer to private
+  std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
   void AddMessage(std::string msg);
   void SetSocket(UDPSocketPtr s);
   void SetPort(const u_short& p);
