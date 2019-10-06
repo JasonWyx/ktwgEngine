@@ -23,8 +23,8 @@ class SocketWindowData
 {
   float                   rtt;
   int                     windowSize = 1;
-  int                     cumulativePktsSent = 0;
-  int                     dynamicRecvPkt = 0;
+  unsigned char           cumulativePktsSent = 0;
+  unsigned char           dynamicRecvPkt = 0;
   int                     recvAckSlip = 0;
   unsigned char           senderStartPkt = 0;
   unsigned char           sentPkt = 0;

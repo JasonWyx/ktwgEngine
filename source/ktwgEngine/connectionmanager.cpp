@@ -125,6 +125,8 @@ void ConnectionManager::ConnectToServer()
 
       mySocket.AddMessage(message);
       mySocket.AddMessage(message);
+      mySocket.AddMessage(message);
+
 
       u_short port = std::stoi(buf);
       std::cout << "Recieve new port to connect to as " << port << std::endl;
@@ -145,6 +147,8 @@ void ConnectionManager::ConnectToServer()
 
     mySocket.AddMessage(message);
     mySocket.AddMessage(message);
+    mySocket.AddMessage(message);
+
 
     u_short port = std::stoi(buf);
     std::cout << "Recieve new port to connect to as " << port << std::endl;
@@ -206,7 +210,7 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
 
 void SocketWindowData::ReadACKS(const int& acks)
 {
-  if (sentPkt < ackPkt + 1) return; // Duplicate ACKS
+  // if (sentPkt < ackPkt + 1) return; // Duplicate ACKS
   int tmpWindowSize = windowSize;
   // int currWindowSize = windowSize;
   int bit = 0x1;
@@ -263,6 +267,7 @@ void SocketWindowData::DeliverMessage()
   while (currWindowSize != 0)
   {
     if (msgQueue.empty()) break;
+    // std::cout << (int)startPkt << std::endl;
     std::string message = msgQueue.back();
     msgQueue.pop();
     message = PacketMessage(message, startPkt);
@@ -271,8 +276,6 @@ void SocketWindowData::DeliverMessage()
     ++cumulativePktsSent;
     ++sentPkt;
   }
-  // if(cumulativePktsSent == windowSize)
-  //   ackSlip.clear();
 }
 
 void SocketWindowData::ReceiveMessage()
@@ -309,8 +312,33 @@ void SocketWindowData::ReceiveMessage()
 
     // End of Debugging
 
+    if ((int)senderStartPkt + ackSlip.size() < 255 && std::get<1>(message) < senderStartPkt)
+    {
+      --dynamicRecvPkt;
+      return;
+    }
+
+    if (senderStartPkt == std::get<1>(message) && std::get<2>(message) != ackSlip.size() && !ackSlip.empty())
+    {
+      --dynamicRecvPkt;
+      return;
+    }
+
+    if (std::get<1>(message) > senderStartPkt && (std::get<1>(message) != senderStartPkt + ackSlip.size()))
+    {
+      --dynamicRecvPkt;
+      return;
+    }
+
     int index = ((int)std::get<0>(message)) - ((int)std::get<1>(message));
+    // std::cout << "end size : " << (int)std::get<1>(message) + (int)std::get<2>(message) << std::endl;
+    if ((int)std::get<1>(message) + (int)std::get<2>(message) > 256 && index < 0)
+    {
+      index += 256;
+      std::cout << "index : " << index << std::endl;
+    }
     if (index < 0) return;
+    std::cout << (int)dynamicRecvPkt << std::endl;
     if (ackSlip.size() != std::get<2>(message) || senderStartPkt != startPkt)
     {
       senderStartPkt = startPkt;
@@ -318,8 +346,12 @@ void SocketWindowData::ReceiveMessage()
       ackSlip.resize(std::get<2>(message));
       std::fill(ackSlip.begin(), ackSlip.end(), false);
     }
-    if(!(pktNum != 0 && !(pktNum % 3))) ackSlip[index] = true;
-    
+
+    if (ackSlip[index]) --dynamicRecvPkt;
+
+    if(!(pktNum != 0 && !(pktNum % 3)))
+      ackSlip[index] = true;
+
     std::cout << "ACK bits " << ackSlip.size() << " ";
     for (auto b : ackSlip)
     {
