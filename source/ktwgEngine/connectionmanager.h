@@ -21,6 +21,7 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown);
 
 class SocketWindowData
 {
+  typedef std::tuple<bool, TIME, float> PktTimer;
   float                   rtt;
   int                     windowSize = 1;
   unsigned char           cumulativePktsSent = 0;
@@ -38,14 +39,16 @@ class SocketWindowData
   UDPSocketPtr            socket;
   std::vector<bool>       ackSlip;
   std::queue<std::string> msgQueue;
+  std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
 
   void ReceiveMessage();
+  void UpdateTimer();
   std::string PacketMessage(const std::string & msg, const unsigned char& startPkt);
-  void UpdateRecvAckSlip(int val, int size);
+  int UpdateRecvAckSlip(int val, int size);
   int GetAcks();
 public:
   void DeliverMessage(); // to transfer to private
