@@ -16,13 +16,15 @@
 using TIME = std::chrono::time_point<std::chrono::system_clock>;
 
 #define BUFLEN 512
+#define BETA 0.25f
+#define ALPHA 0.125f
 
 void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown);
 
 class SocketWindowData
 {
   typedef std::tuple<bool, TIME, float> PktTimer;
-  float                   rtt;
+  float                   rtt = 0.5f;
   int                     windowSize = 1;
   unsigned char           cumulativePktsSent = 0;
   unsigned char           dynamicRecvPkt = 0;
@@ -33,7 +35,7 @@ class SocketWindowData
   unsigned char           recvPkt = 0;
   const int               ssThres = 10;
   TIME                    timer;
-  TIME                    devRTT;
+  float                   devRTT = 0.f;
   u_short                 mPort = 0;
   u_short                 sPort = 0;
   UDPSocketPtr            socket;
@@ -41,6 +43,7 @@ class SocketWindowData
   std::queue<std::string> msgQueue;
   std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
+  int                     timeOutPkt = 0;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
@@ -80,6 +83,5 @@ private:
 
   // temporary buffer for testing
   char buf[BUFLEN];
-  std::chrono::system_clock::time_point then;
 
 };
