@@ -274,7 +274,7 @@ void SocketWindowData::DeliverMessage()
     socket->SendTo(message.c_str(), message.size(), reciever);
     --currWindowSize;
     float timeOut = rtt + 4 * devRTT;
-    // timeOut = timeOut < 0.7f ? 0.7f : timeOut;
+    timeOut = timeOut < 0.5f ? 0.5f : timeOut;
     PktTimer timer = std::make_tuple(false, std::chrono::system_clock::now(), timeOut);
     timeTracker[cumulativePktsSent] = timer;
     ++cumulativePktsSent;
@@ -476,14 +476,14 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
       bool recv = std::get<0>(timeTracker[i]);
       if (i < cumulativePktsSent)
       {
-        // auto then = std::get<1>(timeTracker[i]);
-        // float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - then)).count();
-        // std::cout << "RTT' :" << elapsedTime << std::endl;
-        // devRTT = (1.f - BETA) * devRTT + BETA * std::fabs((float)elapsedTime - rtt);
-        // rtt = (1.f - ALPHA) * (float)elapsedTime + ALPHA * rtt;
-        // PktTimer tmp = std::make_tuple(true, std::chrono::system_clock::now(), 0.f);
-        // std::cout << "DevRtt : " << devRTT << std::endl;
-        // std::cout << "RTT : " << rtt << std::endl;
+        auto then = std::get<1>(timeTracker[i]);
+        float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - then)).count();
+        //std::cout << "RTT' :" << elapsedTime << std::endl;
+        devRTT = (1.f - BETA) * devRTT + BETA * std::fabs((float)elapsedTime - rtt);
+        rtt = (1.f - ALPHA) * (float)elapsedTime + ALPHA * rtt;
+        PktTimer tmp = std::make_tuple(true, std::chrono::system_clock::now(), 0.f);
+        //std::cout << "DevRtt : " << devRTT << std::endl;
+        //std::cout << "RTT : " << rtt << std::endl;
         timeTracker[i] = tmp;
       }
     }

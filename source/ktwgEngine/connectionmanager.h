@@ -24,7 +24,7 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown);
 class SocketWindowData
 {
   typedef std::tuple<bool, TIME, float> PktTimer;
-  float                   rtt = 0.5f;
+  float                   rtt = 1.0f;
   int                     windowSize = 1;
   unsigned char           cumulativePktsSent = 0;
   unsigned char           dynamicRecvPkt = 0;
@@ -35,7 +35,7 @@ class SocketWindowData
   unsigned char           recvPkt = 0;
   const int               ssThres = 10;
   TIME                    timer;
-  float                   devRTT = 0.f;
+  float                   devRTT = 1.0f;
   u_short                 mPort = 0;
   u_short                 sPort = 0;
   UDPSocketPtr            socket;
