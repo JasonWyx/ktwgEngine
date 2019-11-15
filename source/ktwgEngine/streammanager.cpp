@@ -33,23 +33,3 @@ void StreamManager::InitializeInternal()
 void StreamManager::ShutdownInternal()
 {
 }
-
-bool StreamManager::ClientStreamManager::ProcessIncomingPacket(BitStream& stream)
-{
-    return false;
-}
-
-bool StreamManager::ClientStreamManager::ProcessOutgoingPacket(BitStream& stream)
-{
-    return false;
-}
-
-bool StreamManager::ServerStreamManager::ProcessIncomingPacket(BitStream& stream)
-{
-    return false;
-}
-
-bool StreamManager::ServerStreamManager::ProcessOutgoingPacket(BitStream& stream)
-{
-    return false;
-}

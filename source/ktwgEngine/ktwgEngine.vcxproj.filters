@@ -51,6 +51,14 @@
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="streammanager.cpp" />
+    <ClCompile Include="debugrenderable.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="debugrenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="ghostobject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -106,5 +114,12 @@
       <Filter>renderers</Filter>
     </ClInclude>
     <ClInclude Include="bitstream.h" />
+    <ClInclude Include="streammanager.h" />
+    <ClInclude Include="streammanagerclient.h" />
+    <ClInclude Include="streammanagerserver.h" />
+    <ClInclude Include="istreammanager.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="ghostobject.h" />
+    <ClInclude Include="ghostobjectids.h" />
   </ItemGroup>
 </Project>
