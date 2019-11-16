@@ -59,6 +59,8 @@
       <Filter>renderers</Filter>
     </ClCompile>
     <ClCompile Include="ghostobject.cpp" />
+    <ClCompile Include="streammanagerserver.cpp" />
+    <ClCompile Include="streammanagerclient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -117,9 +119,11 @@
     <ClInclude Include="streammanager.h" />
     <ClInclude Include="streammanagerclient.h" />
     <ClInclude Include="streammanagerserver.h" />
-    <ClInclude Include="istreammanager.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="istreammanager.h" />
+    <ClInclude Include="ighostproperty.h" />
+    <ClInclude Include="ghostproperty.h" />
   </ItemGroup>
 </Project>

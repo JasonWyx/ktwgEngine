@@ -1,5 +1,13 @@
 #include "streammanager.h"
 
+StreamManager::StreamManager()
+{
+}
+
+StreamManager::~StreamManager()
+{
+}
+
 bool StreamManager::ProcessIncomingPacket(BitStream& stream)
 {
     return false;
@@ -8,6 +16,10 @@ bool StreamManager::ProcessIncomingPacket(BitStream& stream)
 bool StreamManager::ProcessOutgoingPacket(BitStream& stream)
 {
     return false;
+}
+
+void StreamManager::NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus)
+{
 }
 
 void StreamManager::InitializeClient()

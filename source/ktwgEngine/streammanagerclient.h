@@ -11,10 +11,11 @@ public:
 
     virtual bool ProcessIncomingPacket(BitStream& stream) override;
     virtual bool ProcessOutgoingPacket(BitStream& stream) override;
+    virtual void NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus) override;
 
 private:
-
-    std::uint32_t m_NetPeerID;
+     
+    // Inherited via IStreamManager
 
     // GhostManager
     // EventManager
