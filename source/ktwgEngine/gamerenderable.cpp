@@ -3,10 +3,10 @@
 
 GameRenderable::GameRenderable()
 {
-  GameRenderer::GetInstance().AddRenderable(this);
+  GameRenderer::GetInstance().InsertGameRenderable(this);
 }
 
 GameRenderable::~GameRenderable()
 {
-  GameRenderer::GetInstance().RemoveRenderable(this);
+  GameRenderer::GetInstance().RemoveGameRenderable(this);
 }

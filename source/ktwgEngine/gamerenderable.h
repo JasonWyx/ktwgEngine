@@ -9,5 +9,5 @@ public:
   GameRenderable();
   ~GameRenderable();
 
-  virtual void GameRender(GameRenderer& renderer) = 0;
+  virtual void RenderGame() = 0;
 };

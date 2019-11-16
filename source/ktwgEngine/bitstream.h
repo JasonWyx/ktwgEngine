@@ -26,6 +26,8 @@ public:
     BitStream& operator=(const BitStream&) = default;
     BitStream& operator=(BitStream&&) = default;
 
+    uint8_t* GetData()              { return m_Buffer.data(); }
+    const uint8_t* GetData() const  { return m_Buffer.data(); }
     size_t GetBitLength() const     { return m_Buffer.size() * ByteInBits; }
     size_t GetByteLength() const    { return m_Buffer.size(); }
     size_t GetBitPosition() const   { return m_BitPosition; }
@@ -33,10 +35,12 @@ public:
     void TruncateBytes()            { m_Buffer.resize((m_BitPosition + ByteInBits) / ByteInBits); }
 
     // Input stream
+    template<typename T>    BitStream& Write(const T& value, size_t bitCount);
     template<typename T>    BitStream& operator<<(const T& value);
     template<>              BitStream& operator<<(const bool& value);
 
     // Output stream
+    template<typename T>    BitStream& Read(T& value, size_t bitCount);
     template<typename T>    BitStream& operator>>(T& output);
     template<>              BitStream& operator>>(bool& output);
 
@@ -52,6 +56,25 @@ private:
     size_t m_BitPosition;
 
 };
+
+template<typename T>    
+BitStream& BitStream::Write(const T& value, size_t bitCount)
+{
+    // Lazy looping for now, might optimize in the future
+    _ASSERT(bitCount > 0 && bitCount <= 64);
+    if (bitCount > 0 && bitCount <= 64)
+    {
+        size_t bitPointer = 1ll << (bitCount - 1);
+        
+        while (bitPointer > 0)
+        {
+            (*this) << static_cast<bool>(value | bitPointer);
+            bitPointer >>= 1;
+        }
+    }
+
+    return *this;
+}
 
 template<typename T>
 BitStream& BitStream::operator<<(const T& value)
@@ -117,6 +140,28 @@ BitStream& BitStream::operator<<(const bool& value)
 
     return *this;
 }
+
+template<typename T>
+BitStream& BitStream::Read(T& value, size_t bitCount)
+{
+    // Lazy looping for now, might optimize in the future
+    _ASSERT(bitCount > 0 && bitCount <= 64);
+    if (bitCount > 0 && bitCount <= 64)
+    {
+        size_t bitPointer = 1ll << (bitCount - 1);
+
+        while (bitPointer > 0)
+        {
+            bool bitValue = false;
+            (*this) >> bitValue;
+            value |= bitValue ? bitPointer : 0;
+            bitPointer >>= 1;
+        }
+    }
+
+    return *this;
+}
+
 
 template<typename T>
 BitStream& BitStream::operator>>(T& output)
