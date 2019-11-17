@@ -59,6 +59,8 @@
       <Filter>renderers</Filter>
     </ClCompile>
     <ClCompile Include="ghostobject.cpp" />
+    <ClCompile Include="ghost.cpp" />
+    <ClCompile Include="ghostmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -121,5 +123,7 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="ghost.h" />
+    <ClInclude Include="ghostmanager.h" />
   </ItemGroup>
 </Project>
