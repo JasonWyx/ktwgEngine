@@ -1,30 +1,26 @@
-#include <glm/glm.hpp>
-#include <glew/glew.h>
-#include <glfw/glfw3.h>
-#include "imgui/imgui.h"
-#include "singletons.h"
+#include "d3d11renderwindow.h"
+#include "d3d11renderapi.h"
 
 int main()
 {
-  ImGuiManager::Initialize();
-  WindowManager::Initialize();
-  //ConnectionManager::Initialize();
+  D3D11RenderAPI::Initialize();
 
-  ImGuiManager::GetInstance().LateInitialize();
-
-  // Main loop
-  while (WindowManager::GetInstance().PollEvents())
+  RENDER_WINDOW_DESC desc;
+  desc.m_VideoMode = { 1280, 600, 60.f };
+  desc.m_Title = "TestWindow";
+  desc.m_Fullscreen = false;
+  desc.m_Hidden = false;
+  desc.m_ShowBorder = true;
+  desc.m_ShowTitleBar = true;
+  desc.m_Left = -1;
+  desc.m_Top = -1;
+  desc.m_MultisampleCount = 1;
+  D3D11RenderWindow* window = new D3D11RenderWindow{desc, D3D11RenderAPI::GetInstancePtr()->GetDevice()};
+  window->Init();
+  window->SetHidden(false);
+  while (true)
   {
-	  //ConnectionManager::GetInstance().Update();
-    glClearColor(.2f, .2f, .2f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
-    ImGuiManager::GetInstance().Update();
-    WindowManager::GetInstance().SwapBuffers();
   }
-
-  ConnectionManager::Shutdown();
-  ImGuiManager::Shutdown();
-  WindowManager::Shutdown();
   return 0;
 }

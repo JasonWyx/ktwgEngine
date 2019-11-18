@@ -59,6 +59,11 @@
       <Filter>renderers</Filter>
     </ClCompile>
     <ClCompile Include="ghostobject.cpp" />
+    <ClCompile Include="win32platform.cpp" />
+    <ClCompile Include="win32window.cpp" />
+    <ClCompile Include="d3d11renderapi.cpp" />
+    <ClCompile Include="d3d11device.cpp" />
+    <ClCompile Include="d3d11renderwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -121,5 +126,11 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="win32window.h" />
+    <ClInclude Include="win32platform.h" />
+    <ClInclude Include="d3d11renderapi.h" />
+    <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11defines.h" />
+    <ClInclude Include="d3d11renderwindow.h" />
   </ItemGroup>
 </Project>
