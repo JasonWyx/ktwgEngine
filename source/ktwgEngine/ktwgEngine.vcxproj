@@ -87,12 +87,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application.cpp" />
     <ClCompile Include="bitstream.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="d3d11device.cpp" />
     <ClCompile Include="d3d11renderapi.cpp" />
     <ClCompile Include="d3d11renderwindow.cpp" />
+    <ClCompile Include="d3d11renderwindowmanager.cpp" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
@@ -115,11 +117,13 @@
     <ClCompile Include="windowmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application.h" />
     <ClInclude Include="bitstream.h" />
     <ClInclude Include="d3d11defines.h" />
     <ClInclude Include="d3d11device.h" />
     <ClInclude Include="d3d11renderapi.h" />
     <ClInclude Include="d3d11renderwindow.h" />
+    <ClInclude Include="d3d11renderwindowmanager.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="ghostobject.h" />
