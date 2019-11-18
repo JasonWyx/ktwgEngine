@@ -92,6 +92,7 @@
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="d3d11device.cpp" />
+    <ClCompile Include="d3d11hardwarebuffer.cpp" />
     <ClCompile Include="d3d11renderapi.cpp" />
     <ClCompile Include="d3d11renderwindow.cpp" />
     <ClCompile Include="d3d11renderwindowmanager.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="bitstream.h" />
     <ClInclude Include="d3d11defines.h" />
     <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11hardwarebuffer.h" />
     <ClInclude Include="d3d11renderapi.h" />
     <ClInclude Include="d3d11renderwindow.h" />
     <ClInclude Include="d3d11renderwindowmanager.h" />

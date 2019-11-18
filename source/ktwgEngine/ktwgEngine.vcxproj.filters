@@ -66,6 +66,7 @@
     <ClCompile Include="d3d11renderwindow.cpp" />
     <ClCompile Include="application.cpp" />
     <ClCompile Include="d3d11renderwindowmanager.cpp" />
+    <ClCompile Include="d3d11hardwarebuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -136,5 +137,6 @@
     <ClInclude Include="d3d11renderwindow.h" />
     <ClInclude Include="application.h" />
     <ClInclude Include="d3d11renderwindowmanager.h" />
+    <ClInclude Include="d3d11hardwarebuffer.h" />
   </ItemGroup>
 </Project>
