@@ -59,6 +59,10 @@
       <Filter>renderers</Filter>
     </ClCompile>
     <ClCompile Include="ghostobject.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="entitypool.cpp" />
+    <ClCompile Include="component.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -121,5 +125,12 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="componenttype.h" />
+    <ClInclude Include="entitypool.h" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="componentmanager.h" />
+    <ClInclude Include="rigidbody.h" />
+    <ClInclude Include="rigidbodytype.h" />
   </ItemGroup>
 </Project>

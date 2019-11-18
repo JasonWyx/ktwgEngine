@@ -88,10 +88,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="component.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="entitypool.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
@@ -101,6 +104,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -111,8 +115,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitstream.h" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="componentmanager.h" />
+    <ClInclude Include="componenttype.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="entitypool.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="object.h" />
@@ -126,6 +135,8 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="istreammanager.h" />
+    <ClInclude Include="rigidbody.h" />
+    <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />
