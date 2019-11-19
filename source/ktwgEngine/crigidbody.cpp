@@ -47,9 +47,9 @@ void CRigidBody::SynchroniseRigidBody()
 {
 }
 
-const RBType & CRigidBody::GetBodyType() const
+const RBType& CRigidBody::GetBodyType() const
 {
-	// TODO: insert return statement here
+  return m_RBType;
 }
 
 float CRigidBody::GetMass() const

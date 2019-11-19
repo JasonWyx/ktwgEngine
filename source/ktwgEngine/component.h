@@ -20,7 +20,7 @@ class Component
   };
 
 public:
-  Component(SharedPtr<Entity> entity, uint32_t id);
+  Component(const SharedPtr<Entity>& entity, uint32_t id);
   virtual ~Component();
 
   virtual void Initialize() {};

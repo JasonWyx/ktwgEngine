@@ -5,6 +5,8 @@
 #include "componenttype.h"
 #include "component.h"
 
+#define INITIAL_COMP_SIZE 1 << 17
+
 // forward declaration
 class Entity;
 
@@ -24,17 +26,16 @@ struct ComponentManager
     size_t nPoolSize;
   };
 
-  static container_t<T>&   GetList() { return ComponentManager::Instance().list_; }
+  static container_t<T>&   GetList() { return ComponentManager::Instance().m_List; }
   static ComponentManager& Instance() { static ComponentManager instance; return instance; }
 
-  static SharedPtr<Component> Alloc(const SharedPtr<Entity>& entity, ComponentType type)
+  static SharedPtr<Component> Alloc(SharedPtr<Entity> entity)
   {
     ComponentManager& instance = Instance();
     container_t<T>& list = Instance().GetList();
     if (instance.m_FreeList.empty())
     {
       list.emplace_back(entity, list.size());
-      list.back().SetType(type);
       return std::make_shared<T>(list.back());
     }
 
@@ -42,7 +43,6 @@ struct ComponentManager
     instance.m_FreeList.pop_back();
     list[index].~T();
     new (&list[index]) T(entity, index);
-    list[index].SetType(type);
     return std::make_shared<T>(list[index]);
   }
 

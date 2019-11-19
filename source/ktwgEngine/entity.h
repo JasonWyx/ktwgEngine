@@ -32,8 +32,8 @@ public:
   Entity(Entity&& rhs)            = default;
   Entity& operator=(Entity&& rhs) = default;
 
-  Entity(const Entity& rhs)            = delete;
-  Entity& operator=(const Entity& rhs) = delete;
+  Entity(const Entity& rhs)            = default;
+  Entity& operator=(const Entity& rhs) = default;
   
   ~Entity();
 
@@ -47,7 +47,7 @@ public:
 
 private:
   template<typename T> 
-  SharedPtr<Component> CreateComponent(ComponentType ctype);
+  SharedPtr<Component> CreateComponent();
 
   SharedPtr<Entity>                 m_Parent;
   container_t<SharedPtr<Entity>>    m_Children;
@@ -60,10 +60,10 @@ private:
 };
 
 template<typename T>
-inline Entity::SharedPtr<Component> Entity::CreateComponent(ComponentType ctype)
+inline Entity::SharedPtr<Component> Entity::CreateComponent()
 {
-  SharedPtr<Component> comp = ComponentManager<T>::Alloc(std::make_shared<Entity>(*this), ctype);
-  comp->Init();
+  SharedPtr<Component> comp = ComponentManager<T, INITIAL_COMP_SIZE>::Alloc(std::make_shared<Entity>(*this));
+  comp->Initialize();
   m_Components.push_back(comp);
-  return comp;
+  return nullptr;
 }
