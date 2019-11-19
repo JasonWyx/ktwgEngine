@@ -108,6 +108,7 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="inputsystem.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="gamerenderable.h" />
     <ClInclude Include="gamerenderer.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="tcpsocket.h" />
     <ClInclude Include="udpsocket.h" />
+    <ClInclude Include="win32input.h" />
     <ClInclude Include="win32platform.h" />
     <ClInclude Include="win32window.h" />
     <ClInclude Include="windowmanager.h" />
