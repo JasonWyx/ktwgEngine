@@ -104,7 +104,8 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
+    <ClCompile Include="crigidbody.cpp" />
+    <ClCompile Include="scene.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -135,8 +136,9 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="istreammanager.h" />
-    <ClInclude Include="rigidbody.h" />
+    <ClInclude Include="crigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />

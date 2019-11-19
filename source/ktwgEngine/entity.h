@@ -22,18 +22,25 @@ class Entity
     ACTIVE = 0, 
     INACTIVE = 1, 
     DEAD = 2, 
-    NONE = 1 << 7
+    NONE =  1 << 7
   };
 
   static uint32_t s_EntityCount;
 public:
-  Entity(size_t id, const std::string& name="");
+  Entity(uint32_t id, const std::string& name="");
+  
+  Entity(Entity&& rhs)            = default;
+  Entity& operator=(Entity&& rhs) = default;
+
+  Entity(const Entity& rhs)            = delete;
+  Entity& operator=(const Entity& rhs) = delete;
+  
   ~Entity();
 
   static SharedPtr<Entity> CreateEntity(const std::string& name="Object");
   static Entity&           GetEntity(uint32_t id);
 
-  SharedPtr<Entity>    AddChild();
+  SharedPtr<Entity>&   AddChild();
   SharedPtr<Component> AddComponent(ComponentType type);
 
   inline bool IsDead() const { return m_State == DEAD; }
@@ -46,9 +53,10 @@ private:
   container_t<SharedPtr<Entity>>    m_Children;
   container_t<SharedPtr<Component>> m_Components;
 
+  // Transform   m_Transform;
+  State       m_State;
   std::string m_Name;
   uint32_t    m_Id;
-  State       m_State;
 };
 
 template<typename T>

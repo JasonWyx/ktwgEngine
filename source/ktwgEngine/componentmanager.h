@@ -3,9 +3,9 @@
 #include <vector>
 #include <memory>
 #include "componenttype.h"
+#include "component.h"
 
 // forward declaration
-class Component;
 class Entity;
 
 template<typename T, unsigned SIZE>
@@ -50,19 +50,21 @@ struct ComponentManager
   {
     ComponentManager& instance = Instance();
     container_t<T>& list = Instance().GetList();
-    if (comp->m_Id < list.size())
+    uint32_t mid = comp->GetId();
+    
+    if (mid < list.size())
     {
-      T& val = list[comp->m_Id];
+      T& val = list[mid];
       val.SetActive(false);
       val.Destroy();
-      instance.m_FreeList.emplace_back(comp->m_Id);
+      instance.m_FreeList.emplace_back(mid);
     }
   }
 
   static Component& Get(SharedPtr<Component> comp)
   {
     ComponentManager& instance = Instance();
-    return instance.m_List[comp->m_Id];
+    return instance.m_List[comp->GetId()];
   }
 
   // Removes duplicates in freelist
@@ -84,9 +86,9 @@ struct ComponentManager
   Usage QueryUsage() const
   {
     Usage u;
-    u.nObjectInFreeList = freelist_.size();
-    u.nObjectsInUse = list_.size() - freelist_.size();
-    u.nPoolSize = list_.size();
+    u.nObjectInFreeList = m_FreeList.size();
+    u.nObjectsInUse = m_List.size() - m_FreeList.size();
+    u.nPoolSize = m_List.size();
     return u;
   }
 

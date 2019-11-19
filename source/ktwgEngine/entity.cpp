@@ -1,10 +1,14 @@
 #include "entity.h"
 #include "entitypool.h"
 
+// Components' headers
+#include "crigidbody.h"
+
 uint32_t Entity::s_EntityCount = 0;
 
-Entity::Entity(size_t id, const std::string& name = "")
-  : m_Id{id}, m_Name{name}, m_State{ACTIVE}
+Entity::Entity(uint32_t id, const std::string& name = "")
+  : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
+    m_Id{ id }, m_Name{ name }, m_State{ ACTIVE }
 {
 }
 
@@ -23,9 +27,11 @@ Entity& Entity::GetEntity(uint32_t id)
   return EntityPool::Instance()->Get(id);
 }
 
-Entity::SharedPtr<Entity> Entity::AddChild()
+Entity::SharedPtr<Entity>& Entity::AddChild()
 {
-  return nullptr;
+  SharedPtr<Entity> ent = CreateEntity();
+  m_Children.emplace_back(ent);
+  return ent;
 }
 
 Entity::SharedPtr<Component> Entity::AddComponent(ComponentType type)
@@ -36,7 +42,7 @@ Entity::SharedPtr<Component> Entity::AddComponent(ComponentType type)
   switch (type)
   {
     //CASE_CREATE_COMP(NONE, TestComponent) break;
-    CASE_CREATE_COMP(C_RIGIDBODY, CRigidBody) break;
+    CASE_CREATE_COMP(CT_RIGIDBODY, CRigidBody) break;
     // ...
   default: break;
   }

@@ -17,7 +17,7 @@ Entity& EntityPool::Create(const std::string& name)
 {
   if (m_FreeList.empty())
   {
-    m_EntityTable.emplace_back(m_EntityTable.size(), name);
+    m_EntityTable.emplace_back(static_cast<uint32_t>(m_EntityTable.size()), name);
     Entity& entity = m_EntityTable.back();
     return entity;
   }

@@ -12,6 +12,8 @@ int main()
 
   ImGuiManager::GetInstance().LateInitialize();
 
+  Scene::Initialize();
+
   // Main loop
   while (WindowManager::GetInstance().PollEvents())
   {

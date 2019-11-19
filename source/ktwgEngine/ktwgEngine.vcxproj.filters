@@ -62,7 +62,8 @@
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="entitypool.cpp" />
     <ClCompile Include="component.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
+    <ClCompile Include="crigidbody.cpp" />
+    <ClCompile Include="scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -130,7 +131,8 @@
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="componentmanager.h" />
-    <ClInclude Include="rigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
+    <ClInclude Include="crigidbody.h" />
+    <ClInclude Include="scene.h" />
   </ItemGroup>
 </Project>

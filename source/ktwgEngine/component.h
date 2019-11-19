@@ -29,6 +29,8 @@ public:
   template<typename T>
   T& Get() { return static_cast<T&>(*this); }
 
+  inline uint32_t GetId() const { return m_Id; }
+
 private:
   SharedPtr<Entity> m_Owner;
   ComponentType     m_Type;
