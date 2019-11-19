@@ -19,12 +19,18 @@ class D3D11HardwareBuffer
 public:
   D3D11HardwareBuffer(D3D11Device* device, D3D11_BUFFER_TYPE type, D3D11_USAGE resourceUsage, uint32_t elementCount, uint32_t elementSize, bool unorderedGpuAccess, bool streamOut, bool shaderUsage, bool drawIndirect);
 
+  const ComPtr<ID3D11Buffer>&   GetBuffer       () const { return m_Buffer; }
+  const D3D11_BUFFER_DESC&      GetDesc         () const { return m_Desc; }
+  uint32_t                      GetElementCount () const { return m_ElementCount; }
+  uint32_t                      GetElementSize  () const { return m_ElementSize; }
+  uint32_t                      GetBufferSize   () const { return m_BufferSize; }
+  HardwareBufferFlags           GetFlags        () const { return m_Flags; }
+
   void Read     (uint32_t offset, uint32_t length, void* dest);
   void Write    (uint32_t offset, uint32_t length, const void* src, GPU_WRITE_TYPE writeType);
   void Copy     (D3D11HardwareBuffer* src, uint32_t srcOffset, uint32_t dstOffset, uint32_t length, bool discardEntireBuffer = false);
 
 private:
-
   void* Map(uint32_t offset, uint32_t length, GPU_LOCK_OPTIONS lockOptions);
   void  Unmap();
 
