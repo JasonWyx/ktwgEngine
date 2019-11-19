@@ -64,6 +64,13 @@
     <ClCompile Include="component.cpp" />
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="win32platform.cpp" />
+    <ClCompile Include="win32window.cpp" />
+    <ClCompile Include="d3d11renderapi.cpp" />
+    <ClCompile Include="d3d11device.cpp" />
+    <ClCompile Include="d3d11renderwindow.cpp" />
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="d3d11renderwindowmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -126,6 +133,7 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+<<<<<<< HEAD
     <ClInclude Include="entity.h" />
     <ClInclude Include="componenttype.h" />
     <ClInclude Include="entitypool.h" />
@@ -134,5 +142,15 @@
     <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="crigidbody.h" />
     <ClInclude Include="scene.h" />
+=======
+    <ClInclude Include="win32window.h" />
+    <ClInclude Include="win32platform.h" />
+    <ClInclude Include="d3d11renderapi.h" />
+    <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11defines.h" />
+    <ClInclude Include="d3d11renderwindow.h" />
+    <ClInclude Include="application.h" />
+    <ClInclude Include="d3d11renderwindowmanager.h" />
+>>>>>>> application-layer-dev
   </ItemGroup>
 </Project>
