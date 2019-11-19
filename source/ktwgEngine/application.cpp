@@ -4,6 +4,8 @@
 #include "d3d11renderwindow.h"
 #include "d3d11renderwindowmanager.h"
 
+#include "scene.h"
+
 void Application::InitializeInternal()
 {
   InitializeCoreSystems();
@@ -34,6 +36,7 @@ void Application::InitializeCoreSystems()
 
 void Application::InitializeResources()
 {
+  Scene::Initialize();
 }
 
 void Application::LateInitialize()

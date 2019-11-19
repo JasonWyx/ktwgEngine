@@ -31,7 +31,7 @@ Entity::SharedPtr<Entity>& Entity::AddChild()
 {
   SharedPtr<Entity> ent = CreateEntity();
   m_Children.emplace_back(ent);
-  return ent;
+  return m_Children.back();
 }
 
 Entity::SharedPtr<Component> Entity::AddComponent(ComponentType type)

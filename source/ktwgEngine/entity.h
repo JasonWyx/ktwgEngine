@@ -21,8 +21,8 @@ class Entity
   { 
     ACTIVE = 0, 
     INACTIVE = 1, 
-    DEAD = 2, 
-    NONE =  1 << 7
+    DEAD = 1 << 2, 
+    NONE =  1 << 6
   };
 
   static uint32_t s_EntityCount;
