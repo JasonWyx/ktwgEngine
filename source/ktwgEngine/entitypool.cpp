@@ -22,7 +22,7 @@ Entity& EntityPool::Create(const std::string& name)
     return entity;
   }
 
-  size_t reuse = 0;
+  uint32_t reuse = 0;
   Entity* entity = 0;
 
   do 

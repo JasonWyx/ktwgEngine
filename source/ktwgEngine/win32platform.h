@@ -20,6 +20,9 @@
 class Win32Platform
 {
 public:
+  static bool m_ShowCursor;
+  static bool m_LockCursor;
+
   static LRESULT Input_WndProcHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   static LRESULT CALLBACK Win32WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

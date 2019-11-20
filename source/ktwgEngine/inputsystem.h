@@ -37,6 +37,9 @@ public:
   InputSystem(HWND hwnd);
   ~InputSystem();
 
+  void InitializeInternal() override;
+  void ShutdownInternal() override;
+
   /* Called every frame to update the input states */
   void Update();
   void PostUpdate();

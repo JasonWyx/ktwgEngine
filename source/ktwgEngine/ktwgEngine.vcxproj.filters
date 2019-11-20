@@ -35,6 +35,8 @@
     <ClCompile Include="win32window.cpp" />
     <ClCompile Include="windowmanager.cpp" />
     <ClCompile Include="inputsystem.cpp" />
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -83,5 +85,7 @@
     <ClInclude Include="windowmanager.h" />
     <ClInclude Include="win32input.h" />
     <ClInclude Include="inputsystem.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="time.h" />
   </ItemGroup>
 </Project>

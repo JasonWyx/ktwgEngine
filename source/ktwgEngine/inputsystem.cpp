@@ -1,5 +1,6 @@
 #include "inputsystem.h"
 #include <cstring>
+#include "time.h"
 
 InputSystem::InputSystem(HWND hwnd)
   : m_MouseDoubleClickTime{ 500.0f }, m_MouseWheel{ 0.0f }, m_LockCursor{ false }, m_ShowCursor{ true }, m_Hwnd{ hwnd }
@@ -29,10 +30,18 @@ InputSystem::~InputSystem()
 {
 }
 
+void InputSystem::InitializeInternal()
+{
+}
+
+void InputSystem::ShutdownInternal()
+{
+}
+
 void InputSystem::Update()
 {
-  float dt = 0.0f;
-  //auto dt = static_cast<float>(GetTimeModule().GetDeltaTimeMs());
+  Time& time = Time::GetInstance();
+  float dt = static_cast<float>(time.GetDeltaTimeMs());
 
   //auto oldPos = mouseScreenPos_;
 
@@ -61,17 +70,17 @@ void InputSystem::Update()
   {
     m_MouseDoubleClick[i] = false;
     m_MouseDownDuration[i] = m_Mouse[i] ? (m_MouseDownDuration[i] < 0.0f ? 0.0f : m_MouseDownDuration[i] + dt) : -1.0f;
-    //if (OnMouseClick((KTWGMouseCode)i))
-    //{
-    //  // If 2nd click time and 1st click time is within threshold, double click confirmed
-    //  if (static_cast<float>(GetTimeModule().GetTimeMs()) - mouseClickTime_[i] < mouseDoubleClickTime_)
-    //  {
-    //    mouseDoubleClick_[i] = true;
-    //    mouseClickTime_[i] = -1000.0f; // Prevent third click to be captured
-    //  }
-    //  else // 1st click state. Keep track of 1st click time
-    //    mouseClickTime_[i] = static_cast<float>(GetTimeModule().GetTimeMs());
-    //}
+    if (OnMouseClick((KTWGMouseCode)i))
+    {
+      // If 2nd click time and 1st click time is within threshold, double click confirmed
+      if (static_cast<float>(time.GetTimeMs()) - m_MouseClickTime[i] < m_MouseDoubleClickTime)
+      {
+        m_MouseDoubleClick[i] = true;
+        m_MouseClickTime[i] = -1000.0f; // Prevent third click to be captured
+      }
+      else // 1st click state. Keep track of 1st click time
+        m_MouseClickTime[i] = static_cast<float>(time.GetTimeMs());
+    }
   }
 }
 
@@ -145,7 +154,7 @@ bool InputSystem::GetShowCursor() const
 
 void InputSystem::SetLockCursor(bool lock)
 {
-  m_LockCursor = lock
+  m_LockCursor = lock;
 }
 
 void InputSystem::ShowCursor(bool show)
