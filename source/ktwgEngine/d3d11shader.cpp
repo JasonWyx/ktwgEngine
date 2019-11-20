@@ -6,6 +6,18 @@ D3D11Shader::D3D11Shader(const ComPtr<ID3DBlob>& compiledShader)
 {
 }
 
+D3D11Shader * D3D11Shader::CreateShader(const SHADER_DESC & desc)
+{
+  switch (desc.m_Type)
+  {
+  case VS:
+    return ::CreateShader<VS>(desc);
+  case PS:
+    return ::CreateShader<PS>(desc);
+  }
+	return nullptr;
+}
+
 ComPtr<ID3DBlob> CompileShader(const char * profile, const SHADER_DESC & desc)
 {
   static const D3D_SHADER_MACRO defines[]
@@ -23,7 +35,7 @@ ComPtr<ID3DBlob> CompileShader(const char * profile, const SHADER_DESC & desc)
   ComPtr<ID3DBlob> microCode = nullptr;
   ComPtr<ID3DBlob> messages = nullptr;
 
-  HRESULT hr = D3DCompile(desc.m_Source.c_str(), desc.m_Source.size(), nullptr, defines, nullptr, desc.m_Entry.c_str(), profile, compileFlags, 0, &microCode, &messages);
+  HRESULT hr = D3DCompile(desc.m_Source.c_str(), desc.m_Source.size(), nullptr, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, desc.m_Entry.c_str(), profile, compileFlags, 0, &microCode, &messages);
 
   if (FAILED(hr))
   {

@@ -23,7 +23,6 @@ D3D11Device::~D3D11Device()
   }
 }
 
-
 std::string D3D11Device::GetErrors(bool clearErrors)
 {
   std::string result;

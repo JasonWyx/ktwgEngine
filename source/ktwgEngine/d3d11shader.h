@@ -24,6 +24,8 @@ public:
 
   const ComPtr<ID3DBlob>& GetCompiledShader() const { return m_CompiledShader; }
 
+  static D3D11Shader* CreateShader(const SHADER_DESC& desc);
+
 private:
   ComPtr<ID3DBlob>          m_CompiledShader;
 };
@@ -32,20 +34,16 @@ ComPtr<ID3DBlob> CompileShader(const char* profile, const SHADER_DESC& desc);
 D3D11Shader* CreateShaderCommon(const char* profile, const SHADER_DESC& desc);
 
 template <SHADER_TYPE st>
-D3D11Shader* CreateShader(const SHADER_DESC&)
-{
-  std::cerr << "Invalid Shader Type\n";
-  return nullptr;
-}
+D3D11Shader* CreateShader(const SHADER_DESC&);
 
 template <>
-D3D11Shader* CreateShader<VS>(const SHADER_DESC& desc)
+inline D3D11Shader* CreateShader<VS>(const SHADER_DESC& desc)
 {
   return CreateShaderCommon("vs_5_0", desc);
 }
 
 template <>
-D3D11Shader* CreateShader<PS>(const SHADER_DESC& desc)
+inline D3D11Shader* CreateShader<PS>(const SHADER_DESC& desc)
 {
   return CreateShaderCommon("ps_5_0", desc);
 }

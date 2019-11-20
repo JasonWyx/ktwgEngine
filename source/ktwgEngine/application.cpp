@@ -3,12 +3,32 @@
 #include "d3d11renderapi.h"
 #include "d3d11renderwindow.h"
 #include "d3d11renderwindowmanager.h"
+#include "d3d11shader.h"
+#include "Shaders/cpp/ShaderCommon.h"
+
+#include <fstream>
 
 void Application::InitializeInternal()
 {
   InitializeCoreSystems();
   InitializeResources();
   LateInitialize();
+
+  std::fstream f{"Shaders/hlsl/SimpleForward.hlsl"};
+
+  SHADER_DESC desc;
+  desc.m_Entry    = "Shade_Vertex";
+  desc.m_Source   = std::string{ std::istreambuf_iterator<char>{f}, std::istreambuf_iterator<char>{} };
+  desc.m_Type     = VS;
+  SimpleForwardVS = D3D11Shader::CreateShader(desc);
+  desc.m_Entry    = "Shade_Pixel";
+  desc.m_Type     = PS;
+  SimpleForwardPS = D3D11Shader::CreateShader(desc);
+
+  if (SimpleForwardVS && SimpleForwardPS)
+  {
+    std::cout << "Success!\n";
+  }
 }
 
 void Application::ShutdownInternal()
