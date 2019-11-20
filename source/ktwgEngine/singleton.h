@@ -30,10 +30,11 @@ public:
   void InitializeImpl() { InitializeInternal(); }
   void ShutdownImpl()   { ShutdownInternal(); }
 
-  static void Initialize() 
+  template <class ...Args>
+  static void Initialize(Args&&... args) 
   {
     assert(!ms_IsInitialized);
-    ms_Instance = new T();
+    ms_Instance = new T(std::forward<Args>(args)...);
     ms_Instance->InitializeImpl();
     ms_IsInitialized = true;
   }
