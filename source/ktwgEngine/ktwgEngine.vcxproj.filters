@@ -37,6 +37,8 @@
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="time.cpp" />
+    <ClCompile Include="physics.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -87,5 +89,8 @@
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="time.h" />
+    <ClInclude Include="rigidbody.h" />
+    <ClInclude Include="physics.h" />
+    <ClInclude Include="physicsconstants.h" />
   </ItemGroup>
 </Project>

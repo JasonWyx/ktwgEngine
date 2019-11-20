@@ -2,18 +2,7 @@
 
 #include <vector>
 #include "Component.h"
-#include "rigidbodytype.h"
-
-enum RBFlags
-{
-  RBF_NONE           = 0,
-  RBF_AWAKE          = 1,
-  RBF_ISLAND         = 1 << 1,
-  RBF_FIXEDROTATIONX = 1 << 2,
-  RBF_FIXEDROTATIONY = 1 << 3,
-  RBF_FIXEDROTATIONZ = 1 << 4,
-  RBF_IGNOREPHYSICS  = 1 << 5,
-};
+#include "rigidbody.h"
 
 /* RigidBody Component class. This is used to manage any modification made to
    the rigid body's data.                                                     */
@@ -21,6 +10,9 @@ class CRigidBody : public Component
 {
   template <typename T>
   using SharedPtr = std::shared_ptr<T>;
+
+  template <typename T>
+  using UniquePtr = std::unique_ptr<T>;
 
   template <typename T>
   using container_t = std::vector<T>;
@@ -71,37 +63,5 @@ public:
   void SetIgnorePhysics(bool flag);
 
 private:
-  RBType m_RBType; // Specify body type of rigid body
-  //Transform  ownerTransform_; // entity world transform
-  //Transform  transform_;      // body world transform
-
-  float m_Mass;               // Mass of the rigid body
-  float m_InvMass;            // Inverse body mass
-
-  //Matrix3 inertia_;          // Inertia about the local center position
-  //Matrix3 invInertia_;       // Inverse inertia about the local center position
-  //Matrix3 worldInvInertia_;  // Inverse inertia about the world center position
-
-  //Vec3 force_;           // Force exerted on the rigid body
-  //Vec3 torque_;          // Torque exerted on the rigid body
-  //Vec3 linearVelocity_;  // Linear velocity on the rigid body
-  //Vec3 angularVelocity_; // Angular velocity on the rigid body
-
-  float m_LinearDamping;  // Linear damping applied on the rigid body
-  float m_AngularDamping; // Angular damping applied on the rigid body
-  float m_GravityScale;   // Gravity scalar applied on the rigid body
-
-  bool m_UseGravity;      // Query if gravity should be applied
-
-  //BPSweep sweep_;        // A barycentric formula to compute Time Of Impact collisions
-
-  uint32_t m_IslandId;    // Index of body in the island
-  uint32_t m_Flags;       // Body Flags
-  float    m_SleepTime;   // Sleep time
-
-  SharedPtr<void> m_World;     // The physics world this rigidbody belongs to
-
-  // std::vector<SharedPtr<BoxCollider>> colliders_;
-
-  bool m_Active;
+  // UniquePtr<RigidBody>
 };
