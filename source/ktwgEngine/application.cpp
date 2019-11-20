@@ -48,14 +48,19 @@ void Application::Run()
   // For now just a loop forever
   while (true)
   {
+    bool quit = false;
     while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
 
       if (msg.message == WM_QUIT)
+        quit = true;
         break;
     }
+
+    if (quit)
+      break;
 
     time.Update();
 
