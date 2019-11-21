@@ -6,7 +6,7 @@
 
 /* RigidBody Component class. This is used to manage any modification made to
    the rigid body's data.                                                     */
-class CRigidBody : public Component
+class CRigidBody final : public Component
 {
   template <typename T>
   using container_t = std::vector<T>;

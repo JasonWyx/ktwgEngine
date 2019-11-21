@@ -50,6 +50,7 @@
     <ClCompile Include="d3d11texture.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="matrix4.cpp" />
+    <ClCompile Include="cboxcollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -120,5 +121,7 @@
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="math.h" />
+    <ClInclude Include="cboxcollider.h" />
+    <ClInclude Include="BoxCollider.h" />
   </ItemGroup>
 </Project>

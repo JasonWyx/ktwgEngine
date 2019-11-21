@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="cboxcollider.cpp" />
     <ClCompile Include="component.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
@@ -135,6 +136,8 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="bitstream.h" />
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="componentmanager.h" />
     <ClInclude Include="componenttype.h" />
