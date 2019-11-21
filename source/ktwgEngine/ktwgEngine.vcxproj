@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="component.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="d3d11device.cpp" />
@@ -101,6 +102,8 @@
     <ClCompile Include="d3d11texture.cpp" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="entitypool.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
@@ -110,12 +113,17 @@
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="crigidbody.cpp" />
+    <ClCompile Include="scene.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
     <ClCompile Include="streammanager.cpp" />
     <ClCompile Include="tcpsocket.cpp" />
+    <ClCompile Include="time.cpp" />
+    <ClCompile Include="timer.cpp" />
     <ClCompile Include="udpsocket.cpp" />
     <ClCompile Include="win32platform.cpp" />
     <ClCompile Include="win32window.cpp" />
@@ -124,6 +132,9 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="bitstream.h" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="componentmanager.h" />
+    <ClInclude Include="componenttype.h" />
     <ClInclude Include="d3d11defines.h" />
     <ClInclude Include="d3d11device.h" />
     <ClInclude Include="d3d11hardwarebuffer.h" />
@@ -134,8 +145,11 @@
     <ClInclude Include="d3d11shader.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="entitypool.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="inputsystem.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="gamerenderable.h" />
     <ClInclude Include="gamerenderer.h" />
@@ -150,6 +164,9 @@
     <ClInclude Include="hyperenderer.h" />
     <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="Shaders\cpp\ShaderCommon.h" />
+    <ClInclude Include="crigidbody.h" />
+    <ClInclude Include="rigidbodytype.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />
@@ -160,7 +177,10 @@
     <ClInclude Include="streammanagerclient.h" />
     <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="tcpsocket.h" />
+    <ClInclude Include="time.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="udpsocket.h" />
+    <ClInclude Include="win32input.h" />
     <ClInclude Include="win32platform.h" />
     <ClInclude Include="win32window.h" />
     <ClInclude Include="windowmanager.h" />
