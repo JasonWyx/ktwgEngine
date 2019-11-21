@@ -43,6 +43,11 @@
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="time.cpp" />
+    <ClCompile Include="d3d11resource.cpp" />
+    <ClCompile Include="d3d11shader.cpp" />
+    <ClCompile Include="d3d11texture.cpp" />
+    <ClCompile Include="hyperenderer.cpp" />
+    <ClCompile Include="matrix4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -100,5 +105,15 @@
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="time.h" />
+    <ClInclude Include="d3d11resource.h" />
+    <ClInclude Include="d3d11shader.h" />
+    <ClInclude Include="hyperenderer.h" />
+    <ClInclude Include="d3d11texture.h" />
+    <ClInclude Include="Shaders\cpp\ShaderCommon.h" />
+    <ClInclude Include="vector3.h" />
+    <ClInclude Include="matrix4.h" />
+    <ClInclude Include="matrix3.h" />
+    <ClInclude Include="quaternion.h" />
+    <ClInclude Include="math.h" />
   </ItemGroup>
 </Project>
