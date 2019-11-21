@@ -6,9 +6,6 @@ class Entity;
 
 class Component
 {
-  template <typename T>
-  using SharedPtr = std::shared_ptr<T>;
-
   friend class Entity;
   
   enum State : char
@@ -20,7 +17,7 @@ class Component
   };
 
 public:
-  Component(const SharedPtr<Entity>& entity, uint32_t id);
+  Component(Entity& entity, uint32_t id);
   virtual ~Component();
 
   virtual void Initialize() {};
@@ -32,8 +29,8 @@ public:
   inline uint32_t GetId() const { return m_Id; }
 
 private:
-  SharedPtr<Entity> m_Owner;
-  ComponentType     m_Type;
-  State             m_State;
-  uint32_t          m_Id;
+  Entity*       m_Owner;
+  ComponentType m_Type;
+  State         m_State;
+  uint32_t      m_Id;
 };

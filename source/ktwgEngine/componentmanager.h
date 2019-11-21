@@ -16,9 +16,6 @@ struct ComponentManager
   template <typename T>
   using container_t = std::vector<T>;
 
-  template <typename T>
-  using SharedPtr = std::shared_ptr<T>;
-
   struct Usage
   {
     size_t nObjectsInUse;
@@ -29,24 +26,24 @@ struct ComponentManager
   static container_t<T>&   GetList() { return ComponentManager::Instance().m_List; }
   static ComponentManager& Instance() { static ComponentManager instance; return instance; }
 
-  static SharedPtr<Component> Alloc(SharedPtr<Entity> entity)
+  static Component* Alloc(Entity& entity)
   {
     ComponentManager& instance = Instance();
     container_t<T>& list = Instance().GetList();
     if (instance.m_FreeList.empty())
     {
       list.emplace_back(entity, list.size());
-      return std::make_shared<T>(list.back());
+      return &list.back();
     }
 
     uint32_t index = instance.m_FreeList.back();
     instance.m_FreeList.pop_back();
     list[index].~T();
     new (&list[index]) T(entity, index);
-    return std::make_shared<T>(list[index]);
+    return &list[index];
   }
 
-  static void Free(SharedPtr<Component> comp)
+  static void Free(Component* comp)
   {
     ComponentManager& instance = Instance();
     container_t<T>& list = Instance().GetList();
@@ -61,7 +58,7 @@ struct ComponentManager
     }
   }
 
-  static Component& Get(SharedPtr<Component> comp)
+  static Component& Get(Component* comp)
   {
     ComponentManager& instance = Instance();
     return instance.m_List[comp->GetId()];
