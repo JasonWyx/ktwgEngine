@@ -47,5 +47,35 @@ enum D3D11_ERROR_LEVEL
   D3D11_EL_INFO
 };
 
+enum D3D11_BUFFER_TYPE
+{
+  D3D11_BT_VERTEX,
+  D3D11_BT_INDEX,
+  D3D11_BT_CONSTANT,
+  D3D11_BT_STRUCTURED,
+  D3D11_BT_RAW,
+  D3D11_BT_Count
+};
+
+enum GPU_LOCK_OPTIONS
+{
+  LO_READ_WRITE, // Read and write, Might limit performance
+
+  LO_READ_ONLY, // Allows reading (SLOW OPERATION)
+
+  LO_WRITE_ONLY_DISCARD, // Write to buffer, driver discards contents 
+  LO_WRITE_ONLY_DISCARD_RANGE, // Write to buffer, driver discards contents of a range (not entire buffer)
+  LO_WRITE_ONLY_NO_OVERWRITE, // Write to buffer, guarantees the driver will not update any part that is currently used
+  LO_WRITE_ONLY // Write to buffer
+};
+
+enum GPU_WRITE_TYPE
+{
+  WT_NORMAL,
+  WT_DISCARD,
+  WT_NO_DISCARD,
+  WT_NO_OVERWRITE
+};
+
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
