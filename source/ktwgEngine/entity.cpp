@@ -16,10 +16,10 @@ Entity::~Entity()
 {
 }
 
-Entity::SharedPtr<Entity> Entity::CreateEntity(const std::string& name)
+Entity* Entity::CreateEntity(const std::string& name)
 {
   Entity& entity = EntityPool::Instance()->Create(name);
-  return std::make_shared<Entity>(entity);
+  return &entity;
 }
 
 Entity& Entity::GetEntity(uint32_t id)
@@ -27,18 +27,18 @@ Entity& Entity::GetEntity(uint32_t id)
   return EntityPool::Instance()->Get(id);
 }
 
-Entity::SharedPtr<Entity>& Entity::AddChild()
+Entity& Entity::AddChild()
 {
-  SharedPtr<Entity> ent = CreateEntity();
+  Entity* ent = CreateEntity();
   m_Children.emplace_back(ent);
-  return m_Children.back();
+  return *m_Children.back();
 }
 
-Entity::SharedPtr<Component> Entity::AddComponent(ComponentType type)
+Component& Entity::AddComponent(ComponentType type)
 {
-#define CASE_CREATE_COMP(comp_type, T) case comp_type: comp = CreateComponent<T>(); 
+#define CASE_CREATE_COMP(comp_type, T) case comp_type: comp = &CreateComponent<T>(); 
 
-  SharedPtr<Component> comp;
+  Component* comp = nullptr;
   switch (type)
   {
     //CASE_CREATE_COMP(NONE, TestComponent) break;
@@ -46,7 +46,7 @@ Entity::SharedPtr<Component> Entity::AddComponent(ComponentType type)
     // ...
   default: break;
   }
-  return comp;
+  return *comp;
 
 #undef CASE_CREATE_COMP
 }

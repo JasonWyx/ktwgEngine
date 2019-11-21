@@ -9,16 +9,10 @@
 class CRigidBody : public Component
 {
   template <typename T>
-  using SharedPtr = std::shared_ptr<T>;
-
-  template <typename T>
-  using UniquePtr = std::unique_ptr<T>;
-
-  template <typename T>
   using container_t = std::vector<T>;
 
 public:
-  CRigidBody(const SharedPtr<Entity>& owner, uint32_t id);
+  CRigidBody(Entity& owner, uint32_t id);
   ~CRigidBody();
 
   /* Override functions for abstract class */
@@ -63,5 +57,5 @@ public:
   void SetIgnorePhysics(bool flag);
 
 private:
-  // UniquePtr<RigidBody>
+  RigidBody* m_Internal;
 };
