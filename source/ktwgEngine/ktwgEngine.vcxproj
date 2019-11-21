@@ -116,6 +116,8 @@
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="crigidbody.cpp" />
+    <ClCompile Include="physics.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="socketaddress.cpp" />
@@ -170,6 +172,9 @@
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="Shaders\cpp\ShaderCommon.h" />
     <ClInclude Include="crigidbody.h" />
+    <ClInclude Include="physics.h" />
+    <ClInclude Include="physicsconstants.h" />
+    <ClInclude Include="rigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="singleton.h" />

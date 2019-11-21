@@ -34,9 +34,9 @@ public:
   Usage QueryUsage() const;
 
 private:
-  container_t<Entity>  m_EntityTable;
-  container_t<size_t>  m_FreeList;
-  size_t               m_Capacity;
+  container_t<Entity>   m_EntityTable;
+  container_t<uint32_t> m_FreeList;
+  uint32_t              m_Capacity;
 };
 
 inline Entity& GetEntity(const size_t id) { return EntityPool::Instance()->Get(id); }

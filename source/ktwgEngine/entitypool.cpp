@@ -6,7 +6,7 @@ EntityPool::EntityPool()
 {
   m_EntityTable.reserve(MAX_ENTITY_COUNT);
   m_FreeList.reserve(FREELIST_RESERVE_COUNT);
-  m_Capacity = m_EntityTable.capacity();
+  m_Capacity = static_cast<uint32_t>(m_EntityTable.capacity());
 }
 
 EntityPool::~EntityPool()
