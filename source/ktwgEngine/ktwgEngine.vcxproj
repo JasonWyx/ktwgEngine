@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -96,7 +96,9 @@
     <ClCompile Include="d3d11renderapi.cpp" />
     <ClCompile Include="d3d11renderwindow.cpp" />
     <ClCompile Include="d3d11renderwindowmanager.cpp" />
+    <ClCompile Include="d3d11resource.cpp" />
     <ClCompile Include="d3d11shader.cpp" />
+    <ClCompile Include="d3d11texture.cpp" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
@@ -128,6 +130,7 @@
     <ClInclude Include="d3d11renderapi.h" />
     <ClInclude Include="d3d11renderwindow.h" />
     <ClInclude Include="d3d11renderwindowmanager.h" />
+    <ClInclude Include="d3d11resource.h" />
     <ClInclude Include="d3d11shader.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />

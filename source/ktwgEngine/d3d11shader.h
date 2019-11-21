@@ -21,6 +21,7 @@ class D3D11Shader
 {
 public:
   D3D11Shader(const ComPtr<ID3DBlob>&  compiledShader);
+  virtual ~D3D11Shader(){}
 
   const ComPtr<ID3DBlob>& GetCompiledShader() const { return m_CompiledShader; }
 
@@ -28,6 +29,16 @@ public:
 
 private:
   ComPtr<ID3DBlob>          m_CompiledShader;
+};
+
+class D3D11VertexShader : public D3D11Shader
+{
+    
+};
+
+class D3D11PixelShader : public D3D11Shader
+{
+
 };
 
 ComPtr<ID3DBlob> CompileShader(const char* profile, const SHADER_DESC& desc);
