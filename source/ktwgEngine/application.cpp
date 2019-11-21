@@ -6,6 +6,9 @@
 #include "d3d11renderwindow.h"
 #include "d3d11renderwindowmanager.h"
 
+#include "hyperenderer.h"
+
+#include <fstream>
 #include "time.h"
 #include "inputsystem.h"
 
@@ -95,6 +98,7 @@ void Application::InitializeCoreSystems()
 
 void Application::InitializeResources()
 {
+  HypeRenderer::LoadSystemShaders();
   Scene::Initialize();
 }
 

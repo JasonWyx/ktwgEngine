@@ -26,7 +26,7 @@ class CRigidBody : public Component
   using container_t = std::vector<T>;
 
 public:
-  CRigidBody(const SharedPtr<Entity>& owner, uint32_t id);
+  CRigidBody(Entity& owner, uint32_t id);
   ~CRigidBody();
 
   /* Override functions for abstract class */

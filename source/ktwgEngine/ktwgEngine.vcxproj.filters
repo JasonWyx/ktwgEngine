@@ -33,6 +33,12 @@
     <ClCompile Include="udpsocket.cpp" />
     <ClCompile Include="win32platform.cpp" />
     <ClCompile Include="win32window.cpp" />
+    <ClCompile Include="d3d11renderapi.cpp" />
+    <ClCompile Include="d3d11device.cpp" />
+    <ClCompile Include="d3d11renderwindow.cpp" />
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="d3d11renderwindowmanager.cpp" />
+    <ClCompile Include="d3d11hardwarebuffer.cpp" />
     <ClCompile Include="windowmanager.cpp" />
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="timer.cpp" />
@@ -81,6 +87,13 @@
     <ClInclude Include="tcpsocket.h" />
     <ClInclude Include="udpsocket.h" />
     <ClInclude Include="win32platform.h" />
+    <ClInclude Include="d3d11renderapi.h" />
+    <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11defines.h" />
+    <ClInclude Include="d3d11renderwindow.h" />
+    <ClInclude Include="application.h" />
+    <ClInclude Include="d3d11renderwindowmanager.h" />
+    <ClInclude Include="d3d11hardwarebuffer.h" />
     <ClInclude Include="win32window.h" />
     <ClInclude Include="windowmanager.h" />
     <ClInclude Include="win32input.h" />
