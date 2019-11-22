@@ -60,6 +60,7 @@
     <ClCompile Include="contactlistener.cpp" />
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="collisionfunctions.cpp" />
+    <ClCompile Include="transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -142,5 +143,6 @@
     <ClInclude Include="contactlistener.h" />
     <ClInclude Include="collisionfunctions.h" />
     <ClInclude Include="sat.h" />
+    <ClInclude Include="transform.h" />
   </ItemGroup>
 </Project>
