@@ -127,6 +127,7 @@
     <ClCompile Include="tcpsocket.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="timer.cpp" />
+    <ClCompile Include="transform.cpp" />
     <ClCompile Include="udpsocket.cpp" />
     <ClCompile Include="win32platform.cpp" />
     <ClCompile Include="win32window.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="tcpsocket.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="timer.h" />
+    <ClInclude Include="transform.h" />
     <ClInclude Include="udpsocket.h" />
     <ClInclude Include="vector3.h" />
     <ClInclude Include="win32input.h" />
