@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include "d3d11defines.h"
+#include "d3d11resource.h"
 
 class D3D11Device;
 
@@ -14,12 +15,12 @@ struct HardwareBufferFlags
   uint8_t           m_StreamOut                 : 1;
 };
 
-class D3D11HardwareBuffer
+class D3D11HardwareBuffer : public D3D11Resource
 {
 public:
   D3D11HardwareBuffer(D3D11Device* device, D3D11_BUFFER_TYPE type, D3D11_USAGE resourceUsage, uint32_t elementCount, uint32_t elementSize, bool unorderedGpuAccess, bool streamOut, bool shaderUsage, bool drawIndirect);
 
-  const ComPtr<ID3D11Buffer>&   GetBuffer       () const { return m_Buffer; }
+  ID3D11Buffer*                 GetBuffer       () const { return static_cast<ID3D11Buffer*>(m_Resource.Get()); }
   const D3D11_BUFFER_DESC&      GetDesc         () const { return m_Desc; }
   uint32_t                      GetElementCount () const { return m_ElementCount; }
   uint32_t                      GetElementSize  () const { return m_ElementSize; }
@@ -34,7 +35,6 @@ private:
   void* Map(uint32_t offset, uint32_t length, GPU_LOCK_OPTIONS lockOptions);
   void  Unmap();
 
-  ComPtr<ID3D11Buffer> m_Buffer;
   D3D11HardwareBuffer* m_StagingBuffer;
   D3D11_BUFFER_DESC    m_Desc;
   uint32_t             m_BufferSize;

@@ -108,6 +108,7 @@
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
+    <ClCompile Include="hypesimpleforwardrendernode.cpp" />
     <ClCompile Include="imguimanager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -150,6 +151,8 @@
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="hyperendernode.h" />
+    <ClInclude Include="hypesimpleforwardrendernode.h" />
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="matrix3.h" />
