@@ -26,6 +26,8 @@ class RigidBody
   template <typename T>
   using container_t = std::vector<T>;
 
+  friend class ContactListener;
+
 public:
   RigidBody(Entity& entity);
   ~RigidBody();
@@ -46,11 +48,10 @@ public:
   bool CanCollide(RigidBody* body);
 
   /* Getters */
-  //SharedPtr<Physics>             GetWorld() const;
   inline Entity*                          GetOwner()           const { return m_Owner; }
   inline const container_t<BoxCollider*>& GetColliders()       const { return m_Colliders; }
   inline const RBType&                    GetBodyType()        const { return m_Type; }
-  //const Transform&               GetTransform() const override;
+  inline const Transform&                 GetTransform()       const { return m_Transform; }
   inline const Vec3&                      GetForce()           const { return m_Force; }
   inline const Vec3&                      GetTorque()          const { return m_Torque; }
   inline const Vec3&                      GetLinearVelocity()  const { return m_LinearVelocity; }
@@ -102,16 +103,15 @@ private:
   friend struct ContactState;
 
   Entity* m_Owner;
-  RBType m_Type;       // Specify body type of rigid body
-  //Transform  ownerTransform_; // entity world transform
-  //Transform  transform_;      // body world transform
+  RBType m_Type;         // Specify body type of rigid body
+  Transform m_Transform; // body world transform
 
-  float m_Mass;               // Mass of the rigid body
-  float m_InvMass;            // Inverse body mass
+  float m_Mass;    // Mass of the rigid body
+  float m_InvMass; // Inverse body mass
 
-  Matrix3 m_Inertia;          // Inertia about the local center position
-  Matrix3 m_InvInertia;       // Inverse inertia about the local center position
-  Matrix3 m_WorldInvInertia;  // Inverse inertia about the world center position
+  Matrix3 m_Inertia;         // Inertia about the local center position
+  Matrix3 m_InvInertia;      // Inverse inertia about the local center position
+  Matrix3 m_WorldInvInertia; // Inverse inertia about the world center position
 
   Vec3 m_Force;           // Force exerted on the rigid body
   Vec3 m_Torque;          // Torque exerted on the rigid body

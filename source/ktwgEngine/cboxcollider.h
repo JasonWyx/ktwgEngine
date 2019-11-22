@@ -4,6 +4,8 @@
 #include "component.h"
 #include "vector3.h"
 
+class BoxCollider;
+
 class CBoxCollider final : public Component
 {
 public:
@@ -30,5 +32,5 @@ public:
   void SetActive(bool active);
 
 private:
-  // BoxCollider* m_Internal;
+  BoxCollider* m_Internal;
 };

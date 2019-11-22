@@ -153,7 +153,7 @@ void Contact::SolveCollision()
   // 
   // // Call respective collision function
   // sCollideTable[typeA][typeB](manifold_, pair_.colliders_[0], pair_.colliders_[1]);
-
+  CheckBoxToBox(manifold_, pair_.colliders_[0], pair_.colliders_[1]);
 }
 
 void Contact::DispatchEvent(ContactListener* listener)

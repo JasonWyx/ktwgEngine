@@ -6,6 +6,7 @@
 
 #include "componenttype.h"
 #include "componentmanager.h"
+#include "transform.h"
 
 class Component;
 
@@ -19,10 +20,9 @@ class Entity
     ACTIVE   = 0, 
     INACTIVE = 1, 
     DEAD     = 1 << 2, 
-    NONE     =  1 << 6
+    NONE     = 1 << 6
   };
 
-  static uint32_t s_EntityCount;
 public:
   Entity(uint32_t id, const std::string& name="");
   
@@ -50,7 +50,7 @@ private:
   container_t<Entity*>    m_Children;
   container_t<Component*> m_Components;
 
-  // Transform   m_Transform;
+  Transform   m_Transform;
   State       m_State;
   std::string m_Name;
   uint32_t    m_Id;

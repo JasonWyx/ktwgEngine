@@ -1,4 +1,7 @@
 #include "fcollider.h"
+#include "aabb3.h"
+#include "boxcollider.h"
+#include "rigidbody.h"
 
 FCollider::FCollider()
   : m_Vertices{}, m_Planes{}, m_Friction{ 0.0f }, m_Restitution{ 0.0f },
@@ -23,11 +26,11 @@ void FCollider::CleanUp()
 
 void FCollider::SynchroniseProxy()
 {
-  //AABB3 aabb;
+  AABB3 aabb;
   Vec3 displacement;
   displacement.SetZero();
 
-  //owner_->ComputeAABB(aabb, body_->GetTransform());
+  m_Owner->ComputeAABB(aabb, m_Body->GetTransform());
 
   //auto broadphase = &dynamic_cast<BPRigidBody*>(owner_->GetRigidBody())->world_->contactManager_.broadPhase_;
   //broadphase->MoveProxy(broadphaseID_, aabb, displacement);
@@ -43,5 +46,9 @@ void FCollider::SetAsBox()
 }
 
 void FCollider::UpdateBox(const Vec3 & extents)
+{
+}
+
+void FCollider::UpdateBox(const Transform & local, const Vec3 & extents)
 {
 }

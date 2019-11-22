@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include "vector3.h"
+#include "transform.h"
 
 class RigidBody;
 class BoxCollider;
@@ -22,13 +23,14 @@ public:
 
   void SetAsBox();
   void UpdateBox(const Vec3& extents);
-  //void UpdateBox(const Transform& local, const Vec3& extents);
+  void UpdateBox(const Transform& local, const Vec3& extents);
 
   inline const container_t<Vec3>&  GetVertices()     const { return m_Vertices; }
   inline const container_t<Plane>& GetPlanes()       const { return m_Planes; }
   inline float                     GetFriction()     const { return m_Friction; }
   inline float                     GetRestitution()  const { return m_Restitution; }
-  inline const Vec3&               GetCenter()       const { return Vec3{}; }
+  inline const Vec3&               GetCenter()       const { return m_Local.GetPosition(); }
+  inline const Transform&          GetLocal()        const { return m_Local; }
   inline RigidBody*                GetBody()         const { return m_Body; }
   inline BoxCollider*              GetOwner()        const { return m_Owner; }
   inline int32_t                   GetBroadphaseId() const { return m_BroadphaseId; }
@@ -37,6 +39,7 @@ public:
 
   inline void SetFriction(float friction)           { m_Friction = friction; }
   inline void SetRestitution(float restitution)     { m_Restitution = restitution; }
+  inline void SetCenter(const Vec3& center)         { m_Local.SetPosition(center); }
   inline void SetBody(RigidBody* body)              { m_Body = body; }
   inline void SetOwner(BoxCollider* owner)          { m_Owner = owner; }
   inline void SetBroadphaseId(int32_t broadphaseId) { m_BroadphaseId = broadphaseId; }
@@ -51,6 +54,7 @@ private:
   float m_Friction;
   float m_Restitution;
 
+  Transform    m_Local;
   RigidBody*   m_Body;
   BoxCollider* m_Owner;
   int32_t      m_BroadphaseId;

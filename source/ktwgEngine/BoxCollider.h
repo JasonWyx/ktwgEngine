@@ -7,6 +7,7 @@
 #include "matrix3.h"
 #include "aabb3.h"
 #include "raycast.h"
+#include "transform.h"
 
 class Entity;
 class FCollider;
@@ -47,17 +48,22 @@ public:
   uint32_t GetSupportFace(const Vec3& direction);
 
   /* Interface functions : Getters */
-  //const Transform& GetLocal() const;
-  RigidBody*                          GetRigidBody() const;
-  const std::vector<Vec3>&            GetVertices()  const;
-  float                               GetRadius()    const;
-  bool                                GetIsTrigger() const;
-  const Vec3&                         GetExtents()   const;
-  const Vec3&                         GetMin()       const;
-  const Vec3&                         GetMax()       const;
+  RigidBody*               GetRigidBody() const;
+  const Transform&         GetLocal()     const;
+  const std::vector<Vec3>& GetVertices()  const;
+  const Vec3&              GetCenter()    const;
+  bool                     GetIsTrigger() const;
+  bool                     GetActive()    const;
+  float                    GetRadius()    const;
+  const Vec3&              GetExtents()   const;
+  const Vec3&              GetMin()       const;
+  const Vec3&              GetMax()       const;
 
   /* Interface functions : Setters */
   void SetExtents(const Vec3& extent);
+  void SetCenter(const Vec3& center);
+  void SetIsTrigger(bool isTrigger);
+  void SetActive(bool active);
 
 private:
   UniquePtr<FCollider> m_Internal;

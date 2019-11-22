@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vector3.h"
-// #include "collisionfunctions.h"
+#include "collisionfunctions.h"
 
 struct ContactFeature;
 struct ContactEdge;

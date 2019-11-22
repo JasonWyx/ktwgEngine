@@ -4,11 +4,9 @@
 // Components' headers
 #include "crigidbody.h"
 
-uint32_t Entity::s_EntityCount = 0;
-
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
-    m_Id{ id }, m_Name{ name }, m_State{ ACTIVE }
+    m_Transform{}, m_State{ ACTIVE }, m_Id{ id }, m_Name{ name }
 {
 }
 

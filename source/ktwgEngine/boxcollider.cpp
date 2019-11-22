@@ -152,9 +152,19 @@ RigidBody* BoxCollider::GetRigidBody() const
   return m_Internal->GetBody();
 }
 
+const Transform& BoxCollider::GetLocal() const
+{
+  return m_Internal->GetLocal();
+}
+
 const std::vector<Vec3>& BoxCollider::GetVertices() const
 {
   return m_Internal->GetVertices();
+}
+
+const Vec3& BoxCollider::GetCenter() const
+{
+  return m_Internal->GetCenter();
 }
 
 float BoxCollider::GetRadius() const
@@ -165,6 +175,11 @@ float BoxCollider::GetRadius() const
 bool BoxCollider::GetIsTrigger() const
 {
   return m_Internal->GetIsTrigger();
+}
+
+bool BoxCollider::GetActive() const
+{
+  return m_Internal->GetActive();
 }
 
 const Vec3& BoxCollider::GetExtents() const
@@ -185,4 +200,19 @@ const Vec3 & BoxCollider::GetMax() const
 void BoxCollider::SetExtents(const Vec3& extent)
 {
   m_Extents = extent;
+}
+
+void BoxCollider::SetCenter(const Vec3& center)
+{
+  m_Internal->SetCenter(center);
+}
+
+void BoxCollider::SetIsTrigger(bool isTrigger)
+{
+  m_Internal->SetIsTrigger(isTrigger);
+}
+
+void BoxCollider::SetActive(bool active)
+{
+  m_Internal->SetActive(active);
 }

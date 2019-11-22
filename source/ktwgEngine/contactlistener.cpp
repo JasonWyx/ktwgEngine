@@ -1,5 +1,8 @@
 #include "contactlistener.h"
 #include "contact.h"
+#include "boxcollider.h"
+#include "rigidbody.h"
+#include "entity.h"
 
 ContactListener::ContactListener(ContactDispatcher* dispatcher)
   : dispatcher_{ dispatcher }
@@ -8,8 +11,8 @@ ContactListener::ContactListener(ContactDispatcher* dispatcher)
 
 void ContactListener::ContactStarted(Contact* contact)
 {
-  auto entityA = contact->pair_.colliders_[0]->GetRigidBody()->entity_;
-  auto entityB = contact->pair_.colliders_[1]->GetRigidBody()->entity_;
+  Entity* entityA = contact->pair_.colliders_[0]->GetRigidBody()->m_Owner;
+  Entity* entityB = contact->pair_.colliders_[1]->GetRigidBody()->m_Owner;
 
   CollisionInfo infoA, infoB;
   infoA.other_ = entityB;
@@ -17,13 +20,34 @@ void ContactListener::ContactStarted(Contact* contact)
 
   CollisionEvent toDispatch;
 
-  toDispatch.method_ = BPCore::InteropMethods::COLLSTART;
   toDispatch.entityA_ = entityA;
   toDispatch.entityB_ = entityB;
   toDispatch.infoA_ = infoA;
   toDispatch.infoB_ = infoB;
 
   dispatcher_->AddEvent(toDispatch);
-  DispatchToDynamicParent(entityA, entityB, BPCore::InteropMethods::COLLSTART);
-  DispatchToDynamicParent(entityB, entityA, BPCore::InteropMethods::COLLSTART);
+}
+
+void ContactListener::ContactPersist(Contact* contact)
+{
+}
+
+void ContactListener::ContactEnded(Contact* contact)
+{
+}
+
+void ContactListener::TriggerStarted(Contact* contact)
+{
+}
+
+void ContactListener::TriggerPersist(Contact* contact)
+{
+}
+
+void ContactListener::TriggerEnded(Contact* contact)
+{
+}
+
+void ContactListener::SetDispatcher(ContactDispatcher* dispatcher)
+{
 }
