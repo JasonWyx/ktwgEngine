@@ -51,6 +51,15 @@
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
+    <ClCompile Include="boxcollider.cpp" />
+    <ClCompile Include="fcollider.cpp" />
+    <ClCompile Include="aabb3.cpp" />
+    <ClCompile Include="dynamicaabb3tree.cpp" />
+    <ClCompile Include="contact.cpp" />
+    <ClCompile Include="gjk.cpp" />
+    <ClCompile Include="contactlistener.cpp" />
+    <ClCompile Include="sat.cpp" />
+    <ClCompile Include="collisionfunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -122,6 +131,16 @@
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="cboxcollider.h" />
-    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="boxcollider.h" />
+    <ClInclude Include="fcollider.h" />
+    <ClInclude Include="dynamicaabb3tree.h" />
+    <ClInclude Include="aabb3.h" />
+    <ClInclude Include="raycast.h" />
+    <ClInclude Include="contact.h" />
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="gjk.h" />
+    <ClInclude Include="contactlistener.h" />
+    <ClInclude Include="collisionfunctions.h" />
+    <ClInclude Include="sat.h" />
   </ItemGroup>
 </Project>

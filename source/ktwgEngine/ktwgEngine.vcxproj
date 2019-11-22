@@ -87,12 +87,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aabb3.cpp" />
     <ClCompile Include="application.cpp" />
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="boxcollider.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
+    <ClCompile Include="collisionfunctions.cpp" />
     <ClCompile Include="component.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
+    <ClCompile Include="contact.cpp" />
+    <ClCompile Include="contactlistener.cpp" />
     <ClCompile Include="d3d11device.cpp" />
     <ClCompile Include="d3d11hardwarebuffer.cpp" />
     <ClCompile Include="d3d11renderapi.cpp" />
@@ -103,11 +108,14 @@
     <ClCompile Include="d3d11texture.cpp" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
+    <ClCompile Include="dynamicaabb3tree.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="entitypool.cpp" />
+    <ClCompile Include="fcollider.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
+    <ClCompile Include="gjk.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="imguimanager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -120,6 +128,7 @@
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="matrix4.cpp" />
+    <ClCompile Include="sat.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
@@ -134,13 +143,17 @@
     <ClCompile Include="windowmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aabb3.h" />
     <ClInclude Include="application.h" />
     <ClInclude Include="bitstream.h" />
-    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="boxcollider.h" />
     <ClInclude Include="cboxcollider.h" />
+    <ClInclude Include="collisionfunctions.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="componentmanager.h" />
     <ClInclude Include="componenttype.h" />
+    <ClInclude Include="contact.h" />
+    <ClInclude Include="contactlistener.h" />
     <ClInclude Include="d3d11defines.h" />
     <ClInclude Include="d3d11device.h" />
     <ClInclude Include="d3d11hardwarebuffer.h" />
@@ -151,10 +164,13 @@
     <ClInclude Include="d3d11shader.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
+    <ClInclude Include="dynamicaabb3tree.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="entitypool.h" />
+    <ClInclude Include="fcollider.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="gjk.h" />
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="matrix3.h" />
@@ -172,7 +188,10 @@
     <ClInclude Include="istreammanager.h" />
     <ClInclude Include="hyperenderer.h" />
     <ClInclude Include="d3d11texture.h" />
+    <ClInclude Include="plane.h" />
     <ClInclude Include="quaternion.h" />
+    <ClInclude Include="raycast.h" />
+    <ClInclude Include="sat.h" />
     <ClInclude Include="Shaders\cpp\ShaderCommon.h" />
     <ClInclude Include="crigidbody.h" />
     <ClInclude Include="physics.h" />
