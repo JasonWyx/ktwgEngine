@@ -73,6 +73,10 @@
     <ClCompile Include="raycastcallbacks.cpp" />
     <ClCompile Include="island.cpp" />
     <ClCompile Include="contactsolver.cpp" />
+    <ClCompile Include="ccamera.cpp" />
+    <ClCompile Include="hypegraphicsworld.cpp" />
+    <ClCompile Include="hypegraphicobject.cpp" />
+    <ClCompile Include="hypecamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -154,7 +158,6 @@
     <ClInclude Include="hypegraphicobject.h" />
     <ClInclude Include="d3d11device.hpp" />
     <ClInclude Include="hypecamera.h" />
-    <ClInclude Include="hypecamera.cpp" />
     <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="boxcollider.h" />
     <ClInclude Include="fcollider.h" />
@@ -180,5 +183,7 @@
     <ClInclude Include="triggerinteraction.h" />
     <ClInclude Include="island.h" />
     <ClInclude Include="contactsolver.h" />
+    <ClInclude Include="hypegraphicsworld.h" />
+    <ClInclude Include="ccamera.h" />
   </ItemGroup>
 </Project>

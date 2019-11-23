@@ -1,6 +1,4 @@
-#pragma once
 #include "hypecamera.h"
-#include "entity.h"
 
 void Camera::UpdateFrustum()
 {
@@ -17,12 +15,12 @@ void Camera::UpdateFrustum()
 }
 
 Camera::Camera(Entity& owner)
-  : owner_{&owner}, cachedProjectionTransform_{}, verticalFov_{ PI / 2 }, aspectRatio_{ 16.f / 9.f }, nearDistance_{ 0.01f }, farDistance_{ 100.f }, shouldUpdateProjection_{ true }, renderTarget_{ nullptr }
+  : owner_{&owner}, cachedProjectionTransform_{}, verticalFov_{ PI / 2 }, aspectRatio_{ 16.f / 9.f }, nearDistance_{ 0.01f }, farDistance_{ 100.f }, shouldUpdateProjection_{ true }
 {
 }
 
 Camera::Camera(Entity& owner, float verticalFov, float aspectRatio, float nearDistance, float farDistance)
-  : owner_{&owner}, cachedProjectionTransform_{}, verticalFov_{ verticalFov }, aspectRatio_{ aspectRatio }, nearDistance_{ nearDistance }, farDistance_{ farDistance }, shouldUpdateProjection_{ true }, renderTarget_{ nullptr }
+  : owner_{&owner}, cachedProjectionTransform_{}, verticalFov_{ verticalFov }, aspectRatio_{ aspectRatio }, nearDistance_{ nearDistance }, farDistance_{ farDistance }, shouldUpdateProjection_{ true }
 {
 }
 

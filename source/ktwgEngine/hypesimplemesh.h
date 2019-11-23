@@ -12,6 +12,16 @@ enum SimpleMeshShape
   SPHERE
 };
 
+class Entity;
+
+class HypeSimpleMeshInstance : public HypeGraphicObjectInstance
+{
+public:
+  HypeSimpleMeshInstance(Entity& owner);
+
+  Matrix4 GetWorldTransform() const;
+};
+
 class HypeSimpleMesh : public HypeGraphicObject
 {
   struct Vertex
@@ -35,6 +45,7 @@ private:
   void CreateCubeResources();
   void CreateSphereResources();
   void InitializeHardwareBuffers(const std::vector<Vec3>& positions, const std::vector<Vec3>& normals, const std::vector<uint32_t>& indices);
+  HypeGraphicObjectInstance * NotifyInstanceCreatedInternal(Entity & instance) override;
 
   D3D11HardwareBuffer* m_VertexBuffer;
   D3D11HardwareBuffer* m_IndexBuffer;

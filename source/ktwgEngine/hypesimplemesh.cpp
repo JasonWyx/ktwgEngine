@@ -1,6 +1,10 @@
 #include "hypesimplemesh.h"
 #include "d3d11renderapi.h"
 #include "d3d11device.h"
+#include "d3d11staticresources.h"
+#include "entity.h"
+
+DECLARE_STATIC_BUFFER(GeometryConstantBuffer);
 
 HypeSimpleMesh::HypeSimpleMesh()
 :m_VertexBuffer{nullptr}, m_IndexBuffer{nullptr}, m_Shape{NONE}
@@ -43,7 +47,13 @@ void HypeSimpleMesh::DrawInstances()
 
   context.SetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-  context.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_NumIndices, 0U, 0);
+  for (auto& instance : m_Instances)
+  {
+    HypeSimpleMeshInstance* hypeGraphicObjectInstance = (HypeSimpleMeshInstance*)instance;
+    Matrix4 mvp = hypeGraphicObjectInstance->GetWorldTransform() * context.GetViewProj();
+    GET_STATIC_RESOURCE(GeometryConstantBuffer)->Write(0, sizeof(Matrix4), &mvp.m_, WT_DISCARD);
+    context.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_NumIndices, 0, 0);
+  }
 }
 
 void HypeSimpleMesh::ClearResources()
@@ -220,4 +230,19 @@ void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& position
   m_IndexBuffer = new D3D11HardwareBuffer{device, D3D11_BT_INDEX, D3D11_USAGE_DEFAULT, numIndices, sizeof(uint32_t), false, false, false, false};
 
   m_NumIndices = numIndices;
+}
+
+HypeGraphicObjectInstance * HypeSimpleMesh::NotifyInstanceCreatedInternal(Entity & instance)
+{
+  return new HypeSimpleMeshInstance(instance);
+}
+
+HypeSimpleMeshInstance::HypeSimpleMeshInstance(Entity & owner)
+:HypeGraphicObjectInstance{owner}
+{
+}
+
+Matrix4 HypeSimpleMeshInstance::GetWorldTransform() const
+{
+  return m_Owner->GetTransform().GetMatrix();
 }

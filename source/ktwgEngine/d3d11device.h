@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "d3d11defines.h"
+#include "matrix4.h"
 
 class D3D11Texture;
 class D3D11VertexShader;
@@ -45,6 +46,12 @@ public:
 
   void FlushConstantBuffers(uint32_t startSlot);
 
+  void Set(const Matrix4& view, const Matrix4& proj, const Matrix4& viewProj) { m_View = view; m_Proj = proj; m_ViewProj = viewProj; }
+
+  const Matrix4& GetView() const { return m_View; }
+  const Matrix4& GetProj() const { return m_Proj; }
+  const Matrix4& GetViewProj() const { return m_ViewProj; }
+
 private:
   std::vector<ID3D11RenderTargetView*>    m_RenderTargets;
   ID3D11DepthStencilView*                 m_DepthStencil;
@@ -59,6 +66,10 @@ private:
   std::vector<ID3D11Buffer*>              m_PSConstantBuffers;
 
   ComPtr<ID3D11DeviceContext>             m_Context;
+
+  Matrix4                                 m_View;
+  Matrix4                                 m_Proj;
+  Matrix4                                 m_ViewProj;
 };
 
 class D3D11Device
