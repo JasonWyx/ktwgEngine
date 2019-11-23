@@ -37,6 +37,9 @@ public:
   template<typename T>
   T* GetComponent();
 
+  template<typename T> 
+  container_t<T*> GetAllComponentsOfType();
+
   static Entity* CreateEntity(const std::string& name="Object");
   static Entity& GetEntity(uint32_t id);
 
@@ -90,4 +93,20 @@ T* Entity::GetComponent()
       return static_cast<T*>(comp);
   }
   return nullptr;
+}
+
+template<typename T>
+inline Entity::container_t<T*> Entity::GetAllComponentsOfType()
+{
+  auto& info = typeid(T);
+  container_t<T*> result;
+
+  for (auto& elem : m_Components)
+  {
+    auto& comp = elem();
+    if (comp.GetTypeInfo() == info)
+      result.emplace_back(static_cast<T*>(&comp));
+  }
+
+  return result;
 }

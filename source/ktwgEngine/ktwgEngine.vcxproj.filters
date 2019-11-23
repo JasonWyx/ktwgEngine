@@ -68,6 +68,10 @@
     <ClCompile Include="raycastcallbacks.cpp" />
     <ClCompile Include="island.cpp" />
     <ClCompile Include="contactsolver.cpp" />
+    <ClCompile Include="cbehaviour.cpp" />
+    <ClCompile Include="behaviour.cpp" />
+    <ClCompile Include="ktwgbehaviour.cpp" />
+    <ClCompile Include="TestBehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -163,5 +167,9 @@
     <ClInclude Include="triggerinteraction.h" />
     <ClInclude Include="island.h" />
     <ClInclude Include="contactsolver.h" />
+    <ClInclude Include="cbehaviour.h" />
+    <ClInclude Include="behaviour.h" />
+    <ClInclude Include="ktwgbehaviour.h" />
+    <ClInclude Include="TestBehaviour.h" />
   </ItemGroup>
 </Project>

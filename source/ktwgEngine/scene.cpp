@@ -4,6 +4,10 @@
 // Component
 #include "crigidbody.h"
 #include "cboxcollider.h"
+#include "cbehaviour.h"
+
+// Behaviour
+#include "TestBehaviour.h"
 
 Scene::Scene()
   : m_GameScene{ nullptr }
@@ -29,6 +33,9 @@ void Scene::InitializeInternal()
   groundRB.SetBodyType(RBT_STATIC);
   
   CBoxCollider& groundBC = ground->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
+
+  CBehaviour& groundBeh = ground->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+  groundBeh.Bind<TestBehaviour>();
 }
 
 void Scene::ShutdownInternal()
