@@ -31,21 +31,21 @@ namespace Math
   }
 
   template <typename T>
-  inline T BPMin(T a, T b)
+  inline T Min(T a, T b)
   {
     return a < b ? a : b;
   }
 
   template <typename T>
-  inline T BPMax(T a, T b)
+  inline T Max(T a, T b)
   {
     return a > b ? a : b;
   }
 
   template <typename T>
-  inline T BPClamp(T min, T max, T value)
+  inline T Clamp(T min, T max, T value)
   {
-    return BPMax(min, BPMin(value, max));
+    return Max(min, Min(value, max));
   }
 
   template <typename T>

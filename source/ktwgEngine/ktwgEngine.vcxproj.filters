@@ -43,6 +43,8 @@
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="time.cpp" />
+    <ClCompile Include="physics.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="d3d11resource.cpp" />
     <ClCompile Include="d3d11shader.cpp" />
     <ClCompile Include="d3d11texture.cpp" />
@@ -53,6 +55,24 @@
     <ClCompile Include="hypesimplemesh.cpp" />
     <ClCompile Include="d3d11inputlayout.cpp" />
     <ClCompile Include="crenderable.cpp" />
+    <ClCompile Include="cboxcollider.cpp" />
+    <ClCompile Include="boxcollider.cpp" />
+    <ClCompile Include="fcollider.cpp" />
+    <ClCompile Include="aabb3.cpp" />
+    <ClCompile Include="dynamicaabb3tree.cpp" />
+    <ClCompile Include="contact.cpp" />
+    <ClCompile Include="gjk.cpp" />
+    <ClCompile Include="contactlistener.cpp" />
+    <ClCompile Include="sat.cpp" />
+    <ClCompile Include="collisionfunctions.cpp" />
+    <ClCompile Include="transform.cpp" />
+    <ClCompile Include="collisionevent.cpp" />
+    <ClCompile Include="contactdispatcher.cpp" />
+    <ClCompile Include="broadphase.cpp" />
+    <ClCompile Include="contactmanager.cpp" />
+    <ClCompile Include="raycastcallbacks.cpp" />
+    <ClCompile Include="island.cpp" />
+    <ClCompile Include="contactsolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -110,6 +130,9 @@
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="time.h" />
+    <ClInclude Include="rigidbody.h" />
+    <ClInclude Include="physics.h" />
+    <ClInclude Include="physicsconstants.h" />
     <ClInclude Include="d3d11resource.h" />
     <ClInclude Include="d3d11shader.h" />
     <ClInclude Include="hyperenderer.h" />
@@ -132,5 +155,30 @@
     <ClInclude Include="d3d11device.hpp" />
     <ClInclude Include="hypecamera.h" />
     <ClInclude Include="hypecamera.cpp" />
+    <ClInclude Include="cboxcollider.h" />
+    <ClInclude Include="boxcollider.h" />
+    <ClInclude Include="fcollider.h" />
+    <ClInclude Include="dynamicaabb3tree.h" />
+    <ClInclude Include="aabb3.h" />
+    <ClInclude Include="raycast.h" />
+    <ClInclude Include="contact.h" />
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="gjk.h" />
+    <ClInclude Include="contactlistener.h" />
+    <ClInclude Include="collisionfunctions.h" />
+    <ClInclude Include="sat.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="collisioninfo.h" />
+    <ClInclude Include="collisionevent.h" />
+    <ClInclude Include="contactdispatcher.h" />
+    <ClInclude Include="typeinfo.h" />
+    <ClInclude Include="customlist.h" />
+    <ClInclude Include="contactmanager.h" />
+    <ClInclude Include="broadphase.h" />
+    <ClInclude Include="raycastcallbacks.h" />
+    <ClInclude Include="sweep.h" />
+    <ClInclude Include="triggerinteraction.h" />
+    <ClInclude Include="island.h" />
+    <ClInclude Include="contactsolver.h" />
   </ItemGroup>
 </Project>
