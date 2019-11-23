@@ -3,6 +3,9 @@
 #include "d3d11device.h"
 #include "d3d11shader.h"
 
+#include "hypegraphicsworld.h"
+#include "hypegraphicobject.h"
+
 #include "Shaders/cpp/ShaderCommon.h"
 
 DECLARE_VS(SimpleForwardVS);
@@ -22,5 +25,10 @@ void HypeSimpleForwardRenderNode::Setup(D3D11Device& device)
 
 void HypeSimpleForwardRenderNode::Render(D3D11Device& device)
 {
-   
+  const std::vector<HypeGraphicObject*>& graphicObjects = HypeGraphicsWorld::GetInstance().GetGraphicObjects();
+
+  for (HypeGraphicObject* graphicObject : graphicObjects)
+  {
+    graphicObject->DrawInstances();
+  }
 }

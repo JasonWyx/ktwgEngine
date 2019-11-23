@@ -125,6 +125,25 @@ D3D11Context::~D3D11Context()
   }
 }
 
+void D3D11Context::ClearRTV(D3D11Texture * renderTarget, DXGI_FORMAT format, float r, float g, float b, float a)
+{
+  ResourceViewKey key;
+  key.m_Type = RTV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  float rgba[4] = {r, g, b, a};
+  m_Context->ClearRenderTargetView(renderTarget->GetView(key).GetRtv(), rgba);
+}
+
+void D3D11Context::ClearDSV(D3D11Texture * depthStencil, DXGI_FORMAT format, UINT clearFlags, float d, uint8_t stencil)
+{
+  ResourceViewKey key;
+  key.m_Type = DSV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  m_Context->ClearDepthStencilView(depthStencil->GetView(key).GetDsv(), clearFlags, d, stencil);
+}
+
 void D3D11Context::AddRenderTarget(D3D11Texture * renderTarget, DXGI_FORMAT format)
 {
 #if _DEBUG

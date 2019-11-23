@@ -42,3 +42,5 @@ struct GFX_STATIC_RESOURCE_WRAPPER_Buffer
 #define DECLARE_STATIC_BUFFER(name) DECLARE_STATIC_RESOURCE(name, Buffer)
 
 #define GET_STATIC_RESOURCE(name) name.m_Resource
+
+#define RESET_STATIC_RESOURCE(name) delete name.m_Resource; name.m_Resource = nullptr

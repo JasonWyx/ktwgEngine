@@ -41,10 +41,13 @@ public:
 
 private:
   static void CreateIndexBuffer(uint32_t stacks, uint32_t slices, std::vector<uint32_t>& indices);
-  void ClearResources();
-  void CreateCubeResources();
-  void CreateSphereResources();
+
+  void ClearResources         ();
+  void CreateCubeResources    ();
+  void CreateSphereResources  ();
+
   void InitializeHardwareBuffers(const std::vector<Vec3>& positions, const std::vector<Vec3>& normals, const std::vector<uint32_t>& indices);
+  
   HypeGraphicObjectInstance * NotifyInstanceCreatedInternal(Entity & instance) override;
 
   D3D11HardwareBuffer* m_VertexBuffer;

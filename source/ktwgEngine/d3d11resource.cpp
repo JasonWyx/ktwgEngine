@@ -31,6 +31,7 @@ const D3D11ResourceView & D3D11Resource::GetView(const ResourceViewKey & key)
 const D3D11ResourceView & D3D11Resource::CreateSRV(const ResourceViewKey & key)
 {
   D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+  ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
   switch (m_Dimension)
   {
   case D3D11_RESOURCE_DIMENSION_BUFFER:
@@ -84,6 +85,7 @@ const D3D11ResourceView & D3D11Resource::CreateSRV(const ResourceViewKey & key)
 const D3D11ResourceView & D3D11Resource::CreateRTV(const ResourceViewKey & key)
 {
   D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+  ZeroMemory(&rtvDesc, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
 
   switch (m_Dimension)
   {
@@ -118,6 +120,7 @@ const D3D11ResourceView & D3D11Resource::CreateRTV(const ResourceViewKey & key)
 const D3D11ResourceView & D3D11Resource::CreateDSV(const ResourceViewKey & key)
 {
   D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+  ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
   switch (m_Dimension)
   {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 class Entity;
 
@@ -23,9 +24,12 @@ public:
   HypeGraphicObjectInstance* NotifyInstanceCreated(Entity& instance);
   void NotifyInstanceDestroyed(HypeGraphicObjectInstance* instance);
 
+  const std::string& GetName() const { return m_Name; }
+  void SetName(const std::string& name) { m_Name = name; }
 private:
   virtual HypeGraphicObjectInstance* NotifyInstanceCreatedInternal(Entity& instance) = 0;
 
 protected:
   std::vector<HypeGraphicObjectInstance*> m_Instances;
+  std::string m_Name;
 };

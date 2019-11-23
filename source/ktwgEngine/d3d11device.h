@@ -21,6 +21,9 @@ public:
   ComPtr<ID3D11DeviceContext>& GetContext() { return m_Context; }
   const ComPtr<ID3D11DeviceContext>& GetContext() const { return m_Context; }
 
+  void ClearRTV(D3D11Texture* renderTarget, DXGI_FORMAT format, float r, float g, float b, float a);
+  void ClearDSV(D3D11Texture* depthStencil, DXGI_FORMAT format, UINT clearFlags, float d, uint8_t stencil);
+
   void AddRenderTarget(D3D11Texture* renderTarget, DXGI_FORMAT format);
   void SetDepthStencil(D3D11Texture* depthStencil, DXGI_FORMAT format);
   void FlushRenderTargets();

@@ -33,3 +33,11 @@ void HypeGraphicsWorld::NotifyViewDestroyed()
   delete m_View;
   m_View = nullptr;
 }
+
+HypeGraphicObject * HypeGraphicsWorld::GetGraphicObject(const std::string & name)
+{
+  auto it = std::find_if(m_GraphicObjects.begin(), m_GraphicObjects.end(), [&name](HypeGraphicObject* obj) { return obj->GetName() == name; });
+  if(it != m_GraphicObjects.end())
+    return *it;
+  return nullptr;
+}

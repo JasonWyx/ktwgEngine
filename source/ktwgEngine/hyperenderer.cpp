@@ -3,14 +3,21 @@
 #include "Shaders/cpp/ShaderCommon.h"
 #include "d3d11shader.h"
 #include "d3d11staticresources.h"
+#include "hypegraphicsworld.h"
+#include "hyperendernode.h"
+#include "hypecamera.h"
+#include "d3d11renderwindowmanager.h"
+#include "d3d11renderwindow.h"
 #include "matrix4.h"
+#include "hypesimpleforwardrendernode.h"
+
 #include <fstream>
 
-DEFINE_STATIC_TEXTURE(FinalColorOutput);
-DEFINE_STATIC_TEXTURE(MainRenderDepthStencil);
 DECLARE_VS(SimpleForwardVS);
 DECLARE_PS(SimpleForwardPS);
 DEFINE_STATIC_BUFFER(GeometryConstantBuffer);
+DECLARE_STATIC_TEXTURE(FinalColorOutput);
+DECLARE_STATIC_TEXTURE(MainRenderDepthStencil);
 
 void HypeRenderer::LoadSimpleForward()
 {
@@ -32,10 +39,38 @@ void HypeRenderer::UnloadSimpleForward()
 
 void HypeRenderer::InitializeInternal()
 {
+  HypeGraphicsWorld::Initialize();
+  SetupRenderNodes();
+
+  RENDER_WINDOW_DESC desc;
+  desc.m_VideoMode = { 1280, 600, 60.f };
+  desc.m_Title = "TestWindow";
+  desc.m_Fullscreen = false;
+  desc.m_Hidden = false;
+  desc.m_ShowBorder = true;
+  desc.m_ShowTitleBar = true;
+  desc.m_Left = -1;
+  desc.m_Top = -1;
+  desc.m_MultisampleCount = 1;
+
+  m_RenderWindow = D3D11RenderWindowManager::GetInstance().CreatePrimaryRenderWindow(desc);
+  m_RenderWindow->Init();
+  m_RenderWindow->SetHidden(false);
 }
 
 void HypeRenderer::ShutdownInternal()
 {
+  HypeGraphicsWorld::Shutdown();
+  delete m_RenderWindow;
+}
+
+void HypeRenderer::SetupRenderNodes()
+{
+  #define DECLARE_RENDER_NODE(name, ...) m_RenderNodes.emplace_back(new name{__VA_ARGS__})
+
+  DECLARE_RENDER_NODE(HypeSimpleForwardRenderNode);
+
+  #undef DECLARE_RENDER_NODE
 }
 
 void HypeRenderer::LoadSystemShaders()
@@ -54,4 +89,25 @@ void HypeRenderer::CreateCommonResources()
   GET_STATIC_RESOURCE(GeometryConstantBuffer) = new D3D11HardwareBuffer{device, D3D11_BT_CONSTANT, D3D11_USAGE_DYNAMIC, 1, sizeof(Matrix4), false, false, true, false};
   device->GetImmediateContext().AddConstantBuffer<VS>(GET_STATIC_RESOURCE(GeometryConstantBuffer));
   device->GetImmediateContext().AddConstantBuffer<PS>(GET_STATIC_RESOURCE(GeometryConstantBuffer));
+}
+
+void HypeRenderer::Update()
+{
+  D3D11Device* device = D3D11RenderAPI::GetInstance().GetDevice();
+  Camera* view = HypeGraphicsWorld::GetInstance().GetView();
+  if(view)
+  {
+    device->GetImmediateContext().Set(view->GetViewMatrix(), view->GetProjectionMatrix(), view->GetViewMatrix() * view->GetProjectionMatrix());
+  }
+
+  device->GetImmediateContext().ClearRTV(GET_STATIC_RESOURCE(FinalColorOutput), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 1.0f, 1.0f, 1.0f, 1.0f);
+  device->GetImmediateContext().ClearDSV(GET_STATIC_RESOURCE(MainRenderDepthStencil), DXGI_FORMAT_D32_FLOAT, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+  for (auto& elem : m_RenderNodes)
+  {
+    elem->Setup(*device);
+    elem->Render(*device);
+  }
+
+  m_RenderWindow->SwapBuffers();
 }
