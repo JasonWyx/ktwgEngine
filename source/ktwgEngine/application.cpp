@@ -1,6 +1,7 @@
 #include "application.h"
 
 #include <iostream>
+#include <fstream>
 
 #include "d3d11renderapi.h"
 #include "d3d11renderwindow.h"
@@ -8,10 +9,10 @@
 
 #include "hyperenderer.h"
 
-#include <fstream>
 #include "time.h"
 #include "inputsystem.h"
 #include "physics.h"
+#include "ktwgbehaviour.h"
 
 #include "scene.h"
 
@@ -25,6 +26,8 @@ void Application::InitializeInternal()
 void Application::ShutdownInternal()
 {
   Scene::Shutdown();
+
+  KTWGBehaviour::Shutdown();
 
   Physics::Shutdown();
 
@@ -54,6 +57,7 @@ void Application::Run()
   InputSystem& inputSys = InputSystem::GetInstance();
 
   HypeRenderer& renderSys = HypeRenderer::GetInstance();
+  KTWGBehaviour& behSys = KTWGBehaviour::GetInstance();
 
   // For now just a loop forever
   while (true)
@@ -85,6 +89,7 @@ void Application::Run()
     while (accumulator >= fixedDtMs)
     {
       // physicsSys.Update(fixedDt);
+      behSys.Update();
       accumulator -= fixedDtMs;
     }
 
@@ -104,6 +109,8 @@ void Application::InitializeCoreSystems()
   InputSystem::Initialize(::GetCapture());
 
   Physics::Initialize();
+
+  KTWGBehaviour::Initialize();
 }
 
 void Application::InitializeResources()

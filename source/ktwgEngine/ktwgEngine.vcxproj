@@ -89,9 +89,11 @@
   <ItemGroup>
     <ClCompile Include="aabb3.cpp" />
     <ClCompile Include="application.cpp" />
+    <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="bitstream.cpp" />
     <ClCompile Include="boxcollider.cpp" />
     <ClCompile Include="broadphase.cpp" />
+    <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
     <ClCompile Include="ccamera.cpp" />
     <ClCompile Include="collisionevent.cpp" />
@@ -137,6 +139,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="island.cpp" />
+    <ClCompile Include="ktwgbehaviour.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="physics.cpp" />
@@ -151,6 +154,7 @@
     <ClCompile Include="socketutility.cpp" />
     <ClCompile Include="streammanager.cpp" />
     <ClCompile Include="tcpsocket.cpp" />
+    <ClCompile Include="testbehaviour.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="transform.cpp" />
@@ -162,9 +166,11 @@
   <ItemGroup>
     <ClInclude Include="aabb3.h" />
     <ClInclude Include="application.h" />
+    <ClInclude Include="behaviour.h" />
     <ClInclude Include="bitstream.h" />
     <ClInclude Include="boxcollider.h" />
     <ClInclude Include="broadphase.h" />
+    <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="ccamera.h" />
     <ClInclude Include="collisionevent.h" />
@@ -204,6 +210,7 @@
     <ClInclude Include="gjk.h" />
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="island.h" />
+    <ClInclude Include="ktwgbehaviour.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="matrix4.h" />
@@ -249,6 +256,7 @@
     <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="sweep.h" />
     <ClInclude Include="tcpsocket.h" />
+    <ClInclude Include="testbehaviour.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="transform.h" />

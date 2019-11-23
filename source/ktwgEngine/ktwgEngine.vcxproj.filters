@@ -77,6 +77,10 @@
     <ClCompile Include="hypegraphicsworld.cpp" />
     <ClCompile Include="hypegraphicobject.cpp" />
     <ClCompile Include="hypecamera.cpp" />
+    <ClCompile Include="cbehaviour.cpp" />
+    <ClCompile Include="behaviour.cpp" />
+    <ClCompile Include="ktwgbehaviour.cpp" />
+    <ClCompile Include="testbehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -185,5 +189,9 @@
     <ClInclude Include="contactsolver.h" />
     <ClInclude Include="hypegraphicsworld.h" />
     <ClInclude Include="ccamera.h" />
+    <ClInclude Include="cbehaviour.h" />
+    <ClInclude Include="behaviour.h" />
+    <ClInclude Include="ktwgbehaviour.h" />
+    <ClInclude Include="testbehaviour.h" />
   </ItemGroup>
 </Project>

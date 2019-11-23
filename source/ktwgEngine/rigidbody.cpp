@@ -12,8 +12,25 @@ RigidBody::RigidBody(Entity& entity)
     m_InvMass{ 1.0f },
     m_LinearDamping{}, m_AngularDamping{ 0.5f }, 
     m_GravityScale{ 1.0f }, m_UseGravity{ true }, 
-    m_IslandId{ INVALID_ISLAND_ID }
+    m_IslandId{ INVALID_ISLAND_ID },
+    m_Active{ true }
 {
+  // Synchronise our initial position with the owner's position
+  m_Transform = entity.GetTransform();
+
+  // First creation of a rigidbody is always awake
+  m_Flags |= RBF_AWAKE;
+
+  // Make sure our variables are initialised
+  m_Inertia.SetZero();
+  m_InvInertia.SetZero();
+  m_WorldInvInertia.SetZero();
+
+  // Initialise our sweep for TOI collision
+  m_Sweep.localCenter_.SetZero();
+  m_Sweep.worldCenter_ = m_Sweep.worldCenterOld_ = m_Transform.GetPosition();
+  m_Sweep.orientation_ = m_Sweep.orientationOld_ = m_Transform.GetRotation();
+  m_Sweep.t_ = 0.0f;
 }
 
 RigidBody::~RigidBody()

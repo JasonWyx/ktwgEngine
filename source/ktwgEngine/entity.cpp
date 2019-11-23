@@ -4,6 +4,7 @@
 // Components' headers
 #include "crigidbody.h"
 #include "cboxcollider.h"
+#include "cbehaviour.h"
 
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
@@ -33,6 +34,12 @@ Entity* Entity::AddChild()
   return m_Children.back();
 }
 
+void Entity::AddChild(Entity* entity)
+{
+  m_Children.emplace_back(entity);
+}
+
+// @ ADD COMPONENT
 Component* Entity::AddComponent(ComponentType type)
 {
 #define CASE_CREATE_COMP(comp_type, T) case comp_type: comp = &CreateComponent<T>(); 
@@ -43,6 +50,7 @@ Component* Entity::AddComponent(ComponentType type)
     //CASE_CREATE_COMP(NONE, TestComponent) break;
     CASE_CREATE_COMP(CT_RIGIDBODY, CRigidBody) break;
     CASE_CREATE_COMP(CT_BOXCOLLIDER, CBoxCollider) break;
+    CASE_CREATE_COMP(CT_BEHAVIOUR, CBehaviour) break;
     // ...
   default: break;
   }

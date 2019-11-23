@@ -1,5 +1,6 @@
 #pragma once
 
+// @ ADD COMPONENT
 enum ComponentType : int
 {
   CT_NONE = 0,
@@ -7,5 +8,6 @@ enum ComponentType : int
   CT_BOXCOLLIDER,
   CT_RENDERABLE,
   CT_CAMERA,
+  CT_BEHAVIOUR,
   END
 };
