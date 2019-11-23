@@ -57,18 +57,18 @@ void Island::AddContact(Contact* contact)
 
 void Island::Solve(const Vec3& external_force, float dt, unsigned vel_iteration, unsigned pos_iteration, unsigned flag)
 {
-  auto timeScale = Time::GetInstance().GetTimeScale();
+  float timeScale = static_cast<float>(Time::GetInstance().GetTimeScale());
   // Integrate velocities
   {
     //PROFILENESTEDFUNCTION(Physics, IntegrateVelocities);
-    for (auto i = 0U; i < bodyCount_; ++i)
+    for (unsigned i = 0U; i < bodyCount_; ++i)
     {
-      auto b = bodies_[i];
+      RigidBody* b = bodies_[i];
 
-      auto v = b->m_LinearVelocity;     // velocity
-      auto w = b->m_AngularVelocity;    // angular velocity
-      auto position = b->m_Sweep.worldCenter_; // position
-      auto orientation = b->m_Sweep.orientation_; // orientation
+      Vec3 v                 = b->m_LinearVelocity;     // velocity
+      Vec3 w                 = b->m_AngularVelocity;    // angular velocity
+      Vec3 position          = b->m_Sweep.worldCenter_; // position
+      Quaternion orientation = b->m_Sweep.orientation_; // orientation
 
       // Remember position for CCD (Continuous Collision Detection)
       b->m_Sweep.worldCenterOld_ = b->m_Sweep.worldCenter_;
@@ -77,18 +77,18 @@ void Island::Solve(const Vec3& external_force, float dt, unsigned vel_iteration,
       if (b->m_Type == RBT_DYNAMIC)
       {
         // Integrate linear force
-        auto gravityScale = b->m_UseGravity ? b->m_GravityScale : 0.0f;
+        float gravityScale = b->m_UseGravity ? b->m_GravityScale : 0.0f;
 
         // Add up all forces applied on body
         // Acceleration = force / mass
-        auto acceleration = gravityScale * external_force + b->m_InvMass * b->m_Force;
+        Vec3 acceleration = gravityScale * external_force + b->m_InvMass * b->m_Force;
 
         // Velocity = acceleration * dt
         v += acceleration * dt * timeScale;
 
         // Integrate rotational force
         // Angular acceleration = inverse inertia * torque
-        auto angularAcc = Multiply(b->m_WorldInvInertia, b->m_Torque);
+        Vec3 angularAcc = Multiply(b->m_WorldInvInertia, b->m_Torque);
 
         // Angular velocity = angular acceleration * dt
         w += angularAcc * dt * timeScale;
@@ -98,142 +98,127 @@ void Island::Solve(const Vec3& external_force, float dt, unsigned vel_iteration,
         w *= 1.0f / (1.0f + timeScale * dt * b->m_AngularDamping);
       }
 
-      linearVelocities_[i] = v;
+      linearVelocities_[i]  = v;
       angularVelocities_[i] = w;
-      positions_[i] = position;
-      orientations_[i] = orientation;
-      inverseInertias_[i] = b->m_WorldInvInertia;
+      positions_[i]         = position;
+      orientations_[i]      = orientation;
+      inverseInertias_[i]   = b->m_WorldInvInertia;
     }
   }
 
   ContactSolver contactSolver{ this };
 
-  {
-    //PROFILENESTEDFUNCTION(Physics, SolveVelocityConstraint);
-    contactSolver.WarmStart(dt);
+  contactSolver.WarmStart(dt);
 
-    for (auto i = 0U; i < vel_iteration; ++i)
-      contactSolver.SolveVelocityConstraints();
+  for (unsigned i = 0U; i < vel_iteration; ++i)
+    contactSolver.SolveVelocityConstraints();
 
-    contactSolver.StoreImpulses();
-  }
+  contactSolver.StoreImpulses();
 
   // Integrate positions
+  for (unsigned i = 0U; i < bodyCount_; ++i)
   {
-    //PROFILENESTEDFUNCTION(Physics, IntegratePosition);
-    for (auto i = 0U; i < bodyCount_; ++i)
+    RigidBody* b = bodies_[i];
+
+    Vec3 v                 = linearVelocities_[i];
+    Vec3 w                 = angularVelocities_[i];
+    Vec3 position          = positions_[i];
+    Quaternion orientation = orientations_[i];
+    Matrix3 invInertia     = inverseInertias_[i];
+
+    // Check for large velocities changes
+    Vec3 translation = v * dt * timeScale;
+    if (Dot(translation, translation) > MAX_TRANSLATION_SQUARED)
     {
-      auto b = bodies_[i];
-
-      auto v = linearVelocities_[i];
-      auto w = angularVelocities_[i];
-      auto position = positions_[i];
-      auto orientation = orientations_[i];
-      auto invInertia = inverseInertias_[i];
-
-      // Check for large velocities changes
-      auto translation = v * dt * timeScale;
-      if (Dot(translation, translation) > MAX_TRANSLATION_SQUARED)
-      {
-        auto ratio = MAX_TRANSLATION / Length(translation);
-        v *= ratio;
-      }
-
-      auto rotation = w * dt * timeScale;
-      if (Dot(rotation, rotation) > MAX_ROTATION_SQUARED)
-      {
-        auto ratio = MAX_ROTATION / Length(rotation);
-        w *= ratio;
-      }
-
-      // Integrate linear positions
-      position += v * dt * timeScale;
-
-      // Integrate rotational positions
-      orientation.Integrate(w, dt * timeScale);
-      invInertia = RotateToFrame(b->m_InvInertia, ConvertQuaternionToMat33(orientation));
-
-      linearVelocities_[i] = v;
-      angularVelocities_[i] = w;
-      positions_[i] = position;
-      orientations_[i] = orientation;
-      inverseInertias_[i] = invInertia;
+      float ratio = MAX_TRANSLATION / Length(translation);
+      v *= ratio;
     }
+
+    Vec3 rotation = w * dt * timeScale;
+    if (Dot(rotation, rotation) > MAX_ROTATION_SQUARED)
+    {
+      float ratio = MAX_ROTATION / Length(rotation);
+      w *= ratio;
+    }
+
+    // Integrate linear positions
+    position += v * dt * timeScale;
+
+    // Integrate rotational positions
+    orientation.Integrate(w, dt * timeScale);
+    invInertia = RotateToFrame(b->m_InvInertia, ConvertQuaternionToMat33(orientation));
+
+    linearVelocities_[i] = v;
+    angularVelocities_[i] = w;
+    positions_[i] = position;
+    orientations_[i] = orientation;
+    inverseInertias_[i] = invInertia;
   }
 
   // We need to apply positional constraints to our bodies as sometimes
   // when impulse gets too huge, there will be overlaps in our velocity constraints
   // velocity constraints are only solved by acceleration.
   // So positions might overlaps due to errors in calculations
+  for (auto i = 0U; i < pos_iteration; ++i)
   {
-    //PROFILENESTEDFUNCTION(Physics, SolvePosition)
-    for (auto i = 0U; i < pos_iteration; ++i)
-    {
-      bool contactsSolved = contactSolver.SolvePositionConstraints();
+    bool contactsSolved = contactSolver.SolvePositionConstraints();
 
-      // If our position constraints' errors are small enough, we can break early
-      if (contactsSolved)
-        break;
-    }
+    // If our position constraints' errors are small enough, we can break early
+    if (contactsSolved)
+      break;
   }
 
+  // Copy state buffers back into body
+  for (unsigned i = 0U; i < bodyCount_; ++i)
   {
-    //PROFILENESTEDFUNCTION(Physics, CopyStateBuffer);
-    // Copy state buffers back into body
+    RigidBody* b = bodies_[i];
+
+    if (b->GetIgnorePhysics())
+      return;
+
+    b->m_Sweep.worldCenter_ = positions_[i];
+    b->m_Sweep.orientation_ = orientations_[i];
+    b->m_Sweep.orientation_.Normalize();
+    b->m_LinearVelocity  = linearVelocities_[i];
+    b->m_AngularVelocity = angularVelocities_[i];
+    b->m_WorldInvInertia = inverseInertias_[i];
+
+    b->m_Force.SetZero();
+    b->m_Torque.SetZero();
+    b->SynchroniseTransform();
+  }
+
+  if (flag & IF_SLEEP)
+  {
+    float minSleepTime = std::numeric_limits<float>::max();
     for (auto i = 0U; i < bodyCount_; ++i)
     {
       RigidBody* b = bodies_[i];
+      if (b->m_Type == RBT_STATIC)
+        continue;
 
-      if (b->GetIgnorePhysics())
-        return;
+      // Compute the linear and angular speed of the body.
+      float sqrLinVel = Dot(b->m_LinearVelocity, b->m_LinearVelocity);
+      float sqrAngVel = Dot(b->m_AngularVelocity, b->m_AngularVelocity);
 
-      b->m_Sweep.worldCenter_ = positions_[i];
-      b->m_Sweep.orientation_ = orientations_[i];
-      b->m_Sweep.orientation_.Normalize();
-      b->m_LinearVelocity = linearVelocities_[i];
-      b->m_AngularVelocity = angularVelocities_[i];
-      b->m_WorldInvInertia = inverseInertias_[i];
-
-      b->m_Force.SetZero();
-      b->m_Torque.SetZero();
-      b->SynchroniseTransform();
+      if (sqrLinVel > SLEEP_LINEAR_TOL || sqrAngVel > SLEEP_ANGULAR_TOL)
+      {
+        minSleepTime = 0.0f;
+        b->m_SleepTime = 0.0f;
+      }
+      else
+      {
+        b->m_SleepTime += dt * timeScale;
+        minSleepTime = Math::Min(minSleepTime, b->m_SleepTime);
+      }
     }
-  }
 
-  {
-    //PROFILENESTEDFUNCTION(Physics, Sleep);
-    if (flag & IF_SLEEP)
+    // Put the island to sleep so long as the minimum found sleep time
+    // is below the threshold. 
+    if (minSleepTime >= TIME_TO_SLEEP)
     {
-      float minSleepTime = std::numeric_limits<float>::max();
-      for (auto i = 0U; i < bodyCount_; ++i)
-      {
-        RigidBody* b = bodies_[i];
-        if (b->m_Type == RBT_STATIC)
-          continue;
-
-        // Compute the linear and angular speed of the body.
-        float sqrLinVel = Dot(b->m_LinearVelocity, b->m_LinearVelocity);
-        float sqrAngVel = Dot(b->m_AngularVelocity, b->m_AngularVelocity);
-
-        if (sqrLinVel > SLEEP_LINEAR_TOL || sqrAngVel > SLEEP_ANGULAR_TOL)
-        {
-          minSleepTime = 0.0f;
-          b->m_SleepTime = 0.0f;
-        }
-        else
-        {
-          b->m_SleepTime += dt * timeScale;
-          minSleepTime = Math::Min(minSleepTime, b->m_SleepTime);
-        }
-      }
-
-      // Put the island to sleep so long as the minimum found sleep time
-      // is below the threshold. 
-      if (minSleepTime >= TIME_TO_SLEEP)
-      {
-        for (auto i = 0U; i < bodyCount_; ++i)
-          bodies_[i]->SetAwake(false);
-      }
+      for (unsigned i = 0U; i < bodyCount_; ++i)
+        bodies_[i]->SetAwake(false);
     }
   }
 }

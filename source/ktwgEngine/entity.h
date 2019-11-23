@@ -37,17 +37,26 @@ public:
   template<typename T>
   T* GetComponent();
 
+  template<typename T> 
+  container_t<T*> GetAllComponentsOfType();
+
   static Entity* CreateEntity(const std::string& name="Object");
   static Entity& GetEntity(uint32_t id);
 
   Entity*    AddChild();
+  void       AddChild(Entity* entity);
   Component* AddComponent(ComponentType type);
   void       RemoveComponent(Component* comp);
 
-  inline const Transform&               GetTransform()  const { return m_Transform; }
-  inline const container_t<Component*>& GetComponents() const { return m_Components; }
+  inline const Transform&               GetTransform()      const { return m_Transform; }
+  inline const container_t<Component*>& GetComponents()     const { return m_Components; }
+  inline const std::string&             GetName()           const { return m_Name; }
   inline uint32_t                       GetCollisionLayer() const { return m_LayerId; }
-  inline bool                           IsDead()        const { return m_State == DEAD; }
+  inline bool                           IsDead()            const { return m_State == DEAD; }
+
+  inline Transform& GetTransform() { return m_Transform; }
+
+  inline void SetName(const std::string& name) { m_Name = name; }
 
 private:
   template<typename T> 
@@ -84,4 +93,20 @@ T* Entity::GetComponent()
       return static_cast<T*>(comp);
   }
   return nullptr;
+}
+
+template<typename T>
+inline Entity::container_t<T*> Entity::GetAllComponentsOfType()
+{
+  auto& info = typeid(T);
+  container_t<T*> result;
+
+  for (auto& elem : m_Components)
+  {
+    auto& comp = elem();
+    if (comp.GetTypeInfo() == info)
+      result.emplace_back(static_cast<T*>(&comp));
+  }
+
+  return result;
 }
