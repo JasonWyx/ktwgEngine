@@ -6,8 +6,9 @@
 #include "plane.h"
 
 FCollider::FCollider()
-  : m_Vertices{}, m_Planes{}, m_Friction{ 0.0f }, m_Restitution{ 0.0f },
-    m_Body{ nullptr }, m_Owner{ nullptr }, m_BroadphaseId{ -1 },
+  : m_Vertices{}, m_Planes{}, 
+    m_Friction{ 0.0f }, m_Restitution{ 0.0f },
+    m_Local{}, m_Body{ nullptr }, m_Owner{ nullptr }, m_BroadphaseId{ -1 },
     m_IsTrigger{ false }, m_Active{ true }
 {
 }
@@ -44,7 +45,10 @@ void FCollider::SetAsBox()
     m_Vertices.emplace_back(Vec3());
 
   for (int i = 0; i < 6; ++i)
-    m_Planes.emplace_back(Plane());
+    m_Planes.emplace_back(Plane()); 
+  
+  if (m_Body)
+    UpdateBox(m_Local, UNIT_EXTENTS);
 }
 
 void FCollider::UpdateBox(const Vec3& extents)
@@ -76,7 +80,7 @@ void FCollider::UpdateBox(const Transform& local, const Vec3& extents)
   m_Planes[4] = Plane(Z_VECTOR.Negate(), vertices[0]);
   m_Planes[5] = Plane(Z_VECTOR, vertices[7]);
 
-  //SynchroniseProxy();
+  SynchroniseProxy();
 }
 
 void FCollider::AddContactEdge(ContactEdge* contactEdge)

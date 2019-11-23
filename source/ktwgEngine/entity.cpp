@@ -33,6 +33,11 @@ Entity* Entity::AddChild()
   return m_Children.back();
 }
 
+void Entity::AddChild(Entity* entity)
+{
+  m_Children.emplace_back(entity);
+}
+
 Component* Entity::AddComponent(ComponentType type)
 {
 #define CASE_CREATE_COMP(comp_type, T) case comp_type: comp = &CreateComponent<T>(); 
