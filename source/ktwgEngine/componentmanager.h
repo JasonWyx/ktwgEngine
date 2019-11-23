@@ -11,7 +11,7 @@
 class Entity;
 
 template<typename T, unsigned SIZE>
-struct ComponentManager
+struct ComponentManagerInternal
 {
   template <typename T>
   using container_t = std::vector<T>;
@@ -23,12 +23,12 @@ struct ComponentManager
     size_t nPoolSize;
   };
 
-  static container_t<T>&   GetList() { return ComponentManager::Instance().m_List; }
-  static ComponentManager& Instance() { static ComponentManager instance; return instance; }
+  static container_t<T>&   GetList() { return ComponentManagerInternal::Instance().m_List; }
+  static ComponentManagerInternal& Instance() { static ComponentManagerInternal instance; return instance; }
 
   static Component* Alloc(Entity& entity)
   {
-    ComponentManager& instance = Instance();
+    ComponentManagerInternal& instance = Instance();
     container_t<T>& list = Instance().GetList();
     if (instance.m_FreeList.empty())
     {
@@ -45,7 +45,7 @@ struct ComponentManager
 
   static void Free(Component* comp)
   {
-    ComponentManager& instance = Instance();
+    ComponentManagerInternal& instance = Instance();
     container_t<T>& list = Instance().GetList();
     uint32_t mid = comp->GetId();
     
@@ -60,7 +60,7 @@ struct ComponentManager
 
   static Component& Get(Component* comp)
   {
-    ComponentManager& instance = Instance();
+    ComponentManagerInternal& instance = Instance();
     return instance.m_List[comp->GetId()];
   }
 
@@ -90,7 +90,7 @@ struct ComponentManager
   }
 
 private:
-  ComponentManager()
+  ComponentManagerInternal()
     : m_List{}, m_FreeList{}
   {
     m_List.reserve(SIZE);
@@ -100,4 +100,9 @@ private:
 protected:
   container_t<T>        m_List;
   container_t<uint32_t> m_FreeList;
+};
+
+template <typename T>
+struct ComponentManager : public ComponentManagerInternal<T, INITIAL_COMP_SIZE>
+{
 };

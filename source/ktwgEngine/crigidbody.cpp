@@ -1,8 +1,9 @@
 #include "crigidbody.h"
 #include "physics.h"
+#include "entity.h"
 
 CRigidBody::CRigidBody(Entity& entity, uint32_t id)
-  : Component{ entity, id }, m_Internal{ nullptr }
+  : Component{ typeid(CRigidBody), entity, id }, m_Internal{ nullptr }
 {
 }
 
@@ -17,6 +18,23 @@ void CRigidBody::Initialize()
 
 void CRigidBody::Destroy()
 {
+  Entity* entity = GetOwner();
+
+  // copy list of components
+  const std::vector<Component*>& components = entity->GetComponents();
+
+  // delete all colliders
+  for (Component* const & c : components)
+  {
+    if (c->GetType() == CT_BOXCOLLIDER)
+      entity->RemoveComponent(c);
+  }
+
+  if (m_Internal)
+  {
+    Physics::GetInstance().DestroyRigidBody(m_Internal);
+    m_Internal = nullptr;
+  }
 }
 
 void CRigidBody::SetActive(bool active)
@@ -28,6 +46,13 @@ void CRigidBody::SetActive(bool active)
   m_Internal->SetActive(active);
 }
 
+void CRigidBody::AddForce(const Vec3& force)
+{
+  assert(m_Internal);
+
+  m_Internal->AddForce(force);
+}
+
 void CRigidBody::SynchroniseRigidBody()
 {
   assert(m_Internal);
@@ -35,11 +60,44 @@ void CRigidBody::SynchroniseRigidBody()
   m_Internal->SynchroniseRigidBody();
 }
 
+RigidBody* CRigidBody::GetInternal() const
+{
+  return m_Internal;
+}
+
 const RBType& CRigidBody::GetBodyType() const
 {
   assert(m_Internal);
 
   return m_Internal->GetBodyType();
+}
+
+const Vec3& CRigidBody::GetForce() const
+{
+  assert(m_Internal);
+
+  return m_Internal->GetForce();
+}
+
+const Vec3& CRigidBody::GetTorque() const
+{
+  assert(m_Internal);
+
+  return m_Internal->GetTorque();
+}
+
+const Vec3& CRigidBody::GetLinearVelocity() const
+{
+  assert(m_Internal);
+
+  return m_Internal->GetLinearVelocity();
+}
+
+const Vec3& CRigidBody::GetAngularVelocity() const
+{
+  assert(m_Internal);
+
+  return m_Internal->GetAngularVelocity();
 }
 
 float CRigidBody::GetMass() const
@@ -110,6 +168,33 @@ void CRigidBody::SetBodyType(RBType type)
   assert(m_Internal);
 
   m_Internal->SetBodyType(type);
+}
+
+void CRigidBody::SetForce(const Vec3& force)
+{
+  assert(m_Internal);
+
+  m_Internal->SetForce(force);
+}
+
+void CRigidBody::SetTorque(const Vec3& torque)
+{
+  assert(m_Internal);
+  m_Internal->SetTorque(torque);
+}
+
+void CRigidBody::SetLinearVelocity(const Vec3& linearVelocity)
+{
+  assert(m_Internal);
+
+  m_Internal->SetLinearVelocity(linearVelocity);
+}
+
+void CRigidBody::SetAngularVelocity(const Vec3& angularVelocity)
+{
+  assert(m_Internal);
+
+  m_Internal->SetAngularVelocity(angularVelocity);
 }
 
 void CRigidBody::SetMass(float m)
