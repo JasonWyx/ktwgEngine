@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../d3d11shader.h"
 
 struct GeometryConstantBuffer
 {
@@ -7,8 +8,3 @@ struct GeometryConstantBuffer
 };
 
 #define GeometryConstantBufferSlot 10
-
-class D3D11Shader;
-
-static D3D11Shader* SimpleForwardVS = nullptr;
-static D3D11Shader* SimpleForwardPS = nullptr;

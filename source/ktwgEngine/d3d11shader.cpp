@@ -46,11 +46,3 @@ ComPtr<ID3DBlob> CompileShader(const char * profile, const SHADER_DESC & desc)
 
   return microCode;
 }
-
-D3D11Shader* CreateShaderCommon(const char * profile, const SHADER_DESC & desc)
-{
-  ComPtr<ID3DBlob> microCode = CompileShader(profile, desc);
-  if(!microCode)
-    return nullptr;
-  return new D3D11Shader{microCode};
-}

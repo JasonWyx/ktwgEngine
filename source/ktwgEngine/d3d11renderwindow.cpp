@@ -1,7 +1,12 @@
 #include "d3d11renderwindow.h"
 #include "d3d11renderapi.h"
 #include "d3d11device.h"
+#include "d3d11staticresources.h"
+
 #include <iostream>
+
+DEFINE_STATIC_TEXTURE(FinalColorOutput);
+DEFINE_STATIC_TEXTURE(MainRenderDepthStencil);
 
 D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC & desc, D3D11Device * device)
 :m_Desc{desc}, m_Device{device}, m_Window{nullptr}, m_SwapChain{nullptr}
@@ -94,6 +99,8 @@ void D3D11RenderWindow::CreateSizeDependentResources()
   D3D11_TEXTURE2D_DESC backBufferDesc;
   m_Backbuffer->GetDesc(&backBufferDesc);
 
+  // TODO Might not need this -> ??
+  /*
   D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
   ZeroMemory(&rtvDesc, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
 
@@ -108,13 +115,28 @@ void D3D11RenderWindow::CreateSizeDependentResources()
     std::cerr << "Failed to create render target view!\n";
     exit(1);
   }
+  */
+  GET_STATIC_RESOURCE(FinalColorOutput) = new D3D11Texture{ m_Backbuffer };
+  backBufferDesc.Format = DXGI_FORMAT_D32_FLOAT;
+  backBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+  ComPtr<ID3D11Texture2D> ds;
+  hr = m_Device->GetDevice()->CreateTexture2D(&backBufferDesc, nullptr, ds.GetAddressOf());
+
+  if (FAILED(hr))
+  {
+    std::cerr << "Failed to create Depth Stencil!\n";
+    exit(1);
+  }
+  GET_STATIC_RESOURCE(MainRenderDepthStencil) = new D3D11Texture{ds};
 }
 
 void D3D11RenderWindow::DestroySizeDependentResources()
 {
-  m_Device->GetImmediateContext()->OMSetRenderTargets(0, 0, 0);
-  m_RenderTargetView.Reset();
+  m_Device->GetImmediateContext().GetContext()->OMSetRenderTargets(0, 0, 0);
+  // m_RenderTargetView.Reset();
   m_Backbuffer.Reset();
+  RESET_STATIC_RESOURCE(FinalColorOutput);
+  RESET_STATIC_RESOURCE(MainRenderDepthStencil);
 }
 
 void D3D11RenderWindow::Resize(uint32_t width, uint32_t height)
@@ -131,7 +153,7 @@ void D3D11RenderWindow::Resize(uint32_t width, uint32_t height)
 
   CreateSizeDependentResources();
 
-  m_Device->GetImmediateContext()->OMSetRenderTargets(1, m_RenderTargetView.GetAddressOf(), NULL);
+  m_Device->GetImmediateContext().GetContext()->OMSetRenderTargets(1, m_RenderTargetView.GetAddressOf(), NULL);
 
   m_Window->Resize(width, height);
 
@@ -142,7 +164,7 @@ void D3D11RenderWindow::Resize(uint32_t width, uint32_t height)
   viewport.MaxDepth = 1.f;
   viewport.TopLeftX = 0.f;
   viewport.TopLeftY = 0.f;
-  m_Device->GetImmediateContext()->RSSetViewports(1, &viewport);
+  m_Device->GetImmediateContext().GetContext()->RSSetViewports(1, &viewport);
 }
 
 void D3D11RenderWindow::Move(uint32_t left, uint32_t top)

@@ -95,11 +95,13 @@
     <ClCompile Include="broadphase.cpp" />
     <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
+    <ClCompile Include="ccamera.cpp" />
     <ClCompile Include="collisionevent.cpp" />
     <ClCompile Include="collisionfunctions.cpp" />
     <ClCompile Include="component.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
+    <ClCompile Include="crenderable.cpp" />
     <ClCompile Include="contact.cpp" />
     <ClCompile Include="contactdispatcher.cpp" />
     <ClCompile Include="contactlistener.cpp" />
@@ -107,6 +109,7 @@
     <ClCompile Include="contactsolver.cpp" />
     <ClCompile Include="d3d11device.cpp" />
     <ClCompile Include="d3d11hardwarebuffer.cpp" />
+    <ClCompile Include="d3d11inputlayout.cpp" />
     <ClCompile Include="d3d11renderapi.cpp" />
     <ClCompile Include="d3d11renderwindow.cpp" />
     <ClCompile Include="d3d11renderwindowmanager.cpp" />
@@ -123,7 +126,12 @@
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
     <ClCompile Include="gjk.cpp" />
+    <ClCompile Include="hypecamera.cpp" />
+    <ClCompile Include="hypegraphicobject.cpp" />
+    <ClCompile Include="hypegraphicsworld.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
+    <ClCompile Include="hypesimpleforwardrendernode.cpp" />
+    <ClCompile Include="hypesimplemesh.cpp" />
     <ClCompile Include="imguimanager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -140,6 +148,7 @@
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -163,6 +172,7 @@
     <ClInclude Include="broadphase.h" />
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="cboxcollider.h" />
+    <ClInclude Include="ccamera.h" />
     <ClInclude Include="collisionevent.h" />
     <ClInclude Include="collisionfunctions.h" />
     <ClInclude Include="collisioninfo.h" />
@@ -177,12 +187,14 @@
     <ClInclude Include="customlist.h" />
     <ClInclude Include="d3d11defines.h" />
     <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11device.hpp" />
     <ClInclude Include="d3d11hardwarebuffer.h" />
     <ClInclude Include="d3d11renderapi.h" />
     <ClInclude Include="d3d11renderwindow.h" />
     <ClInclude Include="d3d11renderwindowmanager.h" />
     <ClInclude Include="d3d11resource.h" />
     <ClInclude Include="d3d11shader.h" />
+    <ClInclude Include="d3d11staticresources.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="dynamicaabb3tree.h" />
@@ -191,6 +203,10 @@
     <ClInclude Include="fcollider.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="hypecamera.h" />
+    <ClInclude Include="hypegraphicsworld.h" />
+    <ClInclude Include="hyperendernode.h" />
+    <ClInclude Include="hypesimpleforwardrendernode.h" />
     <ClInclude Include="gjk.h" />
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="island.h" />
@@ -213,6 +229,11 @@
     <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="quaternion.h" />
+    <ClInclude Include="d3d11shader.hpp" />
+    <ClInclude Include="hypegraphicobject.h" />
+    <ClInclude Include="crenderable.h" />
+    <ClInclude Include="hypesimplemesh.h" />
+    <ClInclude Include="d3d11inputlayout.h" />
     <ClInclude Include="raycast.h" />
     <ClInclude Include="raycastcallbacks.h" />
     <ClInclude Include="sat.h" />
@@ -223,6 +244,7 @@
     <ClInclude Include="rigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="Shaders\cpp\SimpleForwardInputs.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />

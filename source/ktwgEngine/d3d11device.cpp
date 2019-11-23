@@ -1,5 +1,12 @@
 #include "d3d11device.h"
+#include "d3d11texture.h"
+#include "d3d11shader.h"
+#include "d3d11hardwarebuffer.h"
 #include <vector>
+
+#if _DEBUG
+#include <cassert>
+#endif // #if _DEBUG
 
 D3D11Device::D3D11Device(const ComPtr<ID3D11Device>& device, const ComPtr<ID3D11DeviceContext>& context)
 :m_Device{device}, m_ImmediateContext{context}, m_InfoQueue{nullptr}
@@ -16,11 +23,7 @@ D3D11Device::D3D11Device(const ComPtr<ID3D11Device>& device, const ComPtr<ID3D11
 
 D3D11Device::~D3D11Device()
 {
-  if (m_ImmediateContext)
-  {
-    m_ImmediateContext->Flush();
-    m_ImmediateContext->ClearState();
-  }
+  
 }
 
 std::string D3D11Device::GetErrors(bool clearErrors)
@@ -106,4 +109,109 @@ bool D3D11Device::HasError() const
   }
 #endif
   return false;
+}
+
+D3D11Context::D3D11Context(const ComPtr<ID3D11DeviceContext>& context)
+:m_Context{context}
+{
+}
+
+D3D11Context::~D3D11Context()
+{
+  if (m_Context)
+  {
+    m_Context->Flush();
+    m_Context->ClearState();
+  }
+}
+
+void D3D11Context::ClearRTV(D3D11Texture * renderTarget, DXGI_FORMAT format, float r, float g, float b, float a)
+{
+  ResourceViewKey key;
+  key.m_Type = RTV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  float rgba[4] = {r, g, b, a};
+  m_Context->ClearRenderTargetView(renderTarget->GetView(key).GetRtv(), rgba);
+}
+
+void D3D11Context::ClearDSV(D3D11Texture * depthStencil, DXGI_FORMAT format, UINT clearFlags, float d, uint8_t stencil)
+{
+  ResourceViewKey key;
+  key.m_Type = DSV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  m_Context->ClearDepthStencilView(depthStencil->GetView(key).GetDsv(), clearFlags, d, stencil);
+}
+
+void D3D11Context::AddRenderTarget(D3D11Texture * renderTarget, DXGI_FORMAT format)
+{
+#if _DEBUG
+  assert(m_RenderTargets.size() < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT - 1);
+#endif // #if _DEBUG
+  ResourceViewKey key;
+  key.m_Type = RTV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  m_RenderTargets.emplace_back(renderTarget->GetView(key).GetRtv());
+}
+
+void D3D11Context::SetDepthStencil(D3D11Texture * depthStencil, DXGI_FORMAT format)
+{
+  ResourceViewKey key;
+  key.m_Type = DSV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  m_DepthStencil = depthStencil->GetView(key).GetDsv();
+}
+
+void D3D11Context::FlushRenderTargets()
+{
+  m_Context->OMSetRenderTargets((UINT)m_RenderTargets.size(), m_RenderTargets.data(), m_DepthStencil);
+  m_RenderTargets.clear();
+  m_DepthStencil = nullptr;
+}
+
+void D3D11Context::AddVertexBuffer(D3D11HardwareBuffer * vertexBuffer, uint32_t stride, uint32_t offset)
+{
+  m_VertexBuffers.emplace_back(vertexBuffer->GetBuffer());
+  m_VertexStrides.emplace_back(stride);
+  m_VertexOffsets.emplace_back(offset);
+}
+
+void D3D11Context::FlushVertexBuffers()
+{
+  m_Context->IASetVertexBuffers(0, (UINT)m_VertexBuffers.size(), m_VertexBuffers.data(), m_VertexStrides.data(), m_VertexOffsets.data());
+  m_VertexBuffers.clear();
+  m_VertexStrides.clear();
+  m_VertexOffsets.clear();
+}
+
+void D3D11Context::SetIndexBuffer(D3D11HardwareBuffer * indexBuffer, DXGI_FORMAT format, uint32_t offset)
+{
+  m_Context->IASetIndexBuffer(indexBuffer->GetBuffer(), format, offset);
+}
+
+void D3D11Context::Set(D3D11VertexShader * vs)
+{
+  m_Context->VSSetShader(vs->GetShader().Get(), NULL, 0);
+}
+
+void D3D11Context::Set(D3D11PixelShader * ps)
+{
+  m_Context->PSSetShader(ps->GetShader().Get(), NULL, 0);
+}
+
+void D3D11Context::DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIndices, uint32_t startIndexLocation, int32_t baseVertexLocation)
+{
+  m_Context->IASetPrimitiveTopology(topology);
+  m_Context->DrawIndexed(numIndices, startIndexLocation, baseVertexLocation);
+}
+
+void D3D11Context::FlushConstantBuffers(uint32_t startSlot)
+{
+  if(m_VSConstantBuffers.size())
+    m_Context->VSSetConstantBuffers(startSlot, (UINT)m_VSConstantBuffers.size(), m_VSConstantBuffers.data());
+  if(m_PSConstantBuffers.size())
+    m_Context->PSSetConstantBuffers(startSlot, (UINT)m_PSConstantBuffers.size(), m_VSConstantBuffers.data());
 }

@@ -1,69 +1,102 @@
-#ifndef _D3D11_RESOURCE_H_
-#define _D3D11_RESOURCE_H_
+#pragma once
 
-#include <d3d11.h>
 #include "d3d11defines.h"
+#include <d3d11.h>
+#include <unordered_map>
 
-class D3D11PipelineResource
+class D3D11Device;
+
+enum RESOURCE_VIEW_TYPE
 {
+  SRV,
+  DSV,
+  RTV
 };
 
-class D3D11SR : public D3D11PipelineResource
+struct ResourceViewKey
+{
+  RESOURCE_VIEW_TYPE m_Type;
+  DXGI_FORMAT        m_Format;
+  uint32_t           m_MostDetailedMip;
+};
+
+inline bool operator==(const ResourceViewKey& lhs, const ResourceViewKey& rhs)
+{
+  return lhs.m_Type == rhs.m_Type && lhs.m_Format == rhs.m_Format && lhs.m_MostDetailedMip == rhs.m_MostDetailedMip;
+}
+
+namespace std
+{
+  template<>
+  struct hash<ResourceViewKey>
+  {
+    size_t operator()(const ResourceViewKey& val) const noexcept
+    {
+      size_t hash;
+      hash_combine(hash, (size_t)val.m_Type);
+      hash_combine(hash, (size_t)val.m_Format);
+      hash_combine(hash, (size_t)val.m_MostDetailedMip);
+      return hash;
+    }
+  };
+}
+
+class D3D11ResourceView
 {
 public:
-  void Init(const ComPtr<ID3D11Resource>& resource, const D3D11_SHADER_RESOURCE_VIEW_DESC& desc);
-  const ComPtr<ID3D11ShaderResourceView>& GetResource() const { return m_Resource; }
+
+  D3D11ResourceView(const ComPtr<ID3D11ShaderResourceView>& srv)
+    : m_View{ srv }
+  {
+  }
+
+  D3D11ResourceView(const ComPtr<ID3D11DepthStencilView>& dsv)
+    : m_View{ dsv }
+  {
+
+  }
+
+  D3D11ResourceView(const ComPtr<ID3D11RenderTargetView>& rtv)
+    : m_View{ rtv }
+  {
+
+  }
+
+  ~D3D11ResourceView()
+  {
+    
+  }
+
+  ID3D11ShaderResourceView* GetSrv() const { return static_cast<ID3D11ShaderResourceView*>(m_View.Get()); }
+  ID3D11RenderTargetView* GetRtv() const { return static_cast<ID3D11RenderTargetView*>(m_View.Get()); }
+  ID3D11DepthStencilView* GetDsv() const { return static_cast<ID3D11DepthStencilView*>(m_View.Get()); }
+  
+
 private:
-  ComPtr<ID3D11ShaderResourceView> m_Resource;
+  friend class D3D11Resource;
+
+  void SetSrv(const ComPtr<ID3D11ShaderResourceView>& srv) { m_View = srv; }
+  void SetRtv(const ComPtr<ID3D11RenderTargetView>& rtv) { m_View = rtv; }
+  void SetDsv(const ComPtr<ID3D11DepthStencilView>& dsv) { m_View = dsv; }
+
+  ComPtr<ID3D11View>  m_View;
 };
 
-class D3D11DS : public D3D11PipelineResource
+class D3D11Resource
 {
 public:
-  void Init(const ComPtr<ID3D11Resource>& resource, const D3D11_DEPTH_STENCIL_VIEW_DESC& desc);
-  const ComPtr<ID3D11DepthStencilView>& GetResource() const { return m_Resource; }
+
+  D3D11Resource(const ComPtr<ID3D11Resource>& resource, D3D11_RESOURCE_DIMENSION dimension);
+
+  const D3D11ResourceView& GetView(const ResourceViewKey& key);
+
+  const D3D11ResourceView& CreateSRV(const ResourceViewKey& key);
+  const D3D11ResourceView& CreateRTV(const ResourceViewKey& key);
+  const D3D11ResourceView& CreateDSV(const ResourceViewKey& key);
+
+protected:
+  ComPtr<ID3D11Resource>                                  m_Resource;
 private:
-  ComPtr<ID3D11DepthStencilView> m_Resource;
+  std::unordered_map<ResourceViewKey, D3D11ResourceView>  m_ResourceViews;
+  D3D11_RESOURCE_DIMENSION                                m_Dimension;
 };
-
-class D3D11StaticPipelineResourceFactory
-{
-  static D3D11PipelineResource* CreateNewSR()
-  {
-    return new D3D11SR{};
-  }
-
-  static D3D11PipelineResource* CreateNewDS()
-  {
-    return new D3D11DS{};
-  }
-};
-
-#define DEFINE_STATIC_RESOURCE(name, tag) \
-struct GFX_STATIC_RESOURCE_WRAPPER_#tag#name \
-{\
-  GFX_STATIC_RESOURCE_WRAPPER_#tag#name()\
-  :m_Resource{D3D11StaticPipelineResourceFactory::CreateNew#tag()}\
-  {\
-  }\
-  ~GFX_STATIC_RESOURCE_WRAPPER_#tag#name()\
-  {\
-    delete m_Resource;\
-  }\
-  D3D11#tag* m_Resource;\
-}\
-static GFX_STATIC_RESOURCE_WRAPPER_#tag#name gfx_static_resource_wrapper_#tag#name;\
-D3D11#tag* #name = gfx_static_resource_wrapper_#tag#name.m_Resource;
-
-#define DECLARE_STATIC_RESOURCE(name, tag) \
-extern D3D11#tag* #name
-
-#define DEFINE_SR(name) DEFINE_STATIC_RESOURCE(name, SR)
-
-#define DECLARE_SR(name) DECLARE_STATIC_RESOURCE(name, SR)
-
-#define DEFINE_DS(name) DEFINE_STATIC_RESOURCE(name, DS)
-
-#define DECLARE_DS(name) DECLARE_STATIC_RESOURCE(name, DS)
-
-#endif

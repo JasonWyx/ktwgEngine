@@ -56,6 +56,7 @@ void Application::Run()
   // Retrieve input instance
   InputSystem& inputSys = InputSystem::GetInstance();
 
+  HypeRenderer& renderSys = HypeRenderer::GetInstance();
   KTWGBehaviour& behSys = KTWGBehaviour::GetInstance();
 
   // For now just a loop forever
@@ -92,6 +93,7 @@ void Application::Run()
       accumulator -= fixedDtMs;
     }
 
+    renderSys.Update();
     inputSys.PostUpdate();
   }
 }
@@ -114,23 +116,11 @@ void Application::InitializeCoreSystems()
 void Application::InitializeResources()
 {
   HypeRenderer::LoadSystemShaders();
+  HypeRenderer::CreateCommonResources();
   Scene::Initialize();
 }
 
 void Application::LateInitialize()
 {
-  RENDER_WINDOW_DESC desc;
-  desc.m_VideoMode          = { 1280, 600, 60.f };
-  desc.m_Title              = "TestWindow";
-  desc.m_Fullscreen         = false;
-  desc.m_Hidden             = false;
-  desc.m_ShowBorder         = true;
-  desc.m_ShowTitleBar       = true;
-  desc.m_Left               = -1;
-  desc.m_Top                = -1;
-  desc.m_MultisampleCount   = 1;
-
-  D3D11RenderWindow* renderWindow = D3D11RenderWindowManager::GetInstance().CreatePrimaryRenderWindow(desc);
-  renderWindow->Init();
-  renderWindow->SetHidden(false);
+  HypeRenderer::Initialize();
 }

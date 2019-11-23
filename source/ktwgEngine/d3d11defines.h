@@ -4,6 +4,13 @@
 #include <cinttypes>
 #include <string>
 
+template <class T>
+inline void hash_combine(std::size_t& seed, const T& v)
+{
+  std::hash<T> hasher;
+  seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
 struct VideoMode
 {
   VideoMode() = default;
@@ -75,6 +82,12 @@ enum GPU_WRITE_TYPE
   WT_DISCARD,
   WT_NO_DISCARD,
   WT_NO_OVERWRITE
+};
+
+enum SHADER_TYPE
+{
+  VS,
+  PS
 };
 
 template <typename T>
