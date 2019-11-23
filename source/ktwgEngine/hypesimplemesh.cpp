@@ -34,7 +34,7 @@ void HypeSimpleMesh::Regenerate()
   }
 }
 
-void HypeSimpleMesh::Draw()
+void HypeSimpleMesh::DrawInstances()
 {
   D3D11Context& context = D3D11RenderAPI::GetInstance().GetDevice()->GetImmediateContext();
   context.AddVertexBuffer(m_VertexBuffer, sizeof(Vertex), 0);

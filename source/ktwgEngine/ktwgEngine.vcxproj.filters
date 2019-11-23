@@ -129,5 +129,8 @@
     <ClInclude Include="d3d11inputlayout.h" />
     <ClInclude Include="crenderable.h" />
     <ClInclude Include="hypegraphicobject.h" />
+    <ClInclude Include="d3d11device.hpp" />
+    <ClInclude Include="hypecamera.h" />
+    <ClInclude Include="hypecamera.cpp" />
   </ItemGroup>
 </Project>

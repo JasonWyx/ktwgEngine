@@ -27,7 +27,7 @@ public:
   
   void Regenerate();
 
-  void Draw() override;
+  void DrawInstances() override;
 
 private:
   static void CreateIndexBuffer(uint32_t stacks, uint32_t slices, std::vector<uint32_t>& indices);

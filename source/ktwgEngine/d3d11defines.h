@@ -84,5 +84,11 @@ enum GPU_WRITE_TYPE
   WT_NO_OVERWRITE
 };
 
+enum SHADER_TYPE
+{
+  VS,
+  PS
+};
+
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;

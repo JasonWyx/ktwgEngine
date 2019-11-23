@@ -143,6 +143,7 @@
     <ClInclude Include="componenttype.h" />
     <ClInclude Include="d3d11defines.h" />
     <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11device.hpp" />
     <ClInclude Include="d3d11hardwarebuffer.h" />
     <ClInclude Include="d3d11renderapi.h" />
     <ClInclude Include="d3d11renderwindow.h" />
@@ -156,6 +157,8 @@
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="hypecamera.cpp" />
+    <ClInclude Include="hypecamera.h" />
     <ClInclude Include="hyperendernode.h" />
     <ClInclude Include="hypesimpleforwardrendernode.h" />
     <ClInclude Include="inputsystem.h" />

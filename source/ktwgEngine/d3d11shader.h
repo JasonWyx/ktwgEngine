@@ -5,12 +5,6 @@
 #include "d3d11defines.h"
 #include "d3d11renderapi.h"
 
-enum SHADER_TYPE
-{
-  VS,
-  PS
-};
-
 struct SHADER_DESC
 {
   std::string m_Source;

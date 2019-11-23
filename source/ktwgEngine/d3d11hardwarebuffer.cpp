@@ -11,6 +11,7 @@ D3D11HardwareBuffer::D3D11HardwareBuffer(D3D11Device * device, D3D11_BUFFER_TYPE
   m_Flags.m_UnorderedGpuAccess        = unorderedGpuAccess;
   m_Flags.m_UseTemporaryStagingBuffer = false;
   m_Flags.m_StreamOut                 = streamOut;
+  m_Desc.ByteWidth                    = m_BufferSize;
 
   if (resourceUsage == D3D11_USAGE_STAGING)
   {

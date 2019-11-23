@@ -188,3 +188,11 @@ void D3D11Context::DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIn
   m_Context->IASetPrimitiveTopology(topology);
   m_Context->DrawIndexed(numIndices, startIndexLocation, baseVertexLocation);
 }
+
+void D3D11Context::FlushConstantBuffers(uint32_t startSlot)
+{
+  if(m_VSConstantBuffers.size())
+    m_Context->VSSetConstantBuffers(startSlot, (UINT)m_VSConstantBuffers.size(), m_VSConstantBuffers.data());
+  if(m_PSConstantBuffers.size())
+    m_Context->PSSetConstantBuffers(startSlot, (UINT)m_PSConstantBuffers.size(), m_VSConstantBuffers.data());
+}

@@ -34,6 +34,17 @@ public:
 
   void DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIndices, uint32_t startIndexLocation, int32_t baseVertexLocation);
 
+  template <SHADER_TYPE stage>
+  void AddConstantBuffer(D3D11HardwareBuffer* buffer);
+
+  template <>
+  void AddConstantBuffer<VS>(D3D11HardwareBuffer* buffer);
+
+  template <>
+  void AddConstantBuffer<PS>(D3D11HardwareBuffer* buffer);
+
+  void FlushConstantBuffers(uint32_t startSlot);
+
 private:
   std::vector<ID3D11RenderTargetView*>    m_RenderTargets;
   ID3D11DepthStencilView*                 m_DepthStencil;
@@ -43,6 +54,9 @@ private:
   std::vector<UINT>                       m_VertexOffsets;
 
   ID3D11Buffer*                           m_IndexBuffer;
+
+  std::vector<ID3D11Buffer*>              m_VSConstantBuffers;
+  std::vector<ID3D11Buffer*>              m_PSConstantBuffers;
 
   ComPtr<ID3D11DeviceContext>             m_Context;
 };
@@ -69,3 +83,5 @@ private:
   D3D11Context                m_ImmediateContext;
   ComPtr<ID3D11InfoQueue>     m_InfoQueue;
 };
+
+#include "d3d11device.hpp"

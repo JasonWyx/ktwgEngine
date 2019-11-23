@@ -7,6 +7,7 @@
 
 DECLARE_VS(SimpleForwardVS);
 DECLARE_PS(SimpleForwardPS);
+
 DECLARE_STATIC_TEXTURE(FinalColorOutput);
 DECLARE_STATIC_TEXTURE(MainRenderDepthStencil);
 

@@ -99,6 +99,7 @@ void Application::InitializeCoreSystems()
 void Application::InitializeResources()
 {
   HypeRenderer::LoadSystemShaders();
+  HypeRenderer::CreateCommonResources();
   Scene::Initialize();
 }
 
@@ -118,4 +119,6 @@ void Application::LateInitialize()
   D3D11RenderWindow* renderWindow = D3D11RenderWindowManager::GetInstance().CreatePrimaryRenderWindow(desc);
   renderWindow->Init();
   renderWindow->SetHidden(false);
+
+  HypeRenderer::Initialize();
 }
