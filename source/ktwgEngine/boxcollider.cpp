@@ -3,8 +3,11 @@
 #include "rigidbody.h"
 #include "plane.h"
 
-BoxCollider::BoxCollider()
-  : m_Internal{ nullptr }, m_Extents { UNIT_EXTENTS }, m_Min{}, m_Max{}
+BoxCollider::BoxCollider(uint32_t id)
+  : m_Internal{ nullptr }, 
+    m_Extents { UNIT_EXTENTS }, 
+    m_Min{}, m_Max{},
+    m_Id{ id }
 {
   m_Internal = std::make_unique<FCollider>();
   m_Internal->SetAsBox();
@@ -19,7 +22,7 @@ bool BoxCollider::Contains(const Vec3& point)
 {
   AABB3 aabb;
 
-  //ComputeAABB(aabb, GetRigidBody()->GetTransform());
+  ComputeAABB(aabb, GetRigidBody()->GetTransform());
 
   return aabb.Contains(point);
 }
@@ -66,25 +69,57 @@ void BoxCollider::ComputeMassData(MassData& massData)
   massData.m_Mass = bodyMass;
 }
 
+void BoxCollider::ComputeAABB(AABB3& aabb, const Transform& transform)
+{
+  Vec3 v[8];
+
+  auto extent = GetExtents();
+
+  const Vec3 boxVertices[8]{ Vec3(-extent.x_, -extent.y_, -extent.z_),
+                             Vec3(-extent.x_, -extent.y_,  extent.z_),
+                             Vec3(-extent.x_,  extent.y_, -extent.z_),
+                             Vec3(-extent.x_,  extent.y_,  extent.z_),
+                             Vec3(extent.x_, -extent.y_, -extent.z_),
+                             Vec3(extent.x_, -extent.y_,  extent.z_),
+                             Vec3(extent.x_,  extent.y_, -extent.z_),
+                             Vec3(extent.x_,  extent.y_,  extent.z_) };
+
+  // Find min and max of all vertex
+  Vec3 min{ FLT_MAX,  FLT_MAX,  FLT_MAX };
+  Vec3 max{ -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
+  // Transform to world coordinate system
+  for (auto i = 0u; i < 8; ++i)
+  {
+    v[i] = Multiply(transform, Multiply(GetLocal(), boxVertices[i]));
+    min = MinVec(min, v[i]);
+    max = MaxVec(max, v[i]);
+  }
+
+  // Set the aabb
+  m_Min = aabb.m_Min = min;
+  m_Max = aabb.m_Max = max;
+}
+
 bool BoxCollider::RayCast(const RayCastInput & input, RayCastOutput & output)
 {
   // Need rotation matrix to get ray vector to collider local space
-  //auto transform = GetRigidBody()->GetTransform();
-  //auto worldScale = transform.GetScale();
+  Transform transform = GetRigidBody()->GetTransform();
+  const Vec3& worldScale = transform.GetScale();
 
-  //Transform xf;
-  //xf.SetPosition(worldScale * GetLocal().GetPosition());
+  Transform xf;
+  xf.SetPosition(worldScale * GetLocal().GetPosition());
 
   // World transform of collider
-  //transform = Multiply(transform, xf);
+  transform = Multiply(transform, xf);
 
-  //auto rotMat = transform.GetRotationMatrix33();
+  Matrix3 rotMat = transform.GetRotationMatrix33();
 
   // Put ray into frame of reference
-  //auto p0 = MultiplyT(transform, input.p0_);
-  //auto p1 = MultiplyT(transform, input.p1_);
+  Vec3 p0 = MultiplyT(transform, input.m_p);
+  Vec3 p1 = MultiplyT(transform, input.m_q);
 
-  //auto d = p1 - p0;
+  Vec3 d = p1 - p0;
 
   float tmin = 0.0f;
   float tmax = input.m_MaxT;
@@ -100,40 +135,40 @@ bool BoxCollider::RayCast(const RayCastInput & input, RayCastOutput & output)
   // Need to do plane and ray intersection test 
   for (int i = 0; i < plane_count; ++i)
   {
-    // auto numerator = planes[i]->d_ - Dot(planes[i]->normal_, p0);
-    // auto denominator = Dot(planes[i]->normal_, d);
+     float numerator = planes[i].d_ - Dot(planes[i].normal_, p0);
+     float denominator = Dot(planes[i].normal_, d);
 
-    //if (denominator == 0.0f)
-    //{
-    //  // ray is parallel to halfspace
-    //  if (numerator < 0.0f)
-    //    return false; // Ray is outside of this halfspace
-    //}
-    //else
-    //{
-    //  if (denominator < 0.0f)
-    //  {
-    //    if (numerator < tmin * denominator)
-    //    {
-    //      tmin = numerator / denominator;
-    //      index = i;
-    //    }
-    //  }
-    //  else
-    //  {
-    //    if (numerator < tmax * denominator)
-    //      tmax = numerator / denominator;
-    //  }
-    //
-    //  if (tmax < tmin)
-    //    return false;
-    //}
+    if (denominator == 0.0f)
+    {
+      // ray is parallel to halfspace
+      if (numerator < 0.0f)
+        return false; // Ray is outside of this halfspace
+    }
+    else
+    {
+      if (denominator < 0.0f)
+      {
+        if (numerator < tmin * denominator)
+        {
+          tmin = numerator / denominator;
+          index = i;
+        }
+      }
+      else
+      {
+        if (numerator < tmax * denominator)
+          tmax = numerator / denominator;
+      }
+    
+      if (tmax < tmin)
+        return false;
+    }
   }
 
   if (index != INT_MAX)
   {
     output.m_T = tmin;
-    //output.m_Normal = Multiply(rotMat, planes[index]->normal_);
+    output.m_Normal = Multiply(rotMat, planes[index].normal_);
     output.m_Collider = this;
     output.m_Owner = m_Internal->GetBody()->GetOwner();
     return true;
@@ -144,7 +179,32 @@ bool BoxCollider::RayCast(const RayCastInput & input, RayCastOutput & output)
 
 uint32_t BoxCollider::GetSupportFace(const Vec3 & direction)
 {
-  return uint32_t();
+  const std::vector<Plane>& plane = m_Internal->GetPlanes();
+  int planeCount = 6; // Box has 6 face
+
+  int index = 0;
+  float maxProjection = Dot(direction, plane[0].normal_);
+  for (int i = 1; i < planeCount; ++i)
+  {
+    float projection = Dot(direction, plane[i].normal_);
+    if (projection > maxProjection)
+    {
+      index = i;
+      maxProjection = projection;
+    }
+  }
+
+  return index;
+}
+
+void BoxCollider::AddContactEdge(ContactEdge* contactEdge)
+{
+  m_Internal->AddContactEdge(contactEdge);
+}
+
+void BoxCollider::DestroyContacts()
+{
+  m_Internal->DestroyContacts();
 }
 
 RigidBody* BoxCollider::GetRigidBody() const
@@ -155,6 +215,11 @@ RigidBody* BoxCollider::GetRigidBody() const
 const Transform& BoxCollider::GetLocal() const
 {
   return m_Internal->GetLocal();
+}
+
+FCollider* BoxCollider::GetInternal() const
+{
+  return m_Internal.get();
 }
 
 const std::vector<Vec3>& BoxCollider::GetVertices() const
@@ -172,6 +237,11 @@ float BoxCollider::GetRadius() const
   return 0.0f;
 }
 
+int32_t BoxCollider::GetBroadphaseId() const
+{
+  return m_Internal->GetBroadphaseId();
+}
+
 bool BoxCollider::GetIsTrigger() const
 {
   return m_Internal->GetIsTrigger();
@@ -180,6 +250,16 @@ bool BoxCollider::GetIsTrigger() const
 bool BoxCollider::GetActive() const
 {
   return m_Internal->GetActive();
+}
+
+float BoxCollider::GetFriction() const
+{
+  return m_Internal->GetFriction();
+}
+
+float BoxCollider::GetRestitution() const
+{
+  return m_Internal->GetRestitution();
 }
 
 const Vec3& BoxCollider::GetExtents() const
@@ -195,6 +275,16 @@ const Vec3 & BoxCollider::GetMin() const
 const Vec3 & BoxCollider::GetMax() const
 {
   return m_Max;
+}
+
+void BoxCollider::SetRigidBody(RigidBody* rigidBody)
+{
+  m_Internal->SetBody(rigidBody);
+}
+
+void BoxCollider::SetBroadphaseId(int32_t id)
+{
+  m_Internal->SetBroadphaseId(id);
 }
 
 void BoxCollider::SetExtents(const Vec3& extent)

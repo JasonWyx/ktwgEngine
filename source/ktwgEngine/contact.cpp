@@ -29,16 +29,16 @@ void Contact::Update(ContactListener* listener)
 
     // Update the contact state.
     if (colliding == true)
-      flags_ |= flags_ & eCFColliding ? eCFWasColliding : eCFColliding;
+      flags_ |= flags_ & CF_COLLIDING ? CF_WASCOLLIDING : CF_COLLIDING;
     else
     {
-      if (flags_ & eCFColliding)
+      if (flags_ & CF_COLLIDING)
       {
-        flags_ &= ~eCFColliding;
-        flags_ |= eCFWasColliding;
+        flags_ &= ~CF_COLLIDING;
+        flags_ |= CF_WASCOLLIDING;
       }
       else
-        flags_ &= ~eCFWasColliding;
+        flags_ &= ~CF_WASCOLLIDING;
     }
   }
   else
@@ -79,7 +79,7 @@ void Contact::Update(ContactListener* listener)
       // the contact is already in colliding previous frame.
       // Whereas if the flag is not colliding, it means that the contact just begin its collision
       // So it is considered Colliding in this frame.
-      flags_ |= flags_ & eCFColliding ? eCFWasColliding : eCFColliding;
+      flags_ |= flags_ & CF_COLLIDING ? CF_WASCOLLIDING : CF_COLLIDING;
     }
     else
     {
@@ -88,18 +88,18 @@ void Contact::Update(ContactListener* listener)
       // wasColliding set to imply it had a past collision.
       // Whereas if flag is not in colliding anymore, we should reset the wasColliding flag to imply
       // there's no past collision this frame
-      if (flags_ & eCFColliding)
+      if (flags_ & CF_COLLIDING)
       {
-        flags_ &= ~eCFColliding;
-        flags_ |= eCFWasColliding;
+        flags_ &= ~CF_COLLIDING;
+        flags_ |= CF_WASCOLLIDING;
       }
       else
-        flags_ &= ~eCFWasColliding;
+        flags_ &= ~CF_WASCOLLIDING;
     }
   }
 
-  bool isColliding = flags_ & eCFColliding;
-  bool wasColliding = flags_ & eCFWasColliding;
+  bool isColliding = flags_ & CF_COLLIDING;
+  bool wasColliding = flags_ & CF_WASCOLLIDING;
 
   // Wake the bodies associated with the shapes if the contact has began.
   if (isColliding != wasColliding)
@@ -162,8 +162,8 @@ void Contact::DispatchEvent(ContactListener* listener)
   BoxCollider* colliderB = pair_.colliders_[1];
 
   bool isTriggerContact = colliderA->GetIsTrigger() || colliderB->GetIsTrigger();
-  bool isColliding = flags_ & eCFColliding;
-  bool wasColliding = flags_ & eCFWasColliding;
+  bool isColliding = flags_ & CF_COLLIDING;
+  bool wasColliding = flags_ & CF_WASCOLLIDING;
 
   if (listener)
   {

@@ -12,6 +12,7 @@
 class Entity;
 class FCollider;
 class RigidBody;
+struct ContactEdge;
 
 struct MassData
 {
@@ -26,7 +27,7 @@ class BoxCollider
   using UniquePtr = std::unique_ptr<T>;
   
 public:
-  BoxCollider();
+  BoxCollider(uint32_t id);
   ~BoxCollider();
 
   /* Query if point is contained in collider */
@@ -36,30 +37,36 @@ public:
   void ComputeMassData(MassData& massData);
 
   /* Compute AABB data */
-  //void ComputeAABB(AABB3& aabb, const Transform& transform);
+  void ComputeAABB(AABB3& aabb, const Transform& transform);
 
   /* Test Ray cast against box */
   bool RayCast(const RayCastInput& input, RayCastOutput& output);
 
-  /* Test sphere cast on collider shape*/
-  //bool SphereCast(const RayCastInput& input, float radius, RayCastOutput& output);
-
   /* Get the support face given a direction ( support face is face furthest in direction ) */
   uint32_t GetSupportFace(const Vec3& direction);
 
+  void AddContactEdge(ContactEdge* contactEdge);
+  void DestroyContacts();
+
   /* Interface functions : Getters */
-  RigidBody*               GetRigidBody() const;
-  const Transform&         GetLocal()     const;
-  const std::vector<Vec3>& GetVertices()  const;
-  const Vec3&              GetCenter()    const;
-  bool                     GetIsTrigger() const;
-  bool                     GetActive()    const;
-  float                    GetRadius()    const;
-  const Vec3&              GetExtents()   const;
-  const Vec3&              GetMin()       const;
-  const Vec3&              GetMax()       const;
+  RigidBody*               GetRigidBody()    const;
+  const Transform&         GetLocal()        const;
+  FCollider*               GetInternal()     const;
+  const std::vector<Vec3>& GetVertices()     const;
+  bool                     GetIsTrigger()    const;
+  bool                     GetActive()       const;
+  float                    GetFriction()     const;
+  float                    GetRestitution()  const;
+  float                    GetRadius()       const;
+  int32_t                  GetBroadphaseId() const;
+  const Vec3&              GetCenter()       const;
+  const Vec3&              GetExtents()      const;
+  const Vec3&              GetMin()          const;
+  const Vec3&              GetMax()          const;
 
   /* Interface functions : Setters */
+  void SetRigidBody(RigidBody* rigidBody);
+  void SetBroadphaseId(int32_t id);
   void SetExtents(const Vec3& extent);
   void SetCenter(const Vec3& center);
   void SetIsTrigger(bool isTrigger);
@@ -67,8 +74,11 @@ public:
 
 private:
   UniquePtr<FCollider> m_Internal;
+  Entity* m_Entity;
 
   Vec3 m_Extents; // unit extents for each axis of the box collider
   Vec3 m_Min;
   Vec3 m_Max;
+
+  uint32_t m_Id;
 };

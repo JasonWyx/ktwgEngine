@@ -1,9 +1,13 @@
 #include "cboxcollider.h"
 #include "boxcollider.h"
+#include "entity.h"
+#include "crigidbody.h"
+#include "rigidbody.h"
+#include "physics.h"
 #include <assert.h>
 
 CBoxCollider::CBoxCollider(Entity& owner, uint32_t id)
-  : Component{ owner, id }, m_Internal{ nullptr }
+  : Component{ typeid(CBoxCollider), owner, id }, m_Internal{ nullptr }
 {
 }
 
@@ -13,6 +17,9 @@ CBoxCollider::~CBoxCollider()
 
 void CBoxCollider::Initialize()
 {
+  RigidBody* rb = GetOwner()->GetComponent<CRigidBody>()->GetInternal();
+
+  m_Internal = Physics::GetInstance().CreateCollider(rb, GetId());
 }
 
 void CBoxCollider::Destroy()
@@ -65,6 +72,13 @@ bool CBoxCollider::GetActive() const
   assert(m_Internal);
 
   return m_Internal->GetActive();
+}
+
+void CBoxCollider::SetRigidBody(RigidBody* rigidBody)
+{
+  assert(m_Internal);
+
+  return m_Internal->SetRigidBody(rigidBody);
 }
 
 void CBoxCollider::SetSize(const Vec3& size)

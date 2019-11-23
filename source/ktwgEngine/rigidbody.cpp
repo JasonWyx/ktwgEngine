@@ -1,10 +1,18 @@
 #include "rigidbody.h"
 #include "aabb3.h"
+#include "boxcollider.h"
+#include "fcollider.h"
+#include "physics.h"
+#include "entity.h"
 
 RigidBody::RigidBody(Entity& entity)
-  : m_Owner{ &entity }, m_Type{ RBT_DYNAMIC }, m_Mass{ 1.0f }, m_InvMass{ 1.0f },
-    m_LinearDamping{}, m_AngularDamping{ 0.5f }, m_GravityScale{ 1.0f },
-    m_UseGravity{ true }, m_IslandId{ INVALID_ISLAND_ID }
+  : m_Owner{ &entity }, 
+    m_Type{ RBT_DYNAMIC }, 
+    m_Mass{ 1.0f }, 
+    m_InvMass{ 1.0f },
+    m_LinearDamping{}, m_AngularDamping{ 0.5f }, 
+    m_GravityScale{ 1.0f }, m_UseGravity{ true }, 
+    m_IslandId{ INVALID_ISLAND_ID }
 {
 }
 
@@ -34,17 +42,17 @@ void RigidBody::SynchroniseRigidBody()
     return;
 
   // If our old transform and new transform is different, we need to update
-  //if (transform_ == GetOwner()().GetTransform())
-  //  return;
+  if (m_Transform == GetOwner()->GetTransform())
+    return;
 
   // Synchronise with the owner transform
-  //transform_ = GetOwner()().GetTransform();
+  m_Transform = GetOwner()->GetTransform();
 
   // Update our sweep variable
-  //sweep_.worldCenterOld_ = sweep_.worldCenter_;
-  //sweep_.orientationOld_ = sweep_.orientation_;
-  //sweep_.worldCenter_ = transform_.GetPosition();
-  //sweep_.orientation_ = transform_.GetRotation();
+  m_Sweep.worldCenterOld_ = m_Sweep.worldCenter_;
+  m_Sweep.orientationOld_ = m_Sweep.orientation_;
+  m_Sweep.worldCenter_ = m_Transform.GetPosition();
+  m_Sweep.orientation_ = m_Transform.GetRotation();
 
   SetAwake(true);
 
@@ -54,38 +62,38 @@ void RigidBody::SynchroniseRigidBody()
 
 void RigidBody::SynchroniseTransform()
 {
-  // auto& transform = GetOwner()().GetTransform();
+  const Transform& transform = GetOwner()->GetTransform();
 
-  // auto update = sweep_.GetTransform(1.0f);
+  auto update = m_Sweep.GetTransform(1.0f);
 
   // Update Entity's transform
-  // transform.SetPosition(update.GetPosition());
-  // transform.SetRotation(update.GetRotation());
+  m_Transform.SetPosition(update.GetPosition());
+  m_Transform.SetRotation(update.GetRotation());
 
   // Update Body's transform
-  // transform_.SetPosition(update.GetPosition());
-  // transform_.SetRotation(update.GetRotation());
+  m_Transform.SetPosition(update.GetPosition());
+  m_Transform.SetRotation(update.GetRotation());
 }
 
 void RigidBody::SynchroniseProxies()
 {
-  //auto old_transform = sweep_.GetTransform(0.0f);
-  //auto new_transform = transform_;
-  //old_transform.SetScale(new_transform.GetScale());
-  //
-  //auto displacement = new_transform.GetPosition() - old_transform.GetPosition();
-  //
-  //auto broadphase = &world_->contactManager_.broadPhase_;
+  Transform old_transform = m_Sweep.GetTransform(0.0f);
+  Transform new_transform = m_Transform;
+  old_transform.SetScale(new_transform.GetScale());
+  
+  Vec3 displacement = new_transform.GetPosition() - old_transform.GetPosition();
+  
+  BroadPhase& broadphase = Physics::GetInstance().m_ContactManager.broadPhase_;
 
-  for (BoxCollider*& elem : m_Colliders)
+  for (UniquePtr<BoxCollider>& elem : m_Colliders)
   {
     AABB3 aabb1, aabb2;
-    // elem->ComputeAABB(aabb1, old_transform);
-    // elem->ComputeAABB(aabb2, new_transform);
+    elem->ComputeAABB(aabb1, old_transform);
+    elem->ComputeAABB(aabb2, new_transform);
 
-    auto aabb = Combine(aabb1, aabb2);
+    AABB3 aabb = Combine(aabb1, aabb2);
 
-    //broadphase->MoveProxy(dynamic_cast<BPFCollider*>(elem->GetInternal())->broadphaseID_, aabb, displacement);
+    broadphase.MoveProxy(elem->GetInternal()->GetBroadphaseId(), aabb, displacement);
   }
 }
 
@@ -98,66 +106,17 @@ bool RigidBody::CanCollide(RigidBody* body)
   // Same body cannot collide
   if (this == body)
     return false;
-
-  // Check all parents of this body, if parent is body, and this object is static, ignore
-  // HEntity parent = static_cast<const Entity&>(this->GetOwner()()).GetParent();
-  // while (parent.exist())
-  // {
-  //   auto bodyComp = parent().GetComponent<CRigidBody>();
-  // 
-  //   // Must have a Rigidbody component
-  //   if (bodyComp)
-  //   {
-  //     if (static_cast<BPRigidBody*>(bodyComp->GetInternal()) == b && this->GetBodyType() == eBTStatic)
-  //       return false;
-  //   }
-  // 
-  //   parent = static_cast<const Entity&>(parent()).GetParent();
-  // }
-
-  // Check all parents of given body
-  // parent = static_cast<const Entity&>(b->GetOwner()()).GetParent();
-  // while (parent.exist())
-  // {
-  //   auto bodyComp = parent().GetComponent<CRigidBody>();
-  // 
-  //   // Must have a Rigidbody component
-  //   if (bodyComp)
-  //   {
-  //     if (static_cast<BPRigidBody*>(bodyComp->GetInternal()) == this && b->GetBodyType() == eBTStatic)
-  //       return false;
-  //   }
-  // 
-  //   parent = static_cast<const Entity&>(parent()).GetParent();
-  // }
-  // 
-  // // Collision layers are set to not collide
-  // if (!(GetBPPhysics().layerCollisionMatrix_[this->GetLayerId()] & (1 << (MAX_COLLISION_LAYER - 1 - body->GetLayerId()))))
-  //   return false;
+  
+   // Collision layers are set to not collide
+   if (!(Physics::GetInstance().m_LayerCollisionMatrix[this->GetLayerId()] & (1 << (MAX_COLLISION_LAYER - 1 - body->GetLayerId()))))
+     return false;
 
   return true;
 }
 
-void RigidBody::SynchroniseProxies()
+inline uint32_t RigidBody::GetLayerId() const
 {
-  //auto old_transform = sweep_.GetTransform(0.0f);
-  //auto new_transform = transform_;
-  //old_transform.SetScale(new_transform.GetScale());
-
-  //auto displacement = new_transform.GetPosition() - old_transform.GetPosition();
-
-  //auto broadphase = &world_->contactManager_.broadPhase_;
-
-  for (BoxCollider*& elem : m_Colliders)
-  {
-    AABB3 aabb1, aabb2;
-    //elem->ComputeAABB(aabb1, old_transform);
-    //elem->ComputeAABB(aabb2, new_transform);
-
-    auto aabb = Combine(aabb1, aabb2);
-
-    //broadphase->MoveProxy(dynamic_cast<BPFCollider*>(elem->GetInternal())->broadphaseID_, aabb, displacement);
-  }
+  return m_Owner->GetCollisionLayer();
 }
 
 void RigidBody::SetBodyType(const RBType& type)
@@ -257,8 +216,8 @@ void RigidBody::SetActive(bool active)
 {
   m_Active = active;
 
-  //for (auto& collider : m_Colliders)
-  //  collider->SetActive(active);
+  for (auto& collider : m_Colliders)
+    collider->SetActive(active);
 }
 
 void RigidBody::SetAwake(bool flag)
@@ -275,10 +234,10 @@ void RigidBody::SetAwake(bool flag)
   {
     m_Flags &= RBF_AWAKE;
     m_SleepTime = 0.0f;
-    //force_.SetZero();
-    //torque_.SetZero();
-    //linearVelocity_.SetZero();
-    //angularVelocity_.SetZero();
+    m_Force.SetZero();
+    m_Torque.SetZero();
+    m_LinearVelocity.SetZero();
+    m_AngularVelocity.SetZero();
   }
 }
 
@@ -290,28 +249,75 @@ void RigidBody::SetIgnorePhysics(bool flag)
     m_Flags &= ~RBF_IGNOREPHYSICS;
 }
 
+BoxCollider* RigidBody::CreateCollider(uint32_t id)
+{
+  BoxCollider* collider = nullptr;
+
+  // Create the correct collider
+  m_Colliders.emplace_back(std::make_unique<BoxCollider>(id));
+  collider = m_Colliders.back().get();
+
+  ComputeInertia();
+
+  // Place collider in the broadphase
+  AABB3 aabb;
+  collider->ComputeAABB(aabb, m_Transform);
+  collider->SetBroadphaseId(Physics::GetInstance().m_ContactManager.broadPhase_.CreateProxy(aabb, collider));
+
+  // A new collider is created
+  Physics::GetInstance().m_IsNewCollider = true;
+
+  // collider->SetActive(true);
+
+  return collider;
+}
+
+void RigidBody::DestroyCollider(BoxCollider* collider)
+{
+  for (size_t i = 0U; i < m_Colliders.size(); ++i)
+  {
+    if (m_Colliders[i].get() == collider)
+    {
+      collider->DestroyContacts();
+
+      if (collider->GetBroadphaseId() != -1)
+      {
+        Physics::GetInstance().m_ContactManager.broadPhase_.DestroyProxy(collider->GetBroadphaseId());
+        collider->SetBroadphaseId(-1);
+      }
+
+      m_Colliders[i].release();
+      m_Colliders.erase(m_Colliders.begin() + i);
+      break;
+    }
+  }
+
+  // Need to recompute inertia
+  ComputeInertia();
+}
+
 void RigidBody::DestroyContacts()
 {
-  //for (auto& colliders : m_Colliders)
-  //  colliders->DestroyContacts();
+  for (auto& colliders : m_Colliders)
+    colliders->DestroyContacts();
 }
 
 void RigidBody::ComputeInertia()
 {
   // No need to compute inertia when there's no collider
-  //if (m_Colliders_.empty())
-  //  return;
+  if (m_Colliders.empty())
+    return;
 
-  //inertia_.SetZero();
-  //invInertia_.SetZero();
-  //worldInvInertia_.SetZero();
-  //sweep_.localCenter_.SetZero();
+  m_Inertia.SetZero();
+  m_InvInertia.SetZero();
+  m_WorldInvInertia.SetZero();
+  m_Sweep.localCenter_.SetZero();
 
   // Static body has no mass and inertia
   if (m_Type == RBT_STATIC)
   {
-    //sweep_.worldCenterOld_ = sweep_.worldCenter_ = transform_.GetPosition();
-    //sweep_.orientationOld_ = sweep_.orientation_;
+    m_Sweep.worldCenterOld_ = m_Sweep.worldCenter_ = m_Transform.GetPosition();
+    m_Sweep.orientationOld_ = m_Sweep.orientation_;
     m_InvMass = m_Mass = 0.0f;
     return;
   }
@@ -320,74 +326,73 @@ void RigidBody::ComputeInertia()
     m_Mass = 1.0f;
 
   // Compute center of mass
-  //Vec3 center{};
+  Vec3 center{};
 
-  /*for (auto& elem : m_Colliders)
+  for (auto& elem : m_Colliders)
   {
     MassData massData;
     elem->ComputeMassData(massData);
 
-    center += massData.mass_ * massData.center_;
-    inertia_ += massData.inertia_;
-  }*/
-
+    center += massData.m_Mass * massData.m_Center;
+    m_Inertia += massData.m_Inertia;
+  }
 
   // Compute local center of mass
   m_InvMass = 1.0f / m_Mass;
-  //center *= invMass_;
+  center *= m_InvMass;
 
-  //Matrix3 identity{};
-  //identity.SetIdentity();
+  Matrix3 identity{};
+  identity.SetIdentity();
 
-  //inertia_ -= (identity * Dot(center, center) - OuterProductMat3(center, center)) * mass_;
-  //invInertia_ = Inverse(inertia_);
-  //worldInvInertia_ = RotateToFrame(invInertia_, transform_.GetRotation().ToMat33());
+  m_Inertia -= (identity * Dot(center, center) - OuterProductMat3(center, center)) * m_Mass;
+  m_InvInertia = Inverse(m_Inertia);
+  m_WorldInvInertia = RotateToFrame(m_InvInertia, m_Transform.GetRotation().ToMat33());
 
   // Fix rotation.
-  //if (m_Flags & RBF_FIXEDROTATIONX)
-  //{
-    //invInertia_.m_[1][1] = 0.0f;
-    //invInertia_.m_[2][1] = 0.0f;
-    //invInertia_.m_[1][2] = 0.0f;
-    //invInertia_.m_[2][2] = 0.0f;
+  if (m_Flags & RBF_FIXEDROTATIONX)
+  {
+    m_InvInertia.m_[1][1] = 0.0f;
+    m_InvInertia.m_[2][1] = 0.0f;
+    m_InvInertia.m_[1][2] = 0.0f;
+    m_InvInertia.m_[2][2] = 0.0f;
 
-    //worldInvInertia_.m_[1][1] = 0.0f;
-    //worldInvInertia_.m_[2][1] = 0.0f;
-    //worldInvInertia_.m_[1][2] = 0.0f;
-    //worldInvInertia_.m_[2][2] = 0.0f;
-  //}
+    m_WorldInvInertia.m_[1][1] = 0.0f;
+    m_WorldInvInertia.m_[2][1] = 0.0f;
+    m_WorldInvInertia.m_[1][2] = 0.0f;
+    m_WorldInvInertia.m_[2][2] = 0.0f;
+  }
 
-  //if (m_Flags & RBF_FIXEDROTATIONY)
-  //{
-    //invInertia_.m_[0][0] = 0.0f;
-    //invInertia_.m_[0][2] = 0.0f;
-    //invInertia_.m_[2][0] = 0.0f;
-    //invInertia_.m_[2][2] = 0.0f;
+  if (m_Flags & RBF_FIXEDROTATIONY)
+  {
+    m_InvInertia.m_[0][0] = 0.0f;
+    m_InvInertia.m_[0][2] = 0.0f;
+    m_InvInertia.m_[2][0] = 0.0f;
+    m_InvInertia.m_[2][2] = 0.0f;
 
-    //worldInvInertia_.m_[0][0] = 0.0f;
-    //worldInvInertia_.m_[0][2] = 0.0f;
-    //worldInvInertia_.m_[2][0] = 0.0f;
-    //worldInvInertia_.m_[2][2] = 0.0f;
-  //}
+    m_WorldInvInertia.m_[0][0] = 0.0f;
+    m_WorldInvInertia.m_[0][2] = 0.0f;
+    m_WorldInvInertia.m_[2][0] = 0.0f;
+    m_WorldInvInertia.m_[2][2] = 0.0f;
+  }
 
-  //if (m_Flags & RBF_FIXEDROTATIONZ)
-  //{
-    //invInertia_.m_[0][0] = 0.0f;
-    //invInertia_.m_[0][1] = 0.0f;
-    //invInertia_.m_[1][0] = 0.0f;
-    //invInertia_.m_[1][1] = 0.0f;
+  if (m_Flags & RBF_FIXEDROTATIONZ)
+  {
+    m_InvInertia.m_[0][0] = 0.0f;
+    m_InvInertia.m_[0][1] = 0.0f;
+    m_InvInertia.m_[1][0] = 0.0f;
+    m_InvInertia.m_[1][1] = 0.0f;
 
-    //worldInvInertia_.m_[0][0] = 0.0f;
-    //worldInvInertia_.m_[0][1] = 0.0f;
-    //worldInvInertia_.m_[1][0] = 0.0f;
-    //worldInvInertia_.m_[1][1] = 0.0f;
-  //}
+    m_WorldInvInertia.m_[0][0] = 0.0f;
+    m_WorldInvInertia.m_[0][1] = 0.0f;
+    m_WorldInvInertia.m_[1][0] = 0.0f;
+    m_WorldInvInertia.m_[1][1] = 0.0f;
+  }
 
   // Move center of mass.
-  //sweep_.localCenter_ = Vec3{ 0,0,0 };
-  //sweep_.worldCenterOld_ = sweep_.worldCenter_;
-  //sweep_.worldCenter_ = Multiply(transform_, sweep_.localCenter_);
+  m_Sweep.localCenter_ = Vec3{ 0,0,0 };
+  m_Sweep.worldCenterOld_ = m_Sweep.worldCenter_;
+  m_Sweep.worldCenter_ = Multiply(m_Transform, m_Sweep.localCenter_);
 
   // Update center of mass velocity.
-  //linearVelocity_ += Cross(angularVelocity_, sweep_.worldCenter_ - sweep_.worldCenterOld_);
+  m_LinearVelocity += Cross(m_AngularVelocity, m_Sweep.worldCenter_ - m_Sweep.worldCenterOld_);
 }

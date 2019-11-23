@@ -6,6 +6,8 @@
 #include "physicsconstants.h"
 #include "vector3.h"
 #include "matrix3.h"
+#include "transform.h"
+#include "sweep.h"
 
 class Entity;
 class BoxCollider;
@@ -25,6 +27,9 @@ class RigidBody
 {
   template <typename T>
   using container_t = std::vector<T>;
+
+  template <typename T>
+  using UniquePtr = std::unique_ptr<T>;
 
   friend class ContactListener;
 
@@ -48,25 +53,26 @@ public:
   bool CanCollide(RigidBody* body);
 
   /* Getters */
-  inline Entity*                          GetOwner()           const { return m_Owner; }
-  inline const container_t<BoxCollider*>& GetColliders()       const { return m_Colliders; }
-  inline const RBType&                    GetBodyType()        const { return m_Type; }
-  inline const Transform&                 GetTransform()       const { return m_Transform; }
-  inline const Vec3&                      GetForce()           const { return m_Force; }
-  inline const Vec3&                      GetTorque()          const { return m_Torque; }
-  inline const Vec3&                      GetLinearVelocity()  const { return m_LinearVelocity; }
-  inline const Vec3&                      GetAngularVelocity() const { return m_AngularVelocity; }
-  inline float                            GetMass()            const { return m_Mass; }
-  inline float                            GetLinearDamping()   const { return m_LinearDamping; }
-  inline float                            GetAngularDamping()  const { return m_AngularDamping; }
-  inline float                            GetGravityScale()    const { return m_GravityScale; }
-  inline bool                             GetUseGravity()      const { return m_UseGravity; }
-  inline bool                             GetFreezeRotationX() const { return m_Flags & RBF_FIXEDROTATIONX; }
-  inline bool                             GetFreezeRotationY() const { return m_Flags & RBF_FIXEDROTATIONY; }
-  inline bool                             GetFreezeRotationZ() const { return m_Flags & RBF_FIXEDROTATIONZ; }
-  inline bool                             GetActive()          const { return m_Active; }
-  inline bool                             GetIgnorePhysics()   const { return m_Flags & RBF_IGNOREPHYSICS; }
-  inline bool                             IsAwake()            const { return m_Flags & RBF_AWAKE; }
+  inline Entity*                                    GetOwner()           const { return m_Owner; }
+  inline const container_t<UniquePtr<BoxCollider>>& GetColliders()       const { return m_Colliders; }
+  inline const RBType&                              GetBodyType()        const { return m_Type; }
+  inline const Transform&                           GetTransform()       const { return m_Transform; }
+  inline const Vec3&                                GetForce()           const { return m_Force; }
+  inline const Vec3&                                GetTorque()          const { return m_Torque; }
+  inline const Vec3&                                GetLinearVelocity()  const { return m_LinearVelocity; }
+  inline const Vec3&                                GetAngularVelocity() const { return m_AngularVelocity; }
+  inline float                                      GetMass()            const { return m_Mass; }
+  inline float                                      GetLinearDamping()   const { return m_LinearDamping; }
+  inline float                                      GetAngularDamping()  const { return m_AngularDamping; }
+  inline float                                      GetGravityScale()    const { return m_GravityScale; }
+  inline uint32_t                                   GetLayerId()         const;
+  inline bool                                       GetUseGravity()      const { return m_UseGravity; }
+  inline bool                                       GetFreezeRotationX() const { return m_Flags & RBF_FIXEDROTATIONX; }
+  inline bool                                       GetFreezeRotationY() const { return m_Flags & RBF_FIXEDROTATIONY; }
+  inline bool                                       GetFreezeRotationZ() const { return m_Flags & RBF_FIXEDROTATIONZ; }
+  inline bool                                       GetActive()          const { return m_Active; }
+  inline bool                                       GetIgnorePhysics()   const { return m_Flags & RBF_IGNOREPHYSICS; }
+  inline bool                                       IsAwake()            const { return m_Flags & RBF_AWAKE; }
 
   /* Setters */
   void SetBodyType(const RBType& type);
@@ -87,10 +93,9 @@ public:
   void SetIgnorePhysics(bool flag);
 
 private:
-  // SharedPtr<BoxCollider> CreateCollider(ColliderType type, size_t id, uint32_t meshId = 0) override;
-  //void       DestroyCollider(ICollider* collider)                               override;
-  void DestroyContacts();
-  //void       DeleteCollider(ICollider* collider);
+  BoxCollider* CreateCollider(uint32_t id);
+  void         DestroyCollider(BoxCollider* collider);
+  void         DestroyContacts();
 
   void ComputeInertia();
 
@@ -124,13 +129,13 @@ private:
 
   bool m_UseGravity;      // Query if gravity should be applied
 
-  // Sweep sweep_;        // A barycentric formula to compute Time Of Impact collisions
+  Sweep m_Sweep;        // A barycentric formula to compute Time Of Impact collisions
 
   uint32_t m_IslandId;    // Index of body in the island
   uint32_t m_Flags;       // Body Flags
   float    m_SleepTime;   // Sleep time
 
-  container_t<BoxCollider*> m_Colliders; // Vector of colliders/shapes
+  container_t<UniquePtr<BoxCollider>> m_Colliders; // Vector of colliders/shapes
 
   bool m_Active;
 };

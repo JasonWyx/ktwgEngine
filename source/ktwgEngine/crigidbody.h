@@ -25,20 +25,21 @@ public:
   void SynchroniseRigidBody();
 
   /* Getters */
-  const RBType& GetBodyType()       const;
-  const Vec3&  GetForce()           const;
-  const Vec3&  GetTorque()          const;
-  const Vec3&  GetLinearVelocity()  const;
-  const Vec3&  GetAngularVelocity() const;
-  float        GetMass()            const;
-  float        GetLinearDamping()   const;
-  float        GetAngularDamping()  const;
-  float        GetGravityScale()    const;
-  bool         GetUseGravity()      const;
-  bool         GetFreezeRotationX() const;
-  bool         GetFreezeRotationY() const;
-  bool         GetFreezeRotationZ() const;
-  bool         GetIgnorePhysics()   const;
+  RigidBody*    GetInternal()        const;
+  const RBType& GetBodyType()        const;
+  const Vec3&   GetForce()           const;
+  const Vec3&   GetTorque()          const;
+  const Vec3&   GetLinearVelocity()  const;
+  const Vec3&   GetAngularVelocity() const;
+  float         GetMass()            const;
+  float         GetLinearDamping()   const;
+  float         GetAngularDamping()  const;
+  float         GetGravityScale()    const;
+  bool          GetUseGravity()      const;
+  bool          GetFreezeRotationX() const;
+  bool          GetFreezeRotationY() const;
+  bool          GetFreezeRotationZ() const;
+  bool          GetIgnorePhysics()   const;
 
   /* Setters */
   void SetBodyType(RBType type);

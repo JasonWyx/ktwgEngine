@@ -61,6 +61,13 @@
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="collisionfunctions.cpp" />
     <ClCompile Include="transform.cpp" />
+    <ClCompile Include="collisionevent.cpp" />
+    <ClCompile Include="contactdispatcher.cpp" />
+    <ClCompile Include="broadphase.cpp" />
+    <ClCompile Include="contactmanager.cpp" />
+    <ClCompile Include="raycastcallbacks.cpp" />
+    <ClCompile Include="island.cpp" />
+    <ClCompile Include="contactsolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -144,5 +151,17 @@
     <ClInclude Include="collisionfunctions.h" />
     <ClInclude Include="sat.h" />
     <ClInclude Include="transform.h" />
+    <ClInclude Include="collisioninfo.h" />
+    <ClInclude Include="collisionevent.h" />
+    <ClInclude Include="contactdispatcher.h" />
+    <ClInclude Include="typeinfo.h" />
+    <ClInclude Include="customlist.h" />
+    <ClInclude Include="contactmanager.h" />
+    <ClInclude Include="broadphase.h" />
+    <ClInclude Include="raycastcallbacks.h" />
+    <ClInclude Include="sweep.h" />
+    <ClInclude Include="triggerinteraction.h" />
+    <ClInclude Include="island.h" />
+    <ClInclude Include="contactsolver.h" />
   </ItemGroup>
 </Project>

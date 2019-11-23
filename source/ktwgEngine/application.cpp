@@ -11,6 +11,7 @@
 #include <fstream>
 #include "time.h"
 #include "inputsystem.h"
+#include "physics.h"
 
 #include "scene.h"
 
@@ -23,6 +24,10 @@ void Application::InitializeInternal()
 
 void Application::ShutdownInternal()
 {
+  Scene::Shutdown();
+
+  Physics::Shutdown();
+
   InputSystem::Shutdown();
 
   D3D11RenderWindowManager::Shutdown();
@@ -94,6 +99,8 @@ void Application::InitializeCoreSystems()
   D3D11RenderWindowManager::Initialize();
 
   InputSystem::Initialize(::GetCapture());
+
+  Physics::Initialize();
 }
 
 void Application::InitializeResources()

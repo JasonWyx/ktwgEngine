@@ -99,9 +99,9 @@ struct Contact
 
   enum ContactFlag
   {
-    eCFColliding = 0x1, // Set this when two contact collides
-    eCFWasColliding = 0x2, // Set this when two object end collision
-    eCFIslandFlag = 0x4  // Set this to mark that contact is in an island
+    CF_COLLIDING = 0x1, // Set this when two contact collides
+    CF_WASCOLLIDING = 0x2, // Set this when two object end collision
+    CF_ISLANDFLAG = 0x4  // Set this to mark that contact is in an island
   };
 
   // Contains a pair of colliders in contact and a pair of edge owned by the colliders representing linked contacts via edge

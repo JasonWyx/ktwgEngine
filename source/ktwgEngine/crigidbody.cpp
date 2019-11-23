@@ -1,8 +1,9 @@
 #include "crigidbody.h"
 #include "physics.h"
+#include "entity.h"
 
 CRigidBody::CRigidBody(Entity& entity, uint32_t id)
-  : Component{ entity, id }, m_Internal{ nullptr }
+  : Component{ typeid(CRigidBody), entity, id }, m_Internal{ nullptr }
 {
 }
 
@@ -17,6 +18,23 @@ void CRigidBody::Initialize()
 
 void CRigidBody::Destroy()
 {
+  Entity* entity = GetOwner();
+
+  // copy list of components
+  const std::vector<Component*>& components = entity->GetComponents();
+
+  // delete all colliders
+  for (Component* const & c : components)
+  {
+    if (c->GetType() == CT_BOXCOLLIDER)
+      entity->RemoveComponent(c);
+  }
+
+  if (m_Internal)
+  {
+    Physics::GetInstance().DestroyRigidBody(m_Internal);
+    m_Internal = nullptr;
+  }
 }
 
 void CRigidBody::SetActive(bool active)
@@ -40,6 +58,11 @@ void CRigidBody::SynchroniseRigidBody()
   assert(m_Internal);
 
   m_Internal->SynchroniseRigidBody();
+}
+
+RigidBody* CRigidBody::GetInternal() const
+{
+  return m_Internal;
 }
 
 const RBType& CRigidBody::GetBodyType() const

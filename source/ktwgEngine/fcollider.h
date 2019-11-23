@@ -4,6 +4,8 @@
 #include <vector>
 #include "vector3.h"
 #include "transform.h"
+#include "customlist.h"
+#include "contact.h"
 
 class RigidBody;
 class BoxCollider;
@@ -13,6 +15,9 @@ class FCollider
 {
   template <typename T>
   using container_t = std::vector<T>;
+
+  friend class Physics;
+  friend class ContactManager;
 
 public:
   FCollider();
@@ -24,6 +29,9 @@ public:
   void SetAsBox();
   void UpdateBox(const Vec3& extents);
   void UpdateBox(const Transform& local, const Vec3& extents);
+
+  void AddContactEdge(ContactEdge* contactEdge);
+  void DestroyContacts();
 
   inline const container_t<Vec3>&  GetVertices()     const { return m_Vertices; }
   inline const container_t<Plane>& GetPlanes()       const { return m_Planes; }
@@ -61,5 +69,5 @@ private:
   bool         m_IsTrigger;
   bool         m_Active;
   
-  // BPList<BPContactEdge> contactEdgeList_; // List of contact edge made with other colliders
+  List<ContactEdge> m_ContactEdgeList; // List of contact edge made with other colliders
 };

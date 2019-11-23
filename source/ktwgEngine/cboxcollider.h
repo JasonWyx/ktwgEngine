@@ -5,6 +5,7 @@
 #include "vector3.h"
 
 class BoxCollider;
+class RigidBody;
 
 class CBoxCollider final : public Component
 {
@@ -26,6 +27,7 @@ public:
   bool GetIsTrigger()  const;
   bool GetActive()     const;
 
+  void SetRigidBody(RigidBody* rigidBody);
   void SetSize(const Vec3& size);
   void SetCenter(const Vec3& center);
   void SetIsTrigger(bool isTrigger);

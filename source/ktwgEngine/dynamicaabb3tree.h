@@ -136,7 +136,7 @@ inline void DynamicAABB3Tree::QueryAABB(T* callback, const AABB3& aabb) const
   // Traverse the tree to query if the given aabb has any potential collision based on the fat AABBs 
   while (sp)
   {
-    LOGASSERT(sp < stack_capacity, "Stack too small");
+    assert(sp < stack_capacity);
 
     auto id = stack[--sp];
 
