@@ -34,6 +34,18 @@ void HypeSimpleMesh::Regenerate()
   }
 }
 
+void HypeSimpleMesh::Draw()
+{
+  D3D11Context& context = D3D11RenderAPI::GetInstance().GetDevice()->GetImmediateContext();
+  context.AddVertexBuffer(m_VertexBuffer, sizeof(Vertex), 0);
+  context.AddVertexBuffer(m_VertexBuffer, sizeof(Vertex), sizeof(Vec3));
+  context.FlushVertexBuffers();
+
+  context.SetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+  context.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_NumIndices, 0U, 0);
+}
+
 void HypeSimpleMesh::ClearResources()
 {
   delete m_VertexBuffer;
@@ -146,6 +158,7 @@ void HypeSimpleMesh::CreateCubeResources()
       indices.emplace_back(planeIndices[j] + numVertices);
     }
   }
+  InitializeHardwareBuffers(positions, normals, indices);
 }
 
 void HypeSimpleMesh::CreateSphereResources()
@@ -186,6 +199,7 @@ void HypeSimpleMesh::CreateSphereResources()
   }
 
   CreateIndexBuffer(m_NumStacks, m_NumSlices, indices);
+  InitializeHardwareBuffers(positions, normals, indices);
 }
 
 void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& positions, const std::vector<Vec3>& normals, const std::vector<uint32_t>& indices)
@@ -204,4 +218,6 @@ void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& position
   D3D11Device* device = D3D11RenderAPI::GetInstance().GetDevice();
   m_VertexBuffer = new D3D11HardwareBuffer{device, D3D11_BT_VERTEX, D3D11_USAGE_DEFAULT, numVertices, sizeof(Vertex), false, false, false, false};
   m_IndexBuffer = new D3D11HardwareBuffer{device, D3D11_BT_INDEX, D3D11_USAGE_DEFAULT, numIndices, sizeof(uint32_t), false, false, false, false};
+
+  m_NumIndices = numIndices;
 }

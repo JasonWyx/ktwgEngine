@@ -27,6 +27,8 @@ public:
   
   void Regenerate();
 
+  void Draw() override;
+
 private:
   static void CreateIndexBuffer(uint32_t stacks, uint32_t slices, std::vector<uint32_t>& indices);
   void ClearResources();
@@ -40,4 +42,6 @@ private:
   
   uint32_t m_NumStacks;
   uint32_t m_NumSlices;
+
+  uint32_t m_NumIndices;
 };

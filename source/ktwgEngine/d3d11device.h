@@ -9,6 +9,7 @@
 class D3D11Texture;
 class D3D11VertexShader;
 class D3D11PixelShader;
+class D3D11HardwareBuffer;
 
 class D3D11Context
 {
@@ -18,16 +19,31 @@ public:
 
   ComPtr<ID3D11DeviceContext>& GetContext() { return m_Context; }
   const ComPtr<ID3D11DeviceContext>& GetContext() const { return m_Context; }
+
   void AddRenderTarget(D3D11Texture* renderTarget, DXGI_FORMAT format);
   void SetDepthStencil(D3D11Texture* depthStencil, DXGI_FORMAT format);
   void FlushRenderTargets();
 
+  void AddVertexBuffer(D3D11HardwareBuffer* vertexBuffer, uint32_t stride, uint32_t offset);
+  void FlushVertexBuffers();
+
+  void SetIndexBuffer(D3D11HardwareBuffer* indexBuffer, DXGI_FORMAT format, uint32_t offset);
+
   void Set(D3D11VertexShader* vs);
   void Set(D3D11PixelShader* ps);
+
+  void DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIndices, uint32_t startIndexLocation, int32_t baseVertexLocation);
 
 private:
   std::vector<ID3D11RenderTargetView*>    m_RenderTargets;
   ID3D11DepthStencilView*                 m_DepthStencil;
+
+  std::vector<ID3D11Buffer*>              m_VertexBuffers;
+  std::vector<UINT>                       m_VertexStrides;
+  std::vector<UINT>                       m_VertexOffsets;
+
+  ID3D11Buffer*                           m_IndexBuffer;
+
   ComPtr<ID3D11DeviceContext>             m_Context;
 };
 

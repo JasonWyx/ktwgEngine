@@ -1,6 +1,7 @@
 #include "d3d11device.h"
 #include "d3d11texture.h"
 #include "d3d11shader.h"
+#include "d3d11hardwarebuffer.h"
 #include <vector>
 
 #if _DEBUG
@@ -152,6 +153,26 @@ void D3D11Context::FlushRenderTargets()
   m_DepthStencil = nullptr;
 }
 
+void D3D11Context::AddVertexBuffer(D3D11HardwareBuffer * vertexBuffer, uint32_t stride, uint32_t offset)
+{
+  m_VertexBuffers.emplace_back(vertexBuffer->GetBuffer());
+  m_VertexStrides.emplace_back(stride);
+  m_VertexOffsets.emplace_back(offset);
+}
+
+void D3D11Context::FlushVertexBuffers()
+{
+  m_Context->IASetVertexBuffers(0, (UINT)m_VertexBuffers.size(), m_VertexBuffers.data(), m_VertexStrides.data(), m_VertexOffsets.data());
+  m_VertexBuffers.clear();
+  m_VertexStrides.clear();
+  m_VertexOffsets.clear();
+}
+
+void D3D11Context::SetIndexBuffer(D3D11HardwareBuffer * indexBuffer, DXGI_FORMAT format, uint32_t offset)
+{
+  m_Context->IASetIndexBuffer(indexBuffer->GetBuffer(), format, offset);
+}
+
 void D3D11Context::Set(D3D11VertexShader * vs)
 {
   m_Context->VSSetShader(vs->GetShader().Get(), NULL, 0);
@@ -160,4 +181,10 @@ void D3D11Context::Set(D3D11VertexShader * vs)
 void D3D11Context::Set(D3D11PixelShader * ps)
 {
   m_Context->PSSetShader(ps->GetShader().Get(), NULL, 0);
+}
+
+void D3D11Context::DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIndices, uint32_t startIndexLocation, int32_t baseVertexLocation)
+{
+  m_Context->IASetPrimitiveTopology(topology);
+  m_Context->DrawIndexed(numIndices, startIndexLocation, baseVertexLocation);
 }
