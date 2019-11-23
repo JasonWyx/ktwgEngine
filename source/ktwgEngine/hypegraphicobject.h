@@ -1,6 +1,6 @@
 #pragma once
 
-class HypeGraphicsObject
+class HypeGraphicObject
 {
 public:
   virtual void Draw() = 0;

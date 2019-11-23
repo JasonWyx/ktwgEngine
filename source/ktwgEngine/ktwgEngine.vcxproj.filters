@@ -52,6 +52,7 @@
     <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
     <ClCompile Include="hypesimplemesh.cpp" />
     <ClCompile Include="d3d11inputlayout.cpp" />
+    <ClCompile Include="crenderable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -124,9 +125,9 @@
     <ClInclude Include="d3d11staticresources.h" />
     <ClInclude Include="Shaders\cpp\SimpleForwardInputs.h" />
     <ClInclude Include="d3d11shader.hpp" />
-    <ClInclude Include="hyperenderable.h" />
-    <ClInclude Include="hypegraphicsobject.h" />
     <ClInclude Include="hypesimplemesh.h" />
     <ClInclude Include="d3d11inputlayout.h" />
+    <ClInclude Include="crenderable.h" />
+    <ClInclude Include="hypegraphicobject.h" />
   </ItemGroup>
 </Project>

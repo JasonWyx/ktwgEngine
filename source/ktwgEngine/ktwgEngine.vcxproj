@@ -92,6 +92,7 @@
     <ClCompile Include="component.cpp" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="connectionmanager.h" />
+    <ClCompile Include="crenderable.cpp" />
     <ClCompile Include="d3d11device.cpp" />
     <ClCompile Include="d3d11hardwarebuffer.cpp" />
     <ClCompile Include="d3d11inputlayout.cpp" />
@@ -176,8 +177,8 @@
     <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="d3d11shader.hpp" />
-    <ClInclude Include="hypegraphicsobject.h" />
-    <ClInclude Include="hyperenderable.h" />
+    <ClInclude Include="hypegraphicobject.h" />
+    <ClInclude Include="crenderable.h" />
     <ClInclude Include="hypesimplemesh.h" />
     <ClInclude Include="d3d11inputlayout.h" />
     <ClInclude Include="Shaders\cpp\ShaderCommon.h" />

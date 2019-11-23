@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hypegraphicsobject.h"
+#include "hypegraphicobject.h"
 #include "d3d11hardwarebuffer.h"
 #include "vector3.h"
 #include "quaternion.h"
@@ -12,7 +12,7 @@ enum SimpleMeshShape
   SPHERE
 };
 
-class HypeSimpleMesh : public HypeGraphicsObject
+class HypeSimpleMesh : public HypeGraphicObject
 {
   struct Vertex
   {
