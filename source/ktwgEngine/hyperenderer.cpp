@@ -2,7 +2,13 @@
 
 #include "Shaders/cpp/ShaderCommon.h"
 #include "d3d11shader.h"
+#include "d3d11staticresources.h"
 #include <fstream>
+
+DEFINE_STATIC_TEXTURE(FinalColorOutput);
+DEFINE_STATIC_TEXTURE(MainRenderDepthStencil);
+DECLARE_VS(SimpleForwardVS);
+DECLARE_PS(SimpleForwardPS);
 
 void HypeRenderer::LoadSimpleForward()
 {
@@ -12,10 +18,10 @@ void HypeRenderer::LoadSimpleForward()
   desc.m_Entry = "Shade_Vertex";
   desc.m_Source = std::string{ std::istreambuf_iterator<char>{f}, std::istreambuf_iterator<char>{} };
   desc.m_Type = VS;
-  SimpleForwardVS = D3D11Shader::CreateShader(desc);
+  SimpleForwardVS = CREATE_VS(desc);
   desc.m_Entry = "Shade_Pixel";
   desc.m_Type = PS;
-  SimpleForwardPS = D3D11Shader::CreateShader(desc);
+  SimpleForwardPS = CREATE_PS(desc);
 }
 
 void HypeRenderer::UnloadSimpleForward()

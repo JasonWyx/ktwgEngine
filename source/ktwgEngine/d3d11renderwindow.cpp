@@ -112,7 +112,7 @@ void D3D11RenderWindow::CreateSizeDependentResources()
 
 void D3D11RenderWindow::DestroySizeDependentResources()
 {
-  m_Device->GetImmediateContext()->OMSetRenderTargets(0, 0, 0);
+  m_Device->GetImmediateContext().GetContext()->OMSetRenderTargets(0, 0, 0);
   m_RenderTargetView.Reset();
   m_Backbuffer.Reset();
 }
@@ -131,7 +131,7 @@ void D3D11RenderWindow::Resize(uint32_t width, uint32_t height)
 
   CreateSizeDependentResources();
 
-  m_Device->GetImmediateContext()->OMSetRenderTargets(1, m_RenderTargetView.GetAddressOf(), NULL);
+  m_Device->GetImmediateContext().GetContext()->OMSetRenderTargets(1, m_RenderTargetView.GetAddressOf(), NULL);
 
   m_Window->Resize(width, height);
 
@@ -142,7 +142,7 @@ void D3D11RenderWindow::Resize(uint32_t width, uint32_t height)
   viewport.MaxDepth = 1.f;
   viewport.TopLeftX = 0.f;
   viewport.TopLeftY = 0.f;
-  m_Device->GetImmediateContext()->RSSetViewports(1, &viewport);
+  m_Device->GetImmediateContext().GetContext()->RSSetViewports(1, &viewport);
 }
 
 void D3D11RenderWindow::Move(uint32_t left, uint32_t top)

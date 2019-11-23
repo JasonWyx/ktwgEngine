@@ -93,7 +93,7 @@ void D3D11HardwareBuffer::Write(uint32_t offset, uint32_t length, const void * s
 
     if (m_Flags.m_BufferType == D3D11_BT_CONSTANT)
     {
-      device->GetImmediateContext()->UpdateSubresource(m_Resource.Get(), 0, nullptr, src, 0, 0);
+      device->GetImmediateContext().GetContext()->UpdateSubresource(m_Resource.Get(), 0, nullptr, src, 0, 0);
     }
     else
     {
@@ -105,7 +105,7 @@ void D3D11HardwareBuffer::Write(uint32_t offset, uint32_t length, const void * s
       dstBox.front = 0;
       dstBox.back = 1;
 
-      device->GetImmediateContext()->UpdateSubresource(m_Resource.Get(), 0, &dstBox, src, 0, 0);
+      device->GetImmediateContext().GetContext()->UpdateSubresource(m_Resource.Get(), 0, &dstBox, src, 0, 0);
 
       if (device->HasError())
       {
@@ -122,7 +122,7 @@ void D3D11HardwareBuffer::Copy(D3D11HardwareBuffer * src, uint32_t srcOffset, ui
   // If copying two same sized buffers
   if (srcOffset == 0 && dstOffset == 0 && length == m_BufferSize && length == src->m_BufferSize)
   {
-    device->GetImmediateContext()->CopyResource(m_Resource.Get(), static_cast<D3D11HardwareBuffer*>(src)->m_Resource.Get());
+    device->GetImmediateContext().GetContext()->CopyResource(m_Resource.Get(), static_cast<D3D11HardwareBuffer*>(src)->m_Resource.Get());
   }
   else
   {
@@ -134,7 +134,7 @@ void D3D11HardwareBuffer::Copy(D3D11HardwareBuffer * src, uint32_t srcOffset, ui
     srcBox.front = 0;
     srcBox.back = 1;
 
-    device->GetImmediateContext()->CopySubresourceRegion(m_Resource.Get(), 0, dstOffset, 0, 0, static_cast<D3D11HardwareBuffer*>(src)->m_Resource.Get(), 0, &srcBox);
+    device->GetImmediateContext().GetContext()->CopySubresourceRegion(m_Resource.Get(), 0, dstOffset, 0, 0, static_cast<D3D11HardwareBuffer*>(src)->m_Resource.Get(), 0, &srcBox);
   }
 }
 
@@ -192,7 +192,7 @@ void * D3D11HardwareBuffer::Map(uint32_t offset, uint32_t length, GPU_LOCK_OPTIO
     subResource.pData = nullptr;
 
     D3D11Device* device = D3D11RenderAPI::GetInstance().GetDevice();
-    HRESULT hr = device->GetImmediateContext()->Map(m_Resource.Get(), 0, mapType, 0, &subResource);
+    HRESULT hr = device->GetImmediateContext().GetContext()->Map(m_Resource.Get(), 0, mapType, 0, &subResource);
     if (FAILED(hr))
     {
       auto msg = device->GetErrors();
@@ -237,6 +237,6 @@ void D3D11HardwareBuffer::Unmap()
   }
   else
   {
-    D3D11RenderAPI::GetInstance().GetDevice()->GetImmediateContext()->Unmap(m_Resource.Get(), 0);
+    D3D11RenderAPI::GetInstance().GetDevice()->GetImmediateContext().GetContext()->Unmap(m_Resource.Get(), 0);
   }
 }

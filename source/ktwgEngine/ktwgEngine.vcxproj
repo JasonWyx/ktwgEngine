@@ -94,6 +94,7 @@
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="d3d11device.cpp" />
     <ClCompile Include="d3d11hardwarebuffer.cpp" />
+    <ClCompile Include="d3d11inputlayout.cpp" />
     <ClCompile Include="d3d11renderapi.cpp" />
     <ClCompile Include="d3d11renderwindow.cpp" />
     <ClCompile Include="d3d11renderwindowmanager.cpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="ghostobject.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="hypesimpleforwardrendernode.cpp" />
+    <ClCompile Include="hypesimplemesh.cpp" />
     <ClCompile Include="imguimanager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -119,6 +121,7 @@
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -145,6 +148,7 @@
     <ClInclude Include="d3d11renderwindowmanager.h" />
     <ClInclude Include="d3d11resource.h" />
     <ClInclude Include="d3d11shader.h" />
+    <ClInclude Include="d3d11staticresources.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="entity.h" />
@@ -171,10 +175,16 @@
     <ClInclude Include="hyperenderer.h" />
     <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="quaternion.h" />
+    <ClInclude Include="d3d11shader.hpp" />
+    <ClInclude Include="hypegraphicsobject.h" />
+    <ClInclude Include="hyperenderable.h" />
+    <ClInclude Include="hypesimplemesh.h" />
+    <ClInclude Include="d3d11inputlayout.h" />
     <ClInclude Include="Shaders\cpp\ShaderCommon.h" />
     <ClInclude Include="crigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="Shaders\cpp\SimpleForwardInputs.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />

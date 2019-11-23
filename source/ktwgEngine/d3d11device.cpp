@@ -1,5 +1,11 @@
 #include "d3d11device.h"
+#include "d3d11texture.h"
+#include "d3d11shader.h"
 #include <vector>
+
+#if _DEBUG
+#include <cassert>
+#endif // #if _DEBUG
 
 D3D11Device::D3D11Device(const ComPtr<ID3D11Device>& device, const ComPtr<ID3D11DeviceContext>& context)
 :m_Device{device}, m_ImmediateContext{context}, m_InfoQueue{nullptr}
@@ -16,11 +22,7 @@ D3D11Device::D3D11Device(const ComPtr<ID3D11Device>& device, const ComPtr<ID3D11
 
 D3D11Device::~D3D11Device()
 {
-  if (m_ImmediateContext)
-  {
-    m_ImmediateContext->Flush();
-    m_ImmediateContext->ClearState();
-  }
+  
 }
 
 std::string D3D11Device::GetErrors(bool clearErrors)
@@ -106,4 +108,56 @@ bool D3D11Device::HasError() const
   }
 #endif
   return false;
+}
+
+D3D11Context::D3D11Context(const ComPtr<ID3D11DeviceContext>& context)
+:m_Context{context}
+{
+}
+
+D3D11Context::~D3D11Context()
+{
+  if (m_Context)
+  {
+    m_Context->Flush();
+    m_Context->ClearState();
+  }
+}
+
+void D3D11Context::AddRenderTarget(D3D11Texture * renderTarget, DXGI_FORMAT format)
+{
+#if _DEBUG
+  assert(m_RenderTargets.size() < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT - 1);
+#endif // #if _DEBUG
+  ResourceViewKey key;
+  key.m_Type = RTV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  m_RenderTargets.emplace_back(renderTarget->GetView(key).GetRtv());
+}
+
+void D3D11Context::SetDepthStencil(D3D11Texture * depthStencil, DXGI_FORMAT format)
+{
+  ResourceViewKey key;
+  key.m_Type = DSV;
+  key.m_Format = format;
+  key.m_MostDetailedMip = 0;
+  m_DepthStencil = depthStencil->GetView(key).GetDsv();
+}
+
+void D3D11Context::FlushRenderTargets()
+{
+  m_Context->OMSetRenderTargets((UINT)m_RenderTargets.size(), m_RenderTargets.data(), m_DepthStencil);
+  m_RenderTargets.clear();
+  m_DepthStencil = nullptr;
+}
+
+void D3D11Context::Set(D3D11VertexShader * vs)
+{
+  m_Context->VSSetShader(vs->GetShader().Get(), NULL, 0);
+}
+
+void D3D11Context::Set(D3D11PixelShader * ps)
+{
+  m_Context->PSSetShader(ps->GetShader().Get(), NULL, 0);
 }
