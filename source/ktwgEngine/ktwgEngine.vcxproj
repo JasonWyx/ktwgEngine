@@ -145,7 +145,7 @@
     <ClCompile Include="socketutility.cpp" />
     <ClCompile Include="streammanager.cpp" />
     <ClCompile Include="tcpsocket.cpp" />
-    <ClCompile Include="TestBehaviour.cpp" />
+    <ClCompile Include="testbehaviour.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="transform.cpp" />
@@ -234,7 +234,7 @@
     <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="sweep.h" />
     <ClInclude Include="tcpsocket.h" />
-    <ClInclude Include="TestBehaviour.h" />
+    <ClInclude Include="testbehaviour.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="transform.h" />

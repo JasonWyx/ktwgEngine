@@ -71,7 +71,7 @@
     <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="ktwgbehaviour.cpp" />
-    <ClCompile Include="TestBehaviour.cpp" />
+    <ClCompile Include="testbehaviour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -170,6 +170,6 @@
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="ktwgbehaviour.h" />
-    <ClInclude Include="TestBehaviour.h" />
+    <ClInclude Include="testbehaviour.h" />
   </ItemGroup>
 </Project>
