@@ -1,9 +1,13 @@
 #pragma once
 #include "bitstream.h"
+#include "netdefs.h"
+#include "packet.h"
 
 class IStreamManager
 {
-    virtual bool ProcessIncomingPacket(BitStream& stream) = 0;
-    virtual bool ProcessOutgoingPacket(BitStream& stream) = 0;
-    virtual void NotifyPacketStatus(uint32_t packetID, uint32_t packetStatus) = 0;
+public:
+
+    virtual bool ProcessIncomingPacket(Packet& packet) = 0;
+    virtual bool ProcessOutgoingPacket(Packet& packet) = 0;
+    virtual void NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus) = 0;
 };

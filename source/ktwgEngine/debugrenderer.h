@@ -11,8 +11,8 @@ public:
     ~DebugRenderer();
 
     void Update(float deltaTime);
-    void InsertDebugRenderable(DebugRenderable* renderable);
-    void RemoveDebugRenderable(DebugRenderable* renderable);
+    void RegisterDebugRenderable(DebugRenderable* renderable);
+    void UnregisterDebugRenderable(DebugRenderable* renderable);
 
 private:
 

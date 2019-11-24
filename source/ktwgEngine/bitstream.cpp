@@ -11,6 +11,29 @@ BitStream::BitStream(size_t bytes)
     
 }
 
+BitStream::BitStream(const uint8_t* data, size_t length) : BitStream(length)
+{
+    std::memcpy(m_Buffer.data(), data, length);
+}
+
+BitStream::BitStream(const std::vector<uint8_t>& data)
+    : m_Buffer(data)
+    , m_BitPosition(0)
+{
+}
+
+BitStream::BitStream(std::vector<uint8_t>&& data)
+    : m_Buffer(std::move(data))
+    , m_BitPosition(0)
+{
+}
+
+void BitStream::Clear()
+{
+    m_Buffer.clear();
+    m_BitPosition = 0;
+}
+
 BitStream BitStream::operator+(const BitStream& rhs) const
 {
     return BitStream(*this) += rhs;

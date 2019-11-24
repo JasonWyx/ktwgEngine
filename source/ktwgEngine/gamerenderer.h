@@ -11,8 +11,8 @@ public:
   ~GameRenderer();
 
   void Update(float deltaTime);
-  void InsertGameRenderable(GameRenderable* renderable);
-  void RemoveGameRenderable(GameRenderable* renderable);
+  void RegisterGameRenderable(GameRenderable* renderable);
+  void UnregisterGameRenderable(GameRenderable* renderable);
 
 private:
 
