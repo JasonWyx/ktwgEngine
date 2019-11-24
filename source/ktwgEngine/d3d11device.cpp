@@ -195,11 +195,17 @@ void D3D11Context::SetIndexBuffer(D3D11HardwareBuffer * indexBuffer, DXGI_FORMAT
 void D3D11Context::Set(D3D11VertexShader * vs)
 {
   m_Context->VSSetShader(vs->GetShader().Get(), NULL, 0);
+  Set(vs->GetInputLayout());
 }
 
 void D3D11Context::Set(D3D11PixelShader * ps)
 {
   m_Context->PSSetShader(ps->GetShader().Get(), NULL, 0);
+}
+
+void D3D11Context::Set(D3D11InputLayout * inputLayout)
+{
+  m_Context->IASetInputLayout(inputLayout->GetInputLayout().Get());
 }
 
 void D3D11Context::DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIndices, uint32_t startIndexLocation, int32_t baseVertexLocation)

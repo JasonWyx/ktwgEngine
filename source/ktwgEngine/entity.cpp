@@ -5,6 +5,7 @@
 #include "crigidbody.h"
 #include "cboxcollider.h"
 #include "cbehaviour.h"
+#include "crenderable.h"
 
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
@@ -51,6 +52,7 @@ Component* Entity::AddComponent(ComponentType type)
     CASE_CREATE_COMP(CT_RIGIDBODY, CRigidBody) break;
     CASE_CREATE_COMP(CT_BOXCOLLIDER, CBoxCollider) break;
     CASE_CREATE_COMP(CT_BEHAVIOUR, CBehaviour) break;
+    CASE_CREATE_COMP(CT_RENDERABLE, CRenderable) break;
     // ...
   default: break;
   }

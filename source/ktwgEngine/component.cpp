@@ -4,6 +4,7 @@
 
 #include "crigidbody.h"
 #include "cboxcollider.h"
+#include "crenderable.h"
 
 template<typename T>
 Component& handle_get(Component* comp) 
@@ -31,7 +32,8 @@ Component::FUNC_PAIR Component::ComponentTable[ComponentType::END]
 {
   { 0,0,0 },  // NONE
   MAKETUPLE(CRigidBody),
-  MAKETUPLE(CBoxCollider)
+  MAKETUPLE(CBoxCollider),
+  MAKETUPLE(CRenderable)
 };
 #undef MAKETUPLE
 

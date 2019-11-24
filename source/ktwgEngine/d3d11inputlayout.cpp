@@ -19,7 +19,7 @@ D3D11InputLayout * D3D11InputLayout::GetInputLayout(const InputLayoutKey & key, 
   if(it != inputLayoutLookupTable.end())
     return it->second;
   // Otherwise create a new input layout
-  uint32_t numInputElements = key.m_InputElements.size();
+  uint32_t numInputElements = (uint32_t)key.m_InputElements.size();
   std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc;
   inputElementDesc.resize(numInputElements);
 

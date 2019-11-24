@@ -5,6 +5,7 @@
 #include "crigidbody.h"
 #include "cboxcollider.h"
 #include "cbehaviour.h"
+#include "crenderable.h"
 
 // Behaviour
 #include "TestBehaviour.h"
@@ -36,6 +37,9 @@ void Scene::InitializeInternal()
 
   CBehaviour& groundBeh = ground->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
   groundBeh.Bind<TestBehaviour>();
+
+  CRenderable& renderable = ground->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+  renderable.SetGraphicObject("Cube");
 }
 
 void Scene::ShutdownInternal()

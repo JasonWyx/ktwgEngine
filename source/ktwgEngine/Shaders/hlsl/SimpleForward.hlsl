@@ -20,7 +20,7 @@ struct PS_INPUT
 PS_INPUT Shade_Vertex(in VS_INPUT input)
 {
   PS_INPUT output;
-  output.m_SVPosition = mul(input.m_Position, g_ModelViewProjection);
+  output.m_SVPosition = float4(input.m_Position, 1.0);//mul(input.m_Position, g_ModelViewProjection);
   output.m_Color = float4(1.0, 1.0, 1.0, 1.0);
   return output;
 }

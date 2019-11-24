@@ -4,6 +4,7 @@
 #include <iostream>
 #include "d3d11defines.h"
 #include "d3d11renderapi.h"
+#include "d3d11inputlayout.h"
 
 class D3D11InputLayout;
 
@@ -34,13 +35,13 @@ public:
   D3D11VertexShader(const ComPtr<ID3D11VertexShader>& vs, const ComPtr<ID3DBlob>&  compiledShader)
   :D3D11Shader{compiledShader}, m_Shader{vs}, m_InputLayout{}
   {
-
+  
   }
   
   const ComPtr<ID3D11VertexShader>& GetShader() const { return m_Shader; }
 
   D3D11InputLayout* GetInputLayout() const { return m_InputLayout; };
-  void SetInputLayout(D3D11InputLayout* inputLayout) { m_InputLayout = inputLayout; }
+  void SetInputLayout(const InputLayoutKey& inputLayoutKey);
 
 private:
   ComPtr<ID3D11VertexShader> m_Shader;

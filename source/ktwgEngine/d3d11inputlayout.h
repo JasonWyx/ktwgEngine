@@ -26,9 +26,19 @@ struct InputElement
 struct InputLayoutKey
 {
   std::vector<InputElement> m_InputElements;
+  void AddInputElement(INPUT_ELEMENT_SEMANTIC semantic, DXGI_FORMAT format, UINT semanticIndex, UINT inputSlot, UINT instanceDataStepRate)
+  {
+    InputElement elem;
+    elem.m_Semantic = semantic;
+    elem.m_Format = format;
+    elem.m_SemanticIndex = semanticIndex;
+    elem.m_InputSlot = inputSlot;
+    elem.m_InstanceDataStepRate = instanceDataStepRate;
+    m_InputElements.emplace_back(elem);
+  }
 };
 
-bool operator==(const InputElement& lhs, const InputElement& rhs)
+inline bool operator==(const InputElement& lhs, const InputElement& rhs)
 {
   return lhs.m_Semantic == rhs.m_Semantic && 
          lhs.m_Format == rhs.m_Format &&
@@ -37,7 +47,7 @@ bool operator==(const InputElement& lhs, const InputElement& rhs)
          lhs.m_SemanticIndex == rhs.m_SemanticIndex;
 }
 
-bool operator==(const InputLayoutKey& lhs, const InputLayoutKey& rhs)
+inline bool operator==(const InputLayoutKey& lhs, const InputLayoutKey& rhs)
 {
   return lhs.m_InputElements == rhs.m_InputElements;
 }

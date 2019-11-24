@@ -2,10 +2,19 @@
 #include "hypegraphicobject.h"
 #include "entity.h"
 #include "hypecamera.h"
+#include "hypesimplemesh.h"
 
 void HypeGraphicsWorld::InitializeInternal()
 {
   m_View = nullptr;
+
+  HypeSimpleMesh* simpleMesh = new HypeSimpleMesh{};
+  simpleMesh->SetNumSlices(2);
+  simpleMesh->SetNumStacks(2);
+  simpleMesh->SetName("Cube");
+  simpleMesh->SetShape(CUBE);
+  simpleMesh->Regenerate();
+  AddGraphicObject(simpleMesh);
 }
 
 void HypeGraphicsWorld::ShutdownInternal()

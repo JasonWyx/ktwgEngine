@@ -11,6 +11,7 @@ class D3D11Texture;
 class D3D11VertexShader;
 class D3D11PixelShader;
 class D3D11HardwareBuffer;
+class D3D11InputLayout;
 
 class D3D11Context
 {
@@ -35,6 +36,7 @@ public:
 
   void Set(D3D11VertexShader* vs);
   void Set(D3D11PixelShader* ps);
+  void Set(D3D11InputLayout* inputLayout);
 
   void DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY topology, uint32_t numIndices, uint32_t startIndexLocation, int32_t baseVertexLocation);
 

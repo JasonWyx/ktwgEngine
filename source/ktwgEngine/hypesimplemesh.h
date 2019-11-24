@@ -39,6 +39,9 @@ public:
 
   void DrawInstances() override;
 
+  void SetNumStacks(uint32_t numStacks) { m_NumStacks = numStacks; }
+  void SetNumSlices(uint32_t numSlices) { m_NumSlices = numSlices; }
+
 private:
   static void CreateIndexBuffer(uint32_t stacks, uint32_t slices, std::vector<uint32_t>& indices);
 

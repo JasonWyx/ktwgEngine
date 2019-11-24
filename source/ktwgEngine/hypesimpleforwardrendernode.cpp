@@ -16,11 +16,12 @@ DECLARE_STATIC_TEXTURE(MainRenderDepthStencil);
 
 void HypeSimpleForwardRenderNode::Setup(D3D11Device& device)
 {
-  device.GetImmediateContext().Set(SimpleForwardVS);
-  device.GetImmediateContext().Set(SimpleForwardPS);
-  device.GetImmediateContext().AddRenderTarget(GET_STATIC_RESOURCE(FinalColorOutput), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
-  device.GetImmediateContext().SetDepthStencil(GET_STATIC_RESOURCE(MainRenderDepthStencil), DXGI_FORMAT_D32_FLOAT);
-  device.GetImmediateContext().FlushRenderTargets();
+  D3D11Context& context = device.GetImmediateContext();
+  context.Set(SimpleForwardVS);
+  context.Set(SimpleForwardPS);
+  context.AddRenderTarget(GET_STATIC_RESOURCE(FinalColorOutput), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+  context.SetDepthStencil(GET_STATIC_RESOURCE(MainRenderDepthStencil), DXGI_FORMAT_D32_FLOAT);
+  context.FlushRenderTargets();
 }
 
 void HypeSimpleForwardRenderNode::Render(D3D11Device& device)

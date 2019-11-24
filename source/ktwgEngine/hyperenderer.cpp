@@ -28,6 +28,10 @@ void HypeRenderer::LoadSimpleForward()
   desc.m_Source = std::string{ std::istreambuf_iterator<char>{f}, std::istreambuf_iterator<char>{} };
   desc.m_Type = VS;
   SimpleForwardVS = CREATE_VS(desc);
+  InputLayoutKey inputLayoutKey;
+  inputLayoutKey.AddInputElement(POSITION, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, 0);
+  inputLayoutKey.AddInputElement(NORMAL, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, 0);
+  SimpleForwardVS->SetInputLayout(inputLayoutKey);
   desc.m_Entry = "Shade_Pixel";
   desc.m_Type = PS;
   SimpleForwardPS = CREATE_PS(desc);
@@ -100,7 +104,7 @@ void HypeRenderer::Update()
     device->GetImmediateContext().Set(view->GetViewMatrix(), view->GetProjectionMatrix(), view->GetViewMatrix() * view->GetProjectionMatrix());
   }
 
-  device->GetImmediateContext().ClearRTV(GET_STATIC_RESOURCE(FinalColorOutput), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 1.0f, 1.0f, 1.0f, 1.0f);
+  device->GetImmediateContext().ClearRTV(GET_STATIC_RESOURCE(FinalColorOutput), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 0.0f, 0.0f, 0.0f, 1.0f);
   device->GetImmediateContext().ClearDSV(GET_STATIC_RESOURCE(MainRenderDepthStencil), DXGI_FORMAT_D32_FLOAT, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
   for (auto& elem : m_RenderNodes)
