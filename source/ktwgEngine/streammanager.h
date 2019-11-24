@@ -4,39 +4,23 @@
 #include "istreammanager.h"
 #include "streammanagerclient.h"
 #include "streammanagerserver.h"
+#include "ghostmanager.h"
+#include "eventmanager.h"
 #include "bitstream.h"
 #include <memory>
 #include <vector>
 #include <list>
-
-struct GhostTransmissionRecord
-{
-
-};
-
-struct EventTransmissionRecord
-{
-
-};
-
-struct TransmissionRecord
-{
-    uint32_t            m_PacketID;
-    TransmissionRecord* m_NextTransmissionRecord;
-
-    std::list<GhostTransmissionRecord>  m_GhostRecordList;
-    std::list<EventTransmissionRecord>  m_EventRecordList; // Only stored guaranteed events && in order of sequence as well
-};
+#include <map>
 
 class StreamManager : public Singleton<StreamManager>, public IStreamManager
 {
 public:
 
     StreamManager();
-    virtual ~StreamManager();
+    ~StreamManager();
 
-    virtual bool ProcessIncomingPacket(BitStream& stream) override;
-    virtual bool ProcessOutgoingPacket(BitStream& stream) override;
+    virtual bool ProcessIncomingPacket(Packet& packet) override;
+    virtual bool ProcessOutgoingPacket(Packet& packet) override;
     virtual void NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus) override;
 
     // Client Functions
@@ -53,10 +37,12 @@ public:
 
 private:
 
+    virtual void InitializeInternal() override;
+    virtual void ShutdownInternal() override;
+
     StreamManagerClient* m_ClientStreamManager;
     StreamManagerServer* m_ServerStreamManager;
 
-    virtual void InitializeInternal() override;
-    virtual void ShutdownInternal() override;
+    std::vector<TransmissionRecord> m_TransmissionRecords;
 
 };

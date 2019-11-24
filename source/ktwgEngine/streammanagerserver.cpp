@@ -10,12 +10,12 @@ StreamManagerServer::~StreamManagerServer()
 {
 }
 
-bool StreamManagerServer::ProcessIncomingPacket(BitStream& stream)
+bool StreamManagerServer::ProcessIncomingPacket(Packet& packet)
 {
     return false;
 }
 
-bool StreamManagerServer::ProcessOutgoingPacket(BitStream& stream)
+bool StreamManagerServer::ProcessOutgoingPacket(Packet& packet)
 {
     return false;
 }
@@ -27,7 +27,7 @@ void StreamManagerServer::NotifyPacketStatus(NetPeerID netPeerID, PacketID packe
     {
         NetPeerStreamManager* netPeerStreamManager = iter->second;
 
-        for (const GhostTransmissionRecord& ghostTransmissionRecord : netPeerStreamManager->m_GhostTransmissionRecords)
+        for (const TransmissionRecord& transmissionRecord : netPeerStreamManager->m_TransmissionRecords)
         {
             // Jason TODO: find ghost record with matching packet id and append into list of next properties
         }

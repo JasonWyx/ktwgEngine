@@ -1,18 +1,16 @@
 #pragma once
 #include "istreammanager.h"
+#include "ghostmanager.h"
 #include <map>
 #include <list>
 
-class GhostTransmissionRecord;
-class EventTransmissionRecord;
 class StreamManagerClient;
 
 struct NetPeerStreamManager
 {
     uint32_t m_NetPeerID;
 
-    std::list<GhostTransmissionRecord> m_GhostTransmissionRecords;
-    std::list<EventTransmissionRecord> m_EventTransmissionRecords;
+    std::vector<TransmissionRecord> m_TransmissionRecords;
 
     // GhostManager
     // EventManager
@@ -27,8 +25,8 @@ public:
     StreamManagerServer(StreamManagerClient* streamManagerClient);
     virtual ~StreamManagerServer();
 
-    virtual bool ProcessIncomingPacket(BitStream& stream) override;
-    virtual bool ProcessOutgoingPacket(BitStream& stream) override;
+    virtual bool ProcessIncomingPacket(Packet& packet) override;
+    virtual bool ProcessOutgoingPacket(Packet& packet) override;
     virtual void NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus) override;
 
     void AddNetPeerStreamManager(uint32_t netPeerID);

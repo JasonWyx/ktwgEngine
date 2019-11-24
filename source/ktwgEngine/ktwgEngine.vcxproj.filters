@@ -10,6 +10,9 @@
     <Filter Include="socket api">
       <UniqueIdentifier>{bb6f2ae9-5728-4350-aae7-75743391b140}</UniqueIdentifier>
     </Filter>
+    <Filter Include="streammanagers">
+      <UniqueIdentifier>{d786acd0-41ac-4f22-b44f-132316ac59cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -51,7 +54,6 @@
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="connectionmanager.cpp" />
     <ClCompile Include="bitstream.cpp" />
-    <ClCompile Include="streammanager.cpp" />
     <ClCompile Include="debugrenderable.cpp">
       <Filter>renderers</Filter>
     </ClCompile>
@@ -59,8 +61,19 @@
       <Filter>renderers</Filter>
     </ClCompile>
     <ClCompile Include="ghostobject.cpp" />
-    <ClCompile Include="streammanagerserver.cpp" />
-    <ClCompile Include="streammanagerclient.cpp" />
+    <ClCompile Include="ghostproperty.cpp" />
+    <ClCompile Include="ghostmanager.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="streammanager.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="streammanagerclient.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="streammanagerserver.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -116,14 +129,36 @@
       <Filter>renderers</Filter>
     </ClInclude>
     <ClInclude Include="bitstream.h" />
-    <ClInclude Include="streammanager.h" />
-    <ClInclude Include="streammanagerclient.h" />
-    <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="istreammanager.h" />
-    <ClInclude Include="ighostproperty.h" />
     <ClInclude Include="ghostproperty.h" />
+    <ClInclude Include="netdefs.h" />
+    <ClInclude Include="packet.h" />
+    <ClInclude Include="ghostmanager.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="streammanager.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="streammanagerclient.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="streammanagerserver.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="eventmanager.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="transmissionrecord.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="ghosttransmissionrecord.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="eventtransmissionrecord.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

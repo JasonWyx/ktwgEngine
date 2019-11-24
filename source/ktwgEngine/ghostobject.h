@@ -7,26 +7,37 @@
 
 using GhostNetID = unsigned int;
 
+struct GhostTransmissionRecord;
+
 class GhostObject
 {
 public:
 
-    GhostObject(uint32_t ghostNetID);
+    GhostObject(GhostNetID ghostNetID);
     virtual ~GhostObject();
     
-    // Jason: @Aaron you might want to change this
-    void WriteStream(BitStream& stream, const std::vector<bool>& propertyFlags);
-    void ReadStream(BitStream& stream, const std::vector<bool>& propertyFlags);
+    GhostNetID GetGhostNetID() const { return m_GhostNetID; }
+    size_t GetPropertyCount() const { return m_GhostProperties.size(); }
+    GhostStateMask GetStateMask() const;
+    GhostStateMask GetStateMaskAndCheckNeedUpdate(bool& needUpdate);
+    GhostTransmissionRecord* GetLatestGhostTransmissionRecord() { return m_LatestGhostTransmissionRecord; }
+    void SetLatestGhostTransmissionRecord(GhostTransmissionRecord* latestGhostTransmissionRecord) { m_LatestGhostTransmissionRecord = latestGhostTransmissionRecord; }
+
+    bool NeedUpdate() const;
+    void WriteStream(BitStream& stream, const GhostStateMask& stateMask);
+    void ReadStream(BitStream& stream, const GhostStateMask& stateMask);
 
     template<typename T>
-    void RegisterGhostProperty(T& property)
+    void RegisterGhostPropertyImpl(T& property)
     {
-        m_Properties.push_back(MakeGhostProperty(property, m_Properties.size()));
+        m_GhostProperties.push_back(MakeGhostProperty(property));
     }
+
+#define RegisterGhostProperty(property, bitCount) RegisterGhostPropertyImpl<decltype(property), N>(property)
 
 private:
 
-    GhostNetID m_GhostNetID; // Jason: This is the ID that should be the same for all peers. Server will assign this.
-    GhostClassID m_GhostClassID; // Jason: This COULD be used to identify the class in the packet
-    std::vector<IGhostProperty*> m_Properties;
+    GhostNetID m_GhostNetID;
+    GhostTransmissionRecord* m_LatestGhostTransmissionRecord;
+    std::vector<GhostProperty*> m_GhostProperties;
 };

@@ -18,12 +18,12 @@ void GameRenderer::Update(float deltaTime)
   }
 }
 
-void GameRenderer::InsertGameRenderable(GameRenderable* renderable)
+void GameRenderer::RegisterGameRenderable(GameRenderable* renderable)
 {
   m_GameRenderables.push_back(renderable);
 }
 
-void GameRenderer::RemoveGameRenderable(GameRenderable* renderable)
+void GameRenderer::UnregisterGameRenderable(GameRenderable* renderable)
 {
   m_GameRenderables.erase(std::remove(m_GameRenderables.begin(), m_GameRenderables.end(), renderable));
 }

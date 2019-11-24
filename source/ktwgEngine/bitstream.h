@@ -18,6 +18,9 @@ public:
 
     BitStream();
     BitStream(size_t bytes);
+    BitStream(const uint8_t* data, size_t length);
+    BitStream(const std::vector<uint8_t>& data);
+    BitStream(std::vector<uint8_t>&& data);
     ~BitStream() = default;
 
     // Declare default copy/move constructors/assignments
@@ -33,6 +36,7 @@ public:
     size_t GetBitPosition() const   { return m_BitPosition; }
     void ResetBitPosition()         { m_BitPosition = 0; }
     void TruncateBytes()            { m_Buffer.resize((m_BitPosition + ByteInBits) / ByteInBits); }
+    void Clear();
 
     // Input stream
     template<typename T>    BitStream& Write(const T& value, size_t bitCount);

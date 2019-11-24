@@ -8,12 +8,12 @@ StreamManagerClient::~StreamManagerClient()
 {
 }
 
-bool StreamManagerClient::ProcessIncomingPacket(BitStream& stream)
+bool StreamManagerClient::ProcessIncomingPacket(Packet& stream)
 {
     return false;
 }
 
-bool StreamManagerClient::ProcessOutgoingPacket(BitStream& stream)
+bool StreamManagerClient::ProcessOutgoingPacket(Packet& stream)
 {
     return false;
 }
