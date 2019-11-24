@@ -2,7 +2,7 @@
 #include "ghostmanager.h"
 #include "streammanager.h"
 
-GhostObject::GhostObject(GhostNetID ghostNetID)
+GhostObject::GhostObject(GhostID ghostNetID)
     : m_GhostNetID(ghostNetID)
     , m_GhostProperties()
 {

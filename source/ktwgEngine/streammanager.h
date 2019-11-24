@@ -1,7 +1,6 @@
 #pragma once
 #include "singleton.h"
 #include "connectionmanager.h"
-#include "istreammanager.h"
 #include "streammanagerclient.h"
 #include "streammanagerserver.h"
 #include "ghostmanager.h"
@@ -12,16 +11,16 @@
 #include <list>
 #include <map>
 
-class StreamManager : public Singleton<StreamManager>, public IStreamManager
+class StreamManager : public Singleton<StreamManager>
 {
 public:
 
     StreamManager();
     ~StreamManager();
 
-    virtual bool ProcessIncomingPacket(Packet& packet) override;
-    virtual bool ProcessOutgoingPacket(Packet& packet) override;
-    virtual void NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus) override;
+    bool ProcessIncomingPacket(Packet& packet);
+    bool ProcessOutgoingPacket(Packet& packet);
+    void NotifyPacketStatus(PeerID fromPeerID, PacketID packetID, PacketStatus packetStatus);
 
     // Client Functions
     void InitializeClient();

@@ -18,6 +18,6 @@ bool StreamManagerClient::ProcessOutgoingPacket(Packet& stream)
     return false;
 }
 
-void StreamManagerClient::NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus)
+void StreamManagerClient::NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus)
 {
 }

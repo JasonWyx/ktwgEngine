@@ -20,7 +20,7 @@ bool GhostManager::ProcessIncomingPacket(Packet& packet)
 
     while (numObjectsInPacket > 0)
     {
-        GhostNetID ghostNetID = 0;
+        GhostID ghostNetID = 0;
         packet.m_BitStream >> ghostNetID;
 
         GhostObject* ghostObject = nullptr;
@@ -112,7 +112,7 @@ bool GhostManager::ProcessOutgoingPacket(Packet& packet, TransmissionRecord& tra
     return false;
 }
 
-void GhostManager::NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus)
+void GhostManager::NotifyPacketStatus(PeerID netPeerID, PacketID packetID, PacketStatus packetStatus)
 {
 }
 
