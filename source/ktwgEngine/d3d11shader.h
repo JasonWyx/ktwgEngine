@@ -5,6 +5,8 @@
 #include "d3d11defines.h"
 #include "d3d11renderapi.h"
 
+class D3D11InputLayout;
+
 struct SHADER_DESC
 {
   std::string m_Source;
@@ -30,15 +32,19 @@ class D3D11VertexShader : public D3D11Shader
 {
 public:
   D3D11VertexShader(const ComPtr<ID3D11VertexShader>& vs, const ComPtr<ID3DBlob>&  compiledShader)
-  :D3D11Shader{compiledShader}, m_Shader{vs}
+  :D3D11Shader{compiledShader}, m_Shader{vs}, m_InputLayout{}
   {
 
   }
   
   const ComPtr<ID3D11VertexShader>& GetShader() const { return m_Shader; }
 
+  D3D11InputLayout* GetInputLayout() const { return m_InputLayout; };
+  void SetInputLayout(D3D11InputLayout* inputLayout) { m_InputLayout = inputLayout; }
+
 private:
   ComPtr<ID3D11VertexShader> m_Shader;
+  D3D11InputLayout* m_InputLayout;
 };
 
 class D3D11PixelShader : public D3D11Shader
