@@ -152,6 +152,9 @@ void ConnectionManager::ConnectToServer()
 void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
 {
   std::vector<SocketWindowData> serverSockets;
+  std::vector<bool> playersOnline;
+  playersOnline.resize(4);
+  int players = 0;
 
   std::cout << "Server : Started listening" << std::endl;
   u_short startingPort = 1234;
@@ -173,7 +176,7 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
       u_short newPort = startingPort;
       std::string message = std::to_string(startingPort++);
 
-      if (hostSocket->SendTo(message.c_str(), message.size(), client) < 0)
+      if (players < 4 && hostSocket->SendTo(message.c_str(), message.size(), client) < 0)
       {
         std::cout << "Server: Send To Fail" << std::endl;
       }
@@ -187,6 +190,7 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
         tmp.SetSocket(s);
         tmp.SetPort(cPort);
         serverSockets.push_back(tmp);
+        ++players;
       }
     }
 
@@ -274,7 +278,7 @@ void SocketWindowData::DeliverMessage()
     socket->SendTo(message.c_str(), message.size(), reciever);
     --currWindowSize;
     float timeOut = rtt + 4 * devRTT;
-    timeOut = timeOut < 0.5f ? 0.5f : timeOut;
+    timeOut = timeOut < 1.f ? 1.f : timeOut;
     PktTimer timer = std::make_tuple(false, std::chrono::system_clock::now(), timeOut);
     timeTracker[cumulativePktsSent] = timer;
     ++cumulativePktsSent;
@@ -377,7 +381,7 @@ void SocketWindowData::ReceiveMessage()
     if (std::get<3>(message) == recvPkt) recvAckSlip = recvAckSlip | std::get<4>(message);
     
     int tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
-    dynamicRecvPkt = tmpRecvPkts;
+    dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
     std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
     // IMPT :
     // Update ack slip here with timeout
@@ -419,7 +423,7 @@ void SocketWindowData::UpdateTimer()
       if (!recv)
       {
         const auto& then = std::get<1>(timeTracker[i]);
-        float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - then)).count();
+        float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(now - then)).count();
         float timeOut = std::get<2>(timeTracker[i]);
         if (elapsedTime > timeOut)
         {
@@ -432,9 +436,9 @@ void SocketWindowData::UpdateTimer()
     }
   }
 
-  if (dynamicRecvPkt + timeOutPkt == windowSize && sentMsg)
+  if ((dynamicRecvPkt + timeOutPkt == windowSize) && sentMsg)
   {
-    std::cout << "DYNAMIC RECV PKT : " << (int)dynamicRecvPkt << "TIMEOUT PKT : " << timeOutPkt << std::endl;
+    std::cout << "DYNAMIC RECV PKT : " << (int)dynamicRecvPkt << " TIMEOUT PKT : " << timeOutPkt << std::endl;
     ReadACKS(recvAckSlip);
     dynamicRecvPkt = 0;
     recvAckSlip = 0;
@@ -477,7 +481,7 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
       if (i < cumulativePktsSent)
       {
         auto then = std::get<1>(timeTracker[i]);
-        float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - then)).count();
+        float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(now - then)).count();
         //std::cout << "RTT' :" << elapsedTime << std::endl;
         devRTT = (1.f - BETA) * devRTT + BETA * std::fabs((float)elapsedTime - rtt);
         rtt = (1.f - ALPHA) * (float)elapsedTime + ALPHA * rtt;
