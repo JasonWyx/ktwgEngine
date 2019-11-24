@@ -1,9 +1,7 @@
 #pragma once
 #include "bitstream.h"
 
-using GhostPropertyIndex = unsigned int;
 using GhostStateMask = std::vector<bool>;
-
 
 enum NetAuthority
 {

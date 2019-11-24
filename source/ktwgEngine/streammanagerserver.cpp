@@ -1,5 +1,6 @@
 #include "streammanagerserver.h"
 #include "streammanagerclient.h"
+#include <algorithm>
 
 StreamManagerServer::StreamManagerServer(StreamManagerClient* streamManagerClient)
     : m_LocalClientStreamManager(streamManagerClient)
@@ -8,53 +9,57 @@ StreamManagerServer::StreamManagerServer(StreamManagerClient* streamManagerClien
 
 StreamManagerServer::~StreamManagerServer()
 {
-}
 
-bool StreamManagerServer::ProcessIncomingPacket(Packet& packet)
-{
-    return false;
 }
 
 bool StreamManagerServer::ProcessOutgoingPacket(Packet& packet)
 {
+    
     return false;
 }
 
-void StreamManagerServer::NotifyPacketStatus(NetPeerID netPeerID, PacketID packetID, PacketStatus packetStatus)
+void StreamManagerServer::NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus)
 {
-    auto iter = m_NetPeerStreamManagers.find(netPeerID);
-    if (iter != m_NetPeerStreamManagers.end())
+    auto iter = m_PeerTransmissionRecords.find(peerID);
+    if (iter != m_PeerTransmissionRecords.end())
     {
-        NetPeerStreamManager* netPeerStreamManager = iter->second;
+        if (packetStatus == PacketStatus::Success)
+        {
+            iter->second.erase(std::remove_if(iter->second.begin(), iter->second.end(),
+                [&packetID](const TransmissionRecord& record)
+                {
+                    return record.m_PacketID == packetID;
+                }
+            ));
+        }
 
-        for (const TransmissionRecord& transmissionRecord : netPeerStreamManager->m_TransmissionRecords)
+        for (const TransmissionRecord& transmissionRecord : iter->second)
         {
             // Jason TODO: find ghost record with matching packet id and append into list of next properties
+            
         }
         // And vice versa for events
     }
 
 }
 
-void StreamManagerServer::AddNetPeerStreamManager(uint32_t netPeerID)
+void StreamManagerServer::CreatePeer(PeerID peerID)
 {
-    NetPeerStreamManager* netPeerStreamManager = new NetPeerStreamManager();
-
-    auto [entry, isEmplaceSuccess] = m_NetPeerStreamManagers.try_emplace(netPeerID, netPeerStreamManager);
-
-    if (!isEmplaceSuccess)
+    auto iter = m_PeerTransmissionRecords.find(peerID);
+    if (iter != m_PeerTransmissionRecords.end())
     {
-        // Tried to emplace a new stream manager entry with a net peer id that already exists. Previous manager was not cleaned up properly.
-        delete netPeerStreamManager;
+        _ASSERT(false); // Trying to create a peer with an existing peer ID!
     }
+
+    // Implicitly create new peer entry
+    m_PeerTransmissionRecords[peerID].clear();
 }
 
-void StreamManagerServer::RemoveNetPeerStreamManager(uint32_t netPeerID)
+void StreamManagerServer::RemovePeer(PeerID peerID)
 {
-    auto iter = m_NetPeerStreamManagers.find(netPeerID);
-    if (iter != m_NetPeerStreamManagers.end())
+    auto iter = m_PeerTransmissionRecords.find(peerID);
+    if (iter != m_PeerTransmissionRecords.end())
     {
-        delete iter->second;
-        m_NetPeerStreamManagers.erase(iter);
+        m_PeerTransmissionRecords.erase(iter);
     }
 }

@@ -2,7 +2,7 @@
 #include <map>
 #include <vector>
 
-using NetPeerID     = unsigned int;
+using PeerID     = unsigned int;
 
 
 

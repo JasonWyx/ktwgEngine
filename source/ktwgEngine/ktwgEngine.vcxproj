@@ -124,7 +124,6 @@
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="ghostproperty.h" />
     <ClInclude Include="ghosttransmissionrecord.h" />
-    <ClInclude Include="istreammanager.h" />
     <ClInclude Include="netdefs.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="gamerenderable.h" />

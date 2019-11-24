@@ -5,7 +5,7 @@
 #include <vector>
 #include <type_traits>
 
-using GhostNetID = unsigned int;
+using GhostID = unsigned int;
 
 struct GhostTransmissionRecord;
 
@@ -13,10 +13,10 @@ class GhostObject
 {
 public:
 
-    GhostObject(GhostNetID ghostNetID);
+    GhostObject(GhostID ghostNetID);
     virtual ~GhostObject();
     
-    GhostNetID GetGhostNetID() const { return m_GhostNetID; }
+    GhostID GetGhostNetID() const { return m_GhostNetID; }
     size_t GetPropertyCount() const { return m_GhostProperties.size(); }
     GhostStateMask GetStateMask() const;
     GhostStateMask GetStateMaskAndCheckNeedUpdate(bool& needUpdate);
@@ -37,7 +37,7 @@ public:
 
 private:
 
-    GhostNetID m_GhostNetID;
+    GhostID m_GhostNetID;
     GhostTransmissionRecord* m_LatestGhostTransmissionRecord;
     std::vector<GhostProperty*> m_GhostProperties;
 };

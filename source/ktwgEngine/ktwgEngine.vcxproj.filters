@@ -132,7 +132,6 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
-    <ClInclude Include="istreammanager.h" />
     <ClInclude Include="ghostproperty.h" />
     <ClInclude Include="netdefs.h" />
     <ClInclude Include="packet.h" />
