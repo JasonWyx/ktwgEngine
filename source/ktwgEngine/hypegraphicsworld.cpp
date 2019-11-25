@@ -15,6 +15,14 @@ void HypeGraphicsWorld::InitializeInternal()
   simpleMesh->SetShape(CUBE);
   simpleMesh->Regenerate();
   AddGraphicObject(simpleMesh);
+
+  HypeSimpleMesh* simpleSphere = new HypeSimpleMesh{};
+  simpleSphere->SetNumSlices(20);
+  simpleSphere->SetNumStacks(20);
+  simpleSphere->SetName("Sphere");
+  simpleSphere->SetShape(SPHERE);
+  simpleSphere->Regenerate();
+  AddGraphicObject(simpleSphere);
 }
 
 void HypeGraphicsWorld::ShutdownInternal()

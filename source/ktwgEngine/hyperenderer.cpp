@@ -93,6 +93,7 @@ void HypeRenderer::CreateCommonResources()
   GET_STATIC_RESOURCE(GeometryConstantBuffer) = new D3D11HardwareBuffer{device, D3D11_BT_CONSTANT, D3D11_USAGE_DYNAMIC, 1, sizeof(Matrix4), false, false, true, false};
   device->GetImmediateContext().AddConstantBuffer<VS>(GET_STATIC_RESOURCE(GeometryConstantBuffer));
   device->GetImmediateContext().AddConstantBuffer<PS>(GET_STATIC_RESOURCE(GeometryConstantBuffer));
+  device->GetImmediateContext().FlushConstantBuffers(GeometryConstantBufferSlot);
 }
 
 void HypeRenderer::Update()
@@ -101,7 +102,9 @@ void HypeRenderer::Update()
   Camera* view = HypeGraphicsWorld::GetInstance().GetView();
   if(view)
   {
-    device->GetImmediateContext().Set(view->GetViewMatrix(), view->GetProjectionMatrix(), view->GetViewMatrix() * view->GetProjectionMatrix());
+    view->Update();
+    Matrix4 viewProj = view->GetViewMatrix() * view->GetProjectionMatrix();
+    device->GetImmediateContext().Set(view->GetViewMatrix(), view->GetProjectionMatrix(), viewProj);
   }
 
   device->GetImmediateContext().ClearRTV(GET_STATIC_RESOURCE(FinalColorOutput), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 0.0f, 0.0f, 0.0f, 1.0f);

@@ -5,6 +5,7 @@
 #include "crigidbody.h"
 #include "cboxcollider.h"
 #include "crenderable.h"
+#include "ccamera.h"
 
 template<typename T>
 Component& handle_get(Component* comp) 
@@ -26,14 +27,15 @@ void clear()
 
 #define MAKETUPLE(T) { &handle_get<T>, &handle_release<T>, &clear<T> }
 
-// @ADD_COMPONENT
+// @ADD COMPONENT
 // ** ORDER MUST CORRESPOND TO COMPONENT ENUM!! **
 Component::FUNC_PAIR Component::ComponentTable[ComponentType::END]
 {
   { 0,0,0 },  // NONE
   MAKETUPLE(CRigidBody),
   MAKETUPLE(CBoxCollider),
-  MAKETUPLE(CRenderable)
+  MAKETUPLE(CRenderable),
+  MAKETUPLE(CCamera)
 };
 #undef MAKETUPLE
 

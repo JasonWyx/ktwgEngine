@@ -44,6 +44,15 @@ void D3D11RenderWindow::Init()
   CreateSizeDependentResources();
 
   m_DxgiFactory->MakeWindowAssociation(m_Window->GetHwnd(), 0);
+
+  D3D11_VIEWPORT viewport;
+  viewport.Height = (FLOAT)m_Desc.m_VideoMode.m_Height;
+  viewport.Width = (FLOAT)m_Desc.m_VideoMode.m_Width;;
+  viewport.MinDepth = 0.f;
+  viewport.MaxDepth = 1.f;
+  viewport.TopLeftX = 0.f;
+  viewport.TopLeftY = 0.f;
+  m_Device->GetImmediateContext().GetContext()->RSSetViewports(1, &viewport);
 }
 
 void D3D11RenderWindow::CreateSwapChain()
