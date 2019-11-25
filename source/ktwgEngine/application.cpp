@@ -55,9 +55,12 @@ void Application::Run()
 
   // Retrieve input instance
   InputSystem& inputSys = InputSystem::GetInstance();
-
+  Physics& physicsSys = Physics::GetInstance();
   HypeRenderer& renderSys = HypeRenderer::GetInstance();
   KTWGBehaviour& behSys = KTWGBehaviour::GetInstance();
+
+  behSys.Init();
+  behSys.Start();
 
   // For now just a loop forever
   while (true)
@@ -88,10 +91,11 @@ void Application::Run()
 
     while (accumulator >= fixedDtMs)
     {
-      // physicsSys.Update(fixedDt);
-      behSys.Update();
+      physicsSys.Update(fixedDt);
       accumulator -= fixedDtMs;
     }
+    
+    behSys.Update();
 
     renderSys.Update();
     inputSys.PostUpdate();

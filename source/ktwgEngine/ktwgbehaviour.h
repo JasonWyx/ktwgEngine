@@ -22,6 +22,8 @@ public:
   void InitializeInternal() override;
   void ShutdownInternal() override;
 
+  void Init();
+  void Start();
   void Update();
 
   template <typename T>
