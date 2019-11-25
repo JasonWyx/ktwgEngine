@@ -82,6 +82,7 @@
     <ClCompile Include="ktwgbehaviour.cpp" />
     <ClCompile Include="testbehaviour.cpp" />
     <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
+    <ClCompile Include="hypematerial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -194,5 +195,6 @@
     <ClInclude Include="ktwgbehaviour.h" />
     <ClInclude Include="testbehaviour.h" />
     <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
+    <ClInclude Include="hypematerial.h" />
   </ItemGroup>
 </Project>

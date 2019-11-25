@@ -2,16 +2,31 @@
 #include "entity.h"
 #include <algorithm>
 
-HypeGraphicObjectInstance::HypeGraphicObjectInstance(Entity & owner)
-:m_Owner{&owner}
+HypeGraphicObjectInstance::HypeGraphicObjectInstance(Entity & owner, HypeGraphicObject* graphicObject)
+:m_Owner{&owner}, m_GraphicObject{graphicObject}, m_Material{nullptr}
 {
 }
 
-void HypeGraphicObjectInstance::SetColor(float r, float g, float b, float a)
+void HypeGraphicObjectInstance::CreateOverrideMaterial()
 {
+  m_Material = new HypeMaterial{};
 }
 
-void HypeGraphicObjectInstance::GetColor(float & r, float & g, float & b, float & a)
+void HypeGraphicObjectInstance::DestroyOverrideMaterial()
+{
+  delete m_Material;
+  m_Material = nullptr;
+}
+
+HypeMaterial * HypeGraphicObjectInstance::GetMaterial() const
+{
+  if(m_Material)
+    return m_Material;
+  return m_GraphicObject->GetMaterial();
+}
+
+HypeGraphicObject::HypeGraphicObject()
+:m_Instances{}, m_Name{}, m_Material{}
 {
 }
 

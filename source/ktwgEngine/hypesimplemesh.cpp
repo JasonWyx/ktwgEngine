@@ -50,11 +50,14 @@ void HypeSimpleMesh::DrawInstances()
 
   for (auto& instance : m_Instances)
   {
+    HypeSimpleMeshInstance* hypeGraphicObjectInstance = (HypeSimpleMeshInstance*)instance;
+
     ShaderInputs::SimpleForwardParams params;
-    params.SetColor(1.0f, 0.0f, 0.0, 1.0f);
+    float r, g, b, a;
+    hypeGraphicObjectInstance->GetMaterial()->GetColor(r, g, b, a);
+    params.SetColor(r, g, b, a);
     params.Set();
 
-    HypeSimpleMeshInstance* hypeGraphicObjectInstance = (HypeSimpleMeshInstance*)instance;
     Matrix4 mvp = hypeGraphicObjectInstance->GetWorldTransform() * context.GetViewProj();
     GET_STATIC_RESOURCE(GeometryConstantBuffer)->Write(0, sizeof(Matrix4), &mvp.m_, WT_DISCARD);
 
@@ -243,11 +246,11 @@ void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& position
 
 HypeGraphicObjectInstance * HypeSimpleMesh::NotifyInstanceCreatedInternal(Entity & instance)
 {
-  return new HypeSimpleMeshInstance(instance);
+  return new HypeSimpleMeshInstance(instance, this);
 }
 
-HypeSimpleMeshInstance::HypeSimpleMeshInstance(Entity & owner)
-:HypeGraphicObjectInstance{owner}
+HypeSimpleMeshInstance::HypeSimpleMeshInstance(Entity & owner, HypeSimpleMesh* graphicObject)
+:HypeGraphicObjectInstance{owner, graphicObject}
 {
 }
 

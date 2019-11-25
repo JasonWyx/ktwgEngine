@@ -8,6 +8,8 @@
 #include "crenderable.h"
 #include "ccamera.h"
 
+#include "hypegraphicobject.h"
+
 // Behaviour
 #include "TestBehaviour.h"
 
@@ -74,6 +76,8 @@ void Scene::InitializeInternal()
 
     CRenderable& renderable = boxA->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
+    renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
 
   }
 
@@ -93,6 +97,8 @@ void Scene::InitializeInternal()
 
     CRenderable& renderable = boxB->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
+    renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
 
   }
 

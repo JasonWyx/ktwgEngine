@@ -12,6 +12,7 @@ public:
   CRenderable(Entity& entity, uint32_t id);
 
   HypeGraphicObject*  GetGraphicObject() const { return m_GraphicObject; }
+  HypeGraphicObjectInstance*  GetGraphicObjectInstance() const { return m_Instance; }
   void                SetGraphicObject(HypeGraphicObject* graphicObject);
   void                SetGraphicObject(const std::string& name);
 

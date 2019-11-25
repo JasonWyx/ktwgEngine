@@ -129,6 +129,7 @@
     <ClCompile Include="hypecamera.cpp" />
     <ClCompile Include="hypegraphicobject.cpp" />
     <ClCompile Include="hypegraphicsworld.cpp" />
+    <ClCompile Include="hypematerial.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="hypesimpleforwardrendernode.cpp" />
     <ClCompile Include="hypesimplemesh.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="hypecamera.h" />
     <ClInclude Include="hypegraphicsworld.h" />
+    <ClInclude Include="hypematerial.h" />
     <ClInclude Include="hyperendernode.h" />
     <ClInclude Include="hypesimpleforwardrendernode.h" />
     <ClInclude Include="gjk.h" />

@@ -13,11 +13,12 @@ enum SimpleMeshShape
 };
 
 class Entity;
+class HypeSimpleMesh;
 
 class HypeSimpleMeshInstance : public HypeGraphicObjectInstance
 {
 public:
-  HypeSimpleMeshInstance(Entity& owner);
+  HypeSimpleMeshInstance(Entity& owner, HypeSimpleMesh* graphicObject);
 
   Matrix4 GetWorldTransform() const;
 };
