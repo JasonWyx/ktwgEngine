@@ -9,7 +9,10 @@ HypeGraphicObjectInstance::HypeGraphicObjectInstance(Entity & owner)
 
 HypeGraphicObjectInstance * HypeGraphicObject::NotifyInstanceCreated(Entity & instance)
 {
-  return NotifyInstanceCreatedInternal(instance);
+  HypeGraphicObjectInstance* newInstance = NotifyInstanceCreatedInternal(instance);
+  if(newInstance)
+    m_Instances.emplace_back(newInstance);
+  return newInstance;
 }
 
 void HypeGraphicObject::NotifyInstanceDestroyed(HypeGraphicObjectInstance * instance)
