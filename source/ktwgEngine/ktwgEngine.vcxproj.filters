@@ -193,5 +193,7 @@
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="ktwgbehaviour.h" />
     <ClInclude Include="testbehaviour.h" />
+    <ClInclude Include="collision.h" />
+    <ClInclude Include="collisioneventtype.h" />
   </ItemGroup>
 </Project>

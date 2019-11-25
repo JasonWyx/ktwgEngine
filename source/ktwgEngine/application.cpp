@@ -89,11 +89,11 @@ void Application::Run()
 
     accumulator += dtMs;
 
-    while (accumulator >= fixedDtMs)
-    {
+    //while (accumulator >= fixedDtMs)
+    //{
       physicsSys.Update(fixedDt);
-      accumulator -= fixedDtMs;
-    }
+    //  accumulator -= fixedDtMs;
+    //}
     
     behSys.Update();
 

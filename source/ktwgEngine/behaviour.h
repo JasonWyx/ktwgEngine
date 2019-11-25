@@ -9,6 +9,8 @@
 #include "crigidbody.h"
 #include "cboxcollider.h"
 
+struct Collision;
+
 class Behaviour
 {
 public:
@@ -19,12 +21,12 @@ public:
   virtual void Start() {};
   virtual void Update() {};
 
-  virtual void OnCollisionEnter() {};
-  virtual void OnCollisionStay() {};
-  virtual void OnCollisionExit() {};
-  virtual void OnTriggerEnter() {};
-  virtual void OnTriggerStay() {};
-  virtual void OnTriggerExit() {};
+  virtual void OnCollisionEnter(Collision&) {};
+  virtual void OnCollisionStay(Collision&) {};
+  virtual void OnCollisionExit(Collision&) {};
+  virtual void OnTriggerEnter(Collision&) {};
+  virtual void OnTriggerStay(Collision&) {};
+  virtual void OnTriggerExit(Collision&) {};
   
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 
