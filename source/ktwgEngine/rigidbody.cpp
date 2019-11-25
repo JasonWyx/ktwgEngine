@@ -125,13 +125,13 @@ bool RigidBody::CanCollide(RigidBody* body)
     return false;
   
    // Collision layers are set to not collide
-   if (!(Physics::GetInstance().m_LayerCollisionMatrix[this->GetLayerId()] & (1 << (MAX_COLLISION_LAYER - 1 - body->GetLayerId()))))
-     return false;
+   //if (!(Physics::GetInstance().m_LayerCollisionMatrix[this->GetLayerId()] & (1 << (MAX_COLLISION_LAYER - 1 - body->GetLayerId()))))
+   //  return false;
 
   return true;
 }
 
-inline uint32_t RigidBody::GetLayerId() const
+uint32_t RigidBody::GetLayerId() const
 {
   return m_Owner->GetCollisionLayer();
 }

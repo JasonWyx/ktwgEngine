@@ -144,8 +144,8 @@
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="raycastcallbacks.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="matrix4.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />

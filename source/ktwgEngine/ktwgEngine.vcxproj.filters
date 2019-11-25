@@ -44,7 +44,6 @@
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="physics.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="d3d11resource.cpp" />
     <ClCompile Include="d3d11shader.cpp" />
     <ClCompile Include="d3d11texture.cpp" />
@@ -81,6 +80,7 @@
     <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="ktwgbehaviour.cpp" />
     <ClCompile Include="testbehaviour.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
