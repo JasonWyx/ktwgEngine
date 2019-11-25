@@ -18,6 +18,7 @@ public:
   void Destroy()    override;
 
   Behaviour* GetInternal() const { return m_Internal; }
+  // Behaviour* GetInternal() { return m_Internal; }
   
   template <typename T>
   void Bind();

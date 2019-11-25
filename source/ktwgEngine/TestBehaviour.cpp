@@ -10,7 +10,7 @@ TestBehaviour::~TestBehaviour()
 {
 }
 
-void TestBehaviour::Initialize()
+void TestBehaviour::Start()
 {
   std::cout << "TestBehaviour::Initialize()" << std::endl;
 }

@@ -36,6 +36,8 @@ void Scene::InitializeInternal()
 
   CBehaviour& groundBeh = ground->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
   groundBeh.Bind<TestBehaviour>();
+
+
 }
 
 void Scene::ShutdownInternal()

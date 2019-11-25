@@ -103,9 +103,8 @@ inline Entity::container_t<T*> Entity::GetAllComponentsOfType()
 
   for (auto& elem : m_Components)
   {
-    auto& comp = elem();
-    if (comp.GetTypeInfo() == info)
-      result.emplace_back(static_cast<T*>(&comp));
+    if (elem->GetTypeInfo() == info)
+      result.emplace_back(static_cast<T*>(elem));
   }
 
   return result;
