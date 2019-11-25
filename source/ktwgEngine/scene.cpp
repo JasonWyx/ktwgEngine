@@ -32,7 +32,7 @@ void Scene::InitializeInternal()
   groundTF.SetScale(Vec3{ 50.0f, 50.0f, 50.0f });
   
   CRigidBody& groundRB = ground->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
-  groundRB.SetBodyType(RBT_STATIC);
+  groundRB.SetBodyType(RBT_DYNAMIC);
   
   CBoxCollider& groundBC = ground->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 

@@ -79,13 +79,13 @@ void RigidBody::SynchroniseRigidBody()
 
 void RigidBody::SynchroniseTransform()
 {
-  const Transform& transform = GetOwner()->GetTransform();
+  Transform& transform = GetOwner()->GetTransform();
 
   auto update = m_Sweep.GetTransform(1.0f);
 
   // Update Entity's transform
-  m_Transform.SetPosition(update.GetPosition());
-  m_Transform.SetRotation(update.GetRotation());
+  transform.SetPosition(update.GetPosition());
+  transform.SetRotation(update.GetRotation());
 
   // Update Body's transform
   m_Transform.SetPosition(update.GetPosition());
@@ -273,6 +273,7 @@ BoxCollider* RigidBody::CreateCollider(uint32_t id)
   // Create the correct collider
   m_Colliders.emplace_back(std::make_unique<BoxCollider>(id));
   collider = m_Colliders.back().get();
+  collider->SetRigidBody(this);
 
   ComputeInertia();
 

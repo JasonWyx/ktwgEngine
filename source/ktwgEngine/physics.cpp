@@ -9,7 +9,7 @@
 #include "island.h"
 
 Physics::Physics()
-  : m_RigidBodies{}, m_VelocityIteration{ 12 }, m_PositionIteration{ 6 },
+  : m_Gravity{ 0.0f, -9.81f, 0.0f }, m_RigidBodies {}, m_VelocityIteration{ 12 }, m_PositionIteration{ 6 },
     m_IsPaused{ false }, m_IsNewCollider{ false }, m_QueriesHitTriggers{ true },
     m_ContactManager{}
 {
@@ -192,7 +192,7 @@ void Physics::Solve(float dt)
 {
   // Clear island visited flag for bodies to do DFS
   for (UniquePtr<RigidBody>& elem : m_RigidBodies)
-    elem.get()->m_Flags &= RBF_ISLAND;
+    elem.get()->m_Flags &= ~RBF_ISLAND;
 
   // Clear island visited flag for contacts
   for (auto c = m_ContactManager.contactList_.head_; c; c = c->next_)
