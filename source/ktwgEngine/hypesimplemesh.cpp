@@ -3,6 +3,7 @@
 #include "d3d11device.h"
 #include "d3d11staticresources.h"
 #include "entity.h"
+#include "Shaders/cpp/SimpleForwardParams.h"
 
 DECLARE_STATIC_BUFFER(GeometryConstantBuffer);
 
@@ -49,9 +50,14 @@ void HypeSimpleMesh::DrawInstances()
 
   for (auto& instance : m_Instances)
   {
+    ShaderInputs::SimpleForwardParams params;
+    params.SetColor(1.0f, 0.0f, 0.0, 1.0f);
+    params.Set();
+
     HypeSimpleMeshInstance* hypeGraphicObjectInstance = (HypeSimpleMeshInstance*)instance;
     Matrix4 mvp = hypeGraphicObjectInstance->GetWorldTransform() * context.GetViewProj();
     GET_STATIC_RESOURCE(GeometryConstantBuffer)->Write(0, sizeof(Matrix4), &mvp.m_, WT_DISCARD);
+
     context.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_NumIndices, 0, 0);
   }
 }

@@ -31,6 +31,7 @@ class HypeSimpleMesh : public HypeGraphicObject
   };
 
 public:
+
   HypeSimpleMesh();
 
   void SetShape(SimpleMeshShape shape);

@@ -11,8 +11,12 @@ public:
   HypeGraphicObjectInstance(Entity& owner);
   virtual ~HypeGraphicObjectInstance() {}
 
+  void SetColor(float r, float g, float b, float a);
+  void GetColor(float& r, float& g, float& b, float& a);
+
 protected:
   Entity* m_Owner;
+  float   m_Color[4];
 };
 
 class HypeGraphicObject

@@ -81,6 +81,7 @@
     <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="ktwgbehaviour.cpp" />
     <ClCompile Include="testbehaviour.cpp" />
+    <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -154,7 +155,6 @@
     <ClInclude Include="hypesimpleforwardrendernode.h" />
     <ClInclude Include="hyperendernode.h" />
     <ClInclude Include="d3d11staticresources.h" />
-    <ClInclude Include="Shaders\cpp\SimpleForwardInputs.h" />
     <ClInclude Include="d3d11shader.hpp" />
     <ClInclude Include="hypesimplemesh.h" />
     <ClInclude Include="d3d11inputlayout.h" />
@@ -193,5 +193,6 @@
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="ktwgbehaviour.h" />
     <ClInclude Include="testbehaviour.h" />
+    <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
   </ItemGroup>
 </Project>

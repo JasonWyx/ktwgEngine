@@ -149,6 +149,7 @@
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
+    <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -244,7 +245,7 @@
     <ClInclude Include="rigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="scene.h" />
-    <ClInclude Include="Shaders\cpp\SimpleForwardInputs.h" />
+    <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />

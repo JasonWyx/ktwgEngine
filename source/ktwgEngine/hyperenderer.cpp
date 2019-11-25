@@ -11,6 +11,8 @@
 #include "matrix4.h"
 #include "hypesimpleforwardrendernode.h"
 
+#include "Shaders/cpp/SimpleForwardParams.h"
+
 #include <fstream>
 
 DECLARE_VS(SimpleForwardVS);
@@ -60,6 +62,9 @@ void HypeRenderer::InitializeInternal()
   m_RenderWindow = D3D11RenderWindowManager::GetInstance().CreatePrimaryRenderWindow(desc);
   m_RenderWindow->Init();
   m_RenderWindow->SetHidden(false);
+
+  // Initialize Shader Inputs
+  ShaderInputs::SimpleForwardParams::InitializeHWResources();
 }
 
 void HypeRenderer::ShutdownInternal()

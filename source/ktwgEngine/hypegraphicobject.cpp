@@ -7,6 +7,14 @@ HypeGraphicObjectInstance::HypeGraphicObjectInstance(Entity & owner)
 {
 }
 
+void HypeGraphicObjectInstance::SetColor(float r, float g, float b, float a)
+{
+}
+
+void HypeGraphicObjectInstance::GetColor(float & r, float & g, float & b, float & a)
+{
+}
+
 HypeGraphicObjectInstance * HypeGraphicObject::NotifyInstanceCreated(Entity & instance)
 {
   HypeGraphicObjectInstance* newInstance = NotifyInstanceCreatedInternal(instance);

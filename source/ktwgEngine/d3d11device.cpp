@@ -220,4 +220,7 @@ void D3D11Context::FlushConstantBuffers(uint32_t startSlot)
     m_Context->VSSetConstantBuffers(startSlot, (UINT)m_VSConstantBuffers.size(), m_VSConstantBuffers.data());
   if(m_PSConstantBuffers.size())
     m_Context->PSSetConstantBuffers(startSlot, (UINT)m_PSConstantBuffers.size(), m_VSConstantBuffers.data());
+
+  m_VSConstantBuffers.clear();
+  m_PSConstantBuffers.clear();
 }

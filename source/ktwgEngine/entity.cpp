@@ -10,7 +10,7 @@
 
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
-    m_Transform{}, m_State{ ACTIVE }, m_Id{ id }, m_Name{ name }
+    m_Transform{}, m_State{ ACTIVE }, m_Id{ id }, m_Name{ name }, m_LayerId{0}
 {
 }
 
