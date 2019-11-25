@@ -1,4 +1,5 @@
 #include "d3d11shader.h"
+#include "d3d11inputlayout.h"
 #include <d3dcompiler.h>
 
 D3D11Shader::D3D11Shader(const ComPtr<ID3DBlob>& compiledShader)
@@ -45,4 +46,9 @@ ComPtr<ID3DBlob> CompileShader(const char * profile, const SHADER_DESC & desc)
   }
 
   return microCode;
+}
+
+void D3D11VertexShader::SetInputLayout(const InputLayoutKey & inputLayoutKey)
+{
+  m_InputLayout = D3D11InputLayout::GetInputLayout(inputLayoutKey, GetCompiledShader());
 }

@@ -227,7 +227,10 @@ void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& position
   uint32_t numIndices = (uint32_t)indices.size();
   D3D11Device* device = D3D11RenderAPI::GetInstance().GetDevice();
   m_VertexBuffer = new D3D11HardwareBuffer{device, D3D11_BT_VERTEX, D3D11_USAGE_DEFAULT, numVertices, sizeof(Vertex), false, false, false, false};
+  m_VertexBuffer->Write(0, numVertices * sizeof(Vertex), vertices.data(), WT_DISCARD);
+
   m_IndexBuffer = new D3D11HardwareBuffer{device, D3D11_BT_INDEX, D3D11_USAGE_DEFAULT, numIndices, sizeof(uint32_t), false, false, false, false};
+  m_IndexBuffer->Write(0, numIndices * sizeof(uint32_t), indices.data(), WT_DISCARD);
 
   m_NumIndices = numIndices;
 }

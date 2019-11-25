@@ -1,6 +1,7 @@
 #pragma once
 
 #include "component.h"
+#include <string>
 
 class HypeGraphicObject;
 class HypeGraphicObjectInstance;
@@ -12,6 +13,7 @@ public:
 
   HypeGraphicObject*  GetGraphicObject() const { return m_GraphicObject; }
   void                SetGraphicObject(HypeGraphicObject* graphicObject);
+  void                SetGraphicObject(const std::string& name);
 
 private:
   HypeGraphicObject* m_GraphicObject;

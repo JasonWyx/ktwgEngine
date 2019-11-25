@@ -121,10 +121,10 @@ void Application::InitializeResources()
 {
   HypeRenderer::LoadSystemShaders();
   HypeRenderer::CreateCommonResources();
-  Scene::Initialize();
 }
 
 void Application::LateInitialize()
 {
   HypeRenderer::Initialize();
+  Scene::Initialize();
 }
