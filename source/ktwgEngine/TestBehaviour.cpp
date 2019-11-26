@@ -20,7 +20,7 @@ void TestBehaviour::Start()
 void TestBehaviour::Update()
 {
   auto& inputSys = Input();
-  auto dt = Time().GetDeltaTime();
+  auto dt = (float)Time().GetDeltaTime();
 
   Vec3 translate {};
   if (inputSys.OnKeyDown(KTWG_D))
