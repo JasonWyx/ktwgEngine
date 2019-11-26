@@ -83,6 +83,7 @@
     <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
     <ClCompile Include="hypematerial.cpp" />
     <ClCompile Include="rigidbody.cpp" />
+    <ClCompile Include="playercontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -198,5 +199,6 @@
     <ClInclude Include="hypematerial.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="collisioneventtype.h" />
+    <ClInclude Include="playercontroller.h" />
   </ItemGroup>
 </Project>
