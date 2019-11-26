@@ -15,7 +15,7 @@ void Camera::UpdateFrustum()
 }
 
 Camera::Camera(Entity& owner)
-  : owner_{&owner}, cachedProjectionTransform_{}, verticalFov_{ PI / 2 }, aspectRatio_{ 16.f / 9.f }, nearDistance_{ 0.01f }, farDistance_{ 100.f }, shouldUpdateProjection_{ true }
+  : owner_{&owner}, cachedProjectionTransform_{}, verticalFov_{ PI / 2 }, aspectRatio_{ 16.f / 9.f }, nearDistance_{ 3.f }, farDistance_{ 500.f }, shouldUpdateProjection_{ true }
 {
 }
 

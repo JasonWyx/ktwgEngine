@@ -129,6 +129,7 @@
     <ClCompile Include="hypecamera.cpp" />
     <ClCompile Include="hypegraphicobject.cpp" />
     <ClCompile Include="hypegraphicsworld.cpp" />
+    <ClCompile Include="hypematerial.cpp" />
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="hypesimpleforwardrendernode.cpp" />
     <ClCompile Include="hypesimplemesh.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
+    <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -207,6 +209,7 @@
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="hypecamera.h" />
     <ClInclude Include="hypegraphicsworld.h" />
+    <ClInclude Include="hypematerial.h" />
     <ClInclude Include="hyperendernode.h" />
     <ClInclude Include="hypesimpleforwardrendernode.h" />
     <ClInclude Include="gjk.h" />
@@ -246,7 +249,7 @@
     <ClInclude Include="rigidbody.h" />
     <ClInclude Include="rigidbodytype.h" />
     <ClInclude Include="scene.h" />
-    <ClInclude Include="Shaders\cpp\SimpleForwardInputs.h" />
+    <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
     <ClInclude Include="socketaddress.h" />

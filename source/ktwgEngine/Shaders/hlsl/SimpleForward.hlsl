@@ -2,8 +2,10 @@
 // PS Shade_Pixel
 
 #define _GEOMETRY_PASS_
+#define _SIMPLE_FORWARD_
 
 #include "Shaders/hlsl/ShaderCommon.h"
+#include "Shaders/hlsl/SimpleForwardParams.h"
 
 struct VS_INPUT
 {
@@ -21,9 +23,9 @@ PS_INPUT Shade_Vertex(in VS_INPUT input)
 {
   PS_INPUT output;
   output.m_SVPosition = mul(float4(input.m_Position, 1.0), g_ModelViewProjection);
-  float3 lightDir = float3(0.0, 1.0, -1.0);
+  float3 lightDir = float3(1.0, 1.0, -1.0);
   lightDir = normalize(lightDir);
-  output.m_Color = float4(dot(input.m_Normal, lightDir) * float3(1.0, 1.0, 1.0), 1.0);
+  output.m_Color = saturate(0.2f + dot(input.m_Normal, lightDir)) * g_SimpleForwardParamsColor;
   return output;
 }
 

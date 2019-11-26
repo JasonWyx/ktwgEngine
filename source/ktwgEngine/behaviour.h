@@ -9,6 +9,8 @@
 #include "crigidbody.h"
 #include "cboxcollider.h"
 
+class InputSystem;
+class Time;
 struct Collision;
 
 class Behaviour
@@ -21,6 +23,9 @@ public:
   virtual void Start() {};
   virtual void Update() {};
 
+  static InputSystem&  Input();
+  static Time& Time();
+
   virtual void OnCollisionEnter(Collision&) {};
   virtual void OnCollisionStay(Collision&) {};
   virtual void OnCollisionExit(Collision&) {};
@@ -28,7 +33,7 @@ public:
   virtual void OnTriggerStay(Collision&) {};
   virtual void OnTriggerExit(Collision&) {};
 
-  virtual Transform& Transform();
+  Transform& Transform();
   
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 

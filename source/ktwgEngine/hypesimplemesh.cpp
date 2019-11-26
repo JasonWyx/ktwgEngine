@@ -3,6 +3,7 @@
 #include "d3d11device.h"
 #include "d3d11staticresources.h"
 #include "entity.h"
+#include "Shaders/cpp/SimpleForwardParams.h"
 
 DECLARE_STATIC_BUFFER(GeometryConstantBuffer);
 
@@ -50,8 +51,16 @@ void HypeSimpleMesh::DrawInstances()
   for (auto& instance : m_Instances)
   {
     HypeSimpleMeshInstance* hypeGraphicObjectInstance = (HypeSimpleMeshInstance*)instance;
+
+    ShaderInputs::SimpleForwardParams params;
+    float r, g, b, a;
+    hypeGraphicObjectInstance->GetMaterial()->GetColor(r, g, b, a);
+    params.SetColor(r, g, b, a);
+    params.Set();
+
     Matrix4 mvp = hypeGraphicObjectInstance->GetWorldTransform() * context.GetViewProj();
     GET_STATIC_RESOURCE(GeometryConstantBuffer)->Write(0, sizeof(Matrix4), &mvp.m_, WT_DISCARD);
+
     context.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_NumIndices, 0, 0);
   }
 }
@@ -237,11 +246,11 @@ void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& position
 
 HypeGraphicObjectInstance * HypeSimpleMesh::NotifyInstanceCreatedInternal(Entity & instance)
 {
-  return new HypeSimpleMeshInstance(instance);
+  return new HypeSimpleMeshInstance(instance, this);
 }
 
-HypeSimpleMeshInstance::HypeSimpleMeshInstance(Entity & owner)
-:HypeGraphicObjectInstance{owner}
+HypeSimpleMeshInstance::HypeSimpleMeshInstance(Entity & owner, HypeSimpleMesh* graphicObject)
+:HypeGraphicObjectInstance{owner, graphicObject}
 {
 }
 
