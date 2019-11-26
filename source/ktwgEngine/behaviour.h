@@ -9,6 +9,9 @@
 #include "crigidbody.h"
 #include "cboxcollider.h"
 
+class InputSystem;
+class Time;
+
 class Behaviour
 {
 public:
@@ -25,7 +28,10 @@ public:
   virtual void OnTriggerEnter() {};
   virtual void OnTriggerStay() {};
   virtual void OnTriggerExit() {};
-  
+
+  static InputSystem&  Input();
+  static Time& Time();
+
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 
   template <typename T>
