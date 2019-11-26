@@ -65,7 +65,7 @@ public:
   inline float                                      GetLinearDamping()   const { return m_LinearDamping; }
   inline float                                      GetAngularDamping()  const { return m_AngularDamping; }
   inline float                                      GetGravityScale()    const { return m_GravityScale; }
-  inline uint32_t                                   GetLayerId()         const;
+  uint32_t                                          GetLayerId()         const;
   inline bool                                       GetUseGravity()      const { return m_UseGravity; }
   inline bool                                       GetFreezeRotationX() const { return m_Flags & RBF_FIXEDROTATIONX; }
   inline bool                                       GetFreezeRotationY() const { return m_Flags & RBF_FIXEDROTATIONY; }

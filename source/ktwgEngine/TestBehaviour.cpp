@@ -16,6 +16,8 @@ void TestBehaviour::Start()
 }
 
 void TestBehaviour::Update()
-{
-  std::cout << "TestBehaviour::Update()" << std::endl;
+{/*
+  std::cout << "x : " << Transform().GetPosition().x_ << " " <<
+               "y : " << Transform().GetPosition().y_ << " " <<
+               "z : " << Transform().GetPosition().z_ << std::endl;*/
 }

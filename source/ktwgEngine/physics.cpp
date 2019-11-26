@@ -40,7 +40,7 @@ void Physics::Update(float dt)
   }
 
   for (UniquePtr<RigidBody>& elem : m_RigidBodies)
-    elem.get()->SynchroniseRigidBody();
+    elem->SynchroniseRigidBody();
 
   m_ContactManager.UpdateContacts();
 

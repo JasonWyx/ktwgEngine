@@ -4,11 +4,14 @@
 #include "component.h"
 #include "vector3.h"
 #include "ktwgbehaviour.h"
+#include "collisioneventtype.h"
 
+struct Collision;
 class Behaviour;
 
 class CBehaviour final : public Component
 {
+  friend class ContactListener;
 public:
   CBehaviour(Entity& owner, uint32_t id);
   ~CBehaviour();
@@ -18,12 +21,13 @@ public:
   void Destroy()    override;
 
   Behaviour* GetInternal() const { return m_Internal; }
-  // Behaviour* GetInternal() { return m_Internal; }
   
   template <typename T>
   void Bind();
 
 private:
+  void DispatchCollisionEvent(Collision& other, const CollisionEventType& cet);
+
   Behaviour* m_Internal;
 };
 
