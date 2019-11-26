@@ -27,6 +27,8 @@ public:
   virtual void OnTriggerEnter(Collision&) {};
   virtual void OnTriggerStay(Collision&) {};
   virtual void OnTriggerExit(Collision&) {};
+
+  virtual Transform& Transform();
   
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 

@@ -9,3 +9,8 @@ Behaviour::Behaviour(const ::TypeInfo& info, Entity& entity)
 Behaviour::~Behaviour()
 {
 }
+
+Transform& Behaviour::Transform()
+{
+  return m_Entity->GetTransform();
+}

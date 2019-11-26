@@ -58,8 +58,10 @@ void RigidBody::SynchroniseRigidBody()
   if (!m_Active)
     return;
 
+  const Transform& ownerTF = GetOwner()->GetTransform();
+
   // If our old transform and new transform is different, we need to update
-  if (m_Transform == GetOwner()->GetTransform())
+  if (m_Transform == ownerTF)
     return;
 
   // Synchronise with the owner transform

@@ -7,7 +7,7 @@
 
 FCollider::FCollider()
   : m_Vertices{}, m_Planes{}, 
-    m_Friction{ 0.0f }, m_Restitution{ 0.0f },
+    m_Friction{ 1.0f }, m_Restitution{ 0.0f },
     m_Local{}, m_Body{ nullptr }, m_Owner{ nullptr }, m_BroadphaseId{ -1 },
     m_IsTrigger{ false }, m_Active{ true }
 {
