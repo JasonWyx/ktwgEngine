@@ -44,7 +44,6 @@
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="physics.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="d3d11resource.cpp" />
     <ClCompile Include="d3d11shader.cpp" />
     <ClCompile Include="d3d11texture.cpp" />
@@ -83,6 +82,7 @@
     <ClCompile Include="testbehaviour.cpp" />
     <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
     <ClCompile Include="hypematerial.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -196,5 +196,7 @@
     <ClInclude Include="testbehaviour.h" />
     <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
     <ClInclude Include="hypematerial.h" />
+    <ClInclude Include="collision.h" />
+    <ClInclude Include="collisioneventtype.h" />
   </ItemGroup>
 </Project>

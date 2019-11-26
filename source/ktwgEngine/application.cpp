@@ -94,9 +94,8 @@ void Application::Run()
       physicsSys.Update(fixedDt);
       accumulator -= fixedDtMs;
     }
-    
-    behSys.Update();
 
+    behSys.Update();
     renderSys.Update();
     inputSys.PostUpdate();
   }

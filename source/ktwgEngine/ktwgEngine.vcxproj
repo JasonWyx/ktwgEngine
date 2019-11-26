@@ -145,8 +145,8 @@
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="raycastcallbacks.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="matrix4.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="sat.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
@@ -175,7 +175,9 @@
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="ccamera.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="collisionevent.h" />
+    <ClInclude Include="collisioneventtype.h" />
     <ClInclude Include="collisionfunctions.h" />
     <ClInclude Include="collisioninfo.h" />
     <ClInclude Include="component.h" />

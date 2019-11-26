@@ -22,3 +22,8 @@ Time & Behaviour::Time()
 {
   return Time::GetInstance();
 }
+
+Transform& Behaviour::Transform()
+{
+  return m_Entity->GetTransform();
+}
