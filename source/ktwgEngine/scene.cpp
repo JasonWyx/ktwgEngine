@@ -11,7 +11,8 @@
 #include "hypegraphicobject.h"
 
 // Behaviour
-#include "TestBehaviour.h"
+#include "testbehaviour.h"
+#include "playercontroller.h"
 
 Scene::Scene()
   : m_GameScene{ nullptr }
@@ -36,8 +37,8 @@ void Scene::InitializeInternal()
     cameraTF.SetRotation(ConvertAxisAngleToQuaternion(Vec3{ 1.0f, 0.0f, 0.0f }, 70.0f));
 
     CCamera& cameraCam = camera->AddComponent(CT_CAMERA)->Get<CCamera>();
-    CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
-    camBeh.Bind<TestBehaviour>();
+    //CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    //camBeh.Bind<TestBehaviour>();
   }
 
   {
@@ -137,23 +138,28 @@ void Scene::InitializeInternal()
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.25f, 0.25f, 1.0f);
   }
   {
-    // BoxA
-    Entity* boxA = m_GameScene->AddChild();
-    boxA->SetName("boxA");
+    // Player
+    Entity* player = m_GameScene->AddChild();
+    player->SetName("Player");
 
-    Transform& groundTF = boxA->GetTransform();
+    Transform& groundTF = player->GetTransform();
     groundTF.SetPosition(Vec3{0.f, 2.0f, 0.0f});
     groundTF.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });
 
-    CRigidBody& boxARB = boxA->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
-    boxARB.SetBodyType(RBT_DYNAMIC);
+    CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
+    playerRB.SetBodyType(RBT_DYNAMIC);
+    playerRB.SetFreezeRotationX(true);
+    playerRB.SetFreezeRotationZ(true);
 
-    CBoxCollider& boxABC = boxA->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
+    CBoxCollider& boxABC = player->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
-    CRenderable& renderable = boxA->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
+
+    CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    playerBeh.Bind<PlayerController>();
   }
 
   {

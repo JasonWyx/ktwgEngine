@@ -144,6 +144,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="physics.cpp" />
+    <ClCompile Include="playercontroller.cpp" />
     <ClCompile Include="raycastcallbacks.cpp" />
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="rigidbody.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="hyperenderer.h" />
     <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="plane.h" />
+    <ClInclude Include="playercontroller.h" />
     <ClInclude Include="quaternion.h" />
     <ClInclude Include="d3d11shader.hpp" />
     <ClInclude Include="hypegraphicobject.h" />
