@@ -1,25 +1,13 @@
 #include "objectpoolscript.h"
 
 #include "scene.h"
+#include "entity.h"
 
-ObjectPool::ObjectPool(const TypeInfo& type, Entity& entity)
-  : Behaviour{ type, entity }, m_Object{ nullptr }, m_Pool{}
+ObjectPool::ObjectPool()
 {
 }
 
 ObjectPool::~ObjectPool()
-{
-}
-
-void ObjectPool::Init()
-{
-}
-
-void ObjectPool::Start()
-{
-}
-
-void ObjectPool::Update()
 {
 }
 
@@ -32,6 +20,11 @@ void ObjectPool::IncreasePool(unsigned size)
     clone->SetActive(false);
     m_Pool.emplace_back(clone);
   }
+}
+
+void ObjectPool::SetObject(Entity* obj)
+{
+  m_Object = obj;
 }
 
 Entity* ObjectPool::GetObject()

@@ -1,19 +1,18 @@
 #pragma once
 
-#include "behaviour.h"
+#include "singleton.h"
+#include <vector>
 
-class ObjectPool : public Behaviour
+class Entity;
+
+class ObjectPool : public Singleton<ObjectPool>
 {
-
 public:
-  ObjectPool(const TypeInfo& type, Entity& entity);
+  ObjectPool();
   ~ObjectPool();
 
-  virtual void Init() override;
-  virtual void Start() override;
-  virtual void Update() override;
-
   void IncreasePool(unsigned size);
+  void SetObject(Entity* obj);
   Entity* GetObject();
 
 protected:

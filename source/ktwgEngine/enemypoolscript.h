@@ -5,10 +5,6 @@
 class EnemyPool : public ObjectPool
 {
 public:
-  EnemyPool(Entity& entity);
+  EnemyPool();
   ~EnemyPool();
-
-  void Init() override;
-  void Start() override;
-  void Update() override;
 };
