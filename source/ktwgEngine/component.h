@@ -27,6 +27,7 @@ public:
 
   virtual void Initialize() {};
   virtual void Destroy()    {};
+  virtual void Set(Component* comp);
 
   template<typename T>
   T& Get() { return static_cast<T&>(*this); }
@@ -36,12 +37,13 @@ public:
   inline const ::TypeInfo&    GetTypeInfo() const { return m_Info; }
   inline uint32_t             GetId()       const { return m_Id; }
   inline bool                 GetActive()   const { return m_State == ACTIVE; }
+  inline State                GetState()    const { return m_State; }
 
   inline void SetOwner(Entity* owner)             { m_Owner = owner; }
   inline void SetType(ComponentType type)         { m_Type = type; }
   inline void SetTypeInfo(const ::TypeInfo& info) { m_Info = info; }
   inline void SetId(uint32_t id)                  { m_Id = id; }
-  inline void SetActive(bool active)              { m_State = active ? ACTIVE : INACTIVE; }
+  inline virtual void SetActive(bool active)      { m_State = active ? ACTIVE : INACTIVE; }
 
   static void FreeComponent(Component* comp);
   static void RefreshFreeList();

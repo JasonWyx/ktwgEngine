@@ -122,6 +122,7 @@
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="entitypool.cpp" />
     <ClCompile Include="fcollider.cpp" />
+    <ClCompile Include="enemypoolscript.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="ktwgbehaviour.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="crigidbody.cpp" />
+    <ClCompile Include="objectpoolscript.cpp" />
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="playercontroller.cpp" />
     <ClCompile Include="raycastcallbacks.cpp" />
@@ -206,6 +208,7 @@
     <ClInclude Include="entity.h" />
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="fcollider.h" />
+    <ClInclude Include="enemypoolscript.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="hypecamera.h" />
@@ -233,6 +236,7 @@
     <ClInclude Include="istreammanager.h" />
     <ClInclude Include="hyperenderer.h" />
     <ClInclude Include="d3d11texture.h" />
+    <ClInclude Include="objectpoolscript.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="playercontroller.h" />
     <ClInclude Include="quaternion.h" />

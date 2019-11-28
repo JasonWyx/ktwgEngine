@@ -91,6 +91,7 @@ public:
   void SetActive(bool active);
   void SetAwake(bool flag);
   void SetIgnorePhysics(bool flag);
+  void Set(RigidBody* rb);
 
 private:
   BoxCollider* CreateCollider(uint32_t id);

@@ -99,3 +99,11 @@ void FCollider::DestroyContacts()
     world.m_ContactManager.RemoveContact(to_destroy->contact_);
   }
 }
+
+void FCollider::Set(FCollider* fCollider)
+{
+  SetFriction(fCollider->m_Friction);
+  SetRestitution(fCollider->m_Restitution);
+  SetIsTrigger(fCollider->m_IsTrigger);
+  SetActive(fCollider->m_Active);
+}

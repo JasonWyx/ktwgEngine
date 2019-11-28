@@ -26,10 +26,27 @@ void CBoxCollider::Destroy()
 {
 }
 
+void CBoxCollider::Set(Component* comp)
+{
+  Component::Set(comp);
+  CBoxCollider* bc = static_cast<CBoxCollider*>(comp);
+
+  assert(m_Internal);
+
+  m_Internal->Set(bc->GetInternal());
+}
+
 bool CBoxCollider::Contains(const Vec3& point)
 {
 
   return false;
+}
+
+BoxCollider* CBoxCollider::GetInternal() const
+{
+  assert(m_Internal);
+
+  return m_Internal;
 }
 
 Vec3 CBoxCollider::GetSize() const
@@ -101,5 +118,9 @@ void CBoxCollider::SetIsTrigger(bool isTrigger)
 
 void CBoxCollider::SetActive(bool active)
 {
+  Component::SetActive(active);
+
+  assert(m_Internal);
+
   m_Internal->SetActive(active);
 }

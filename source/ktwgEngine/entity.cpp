@@ -69,3 +69,51 @@ void Entity::RemoveComponent(Component* comp)
   m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), tmp), m_Components.end());
   Component::FreeComponent(comp);
 }
+
+void Entity::SetActive(bool active)
+{
+  m_State = active ? ACTIVE : INACTIVE;
+  if (m_State)
+  {
+    SetAllComponentsActive(true);
+    SetAllChildrenActive(true);
+    return;
+  }
+
+  SetAllComponentsActive(false);
+  SetAllChildrenActive(false);
+}
+
+void Entity::SetAllComponentsActive(bool active)
+{
+  for (auto& comp : m_Components)
+    comp->SetActive(active);
+}
+
+void Entity::SetAllChildrenActive(bool active)
+{
+  for (auto& child : m_Children)
+  {
+    if (m_State != INACTIVE)
+      child->SetActive(false);
+  }
+}
+
+void Entity::Set(Entity* ent)
+{
+  m_State = ent->m_State;
+  m_Name = ent->m_Name;
+  m_LayerId = ent->m_LayerId;
+
+  for (auto& comp : ent->m_Components)
+  {
+    Component* newComp = AddComponent(comp->GetType());
+    newComp->Set(comp);
+  }
+
+  for (auto& child : ent->m_Children)
+  {
+    Entity* newChild = AddChild();
+    newChild->Set(child);
+  }
+}

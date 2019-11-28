@@ -297,6 +297,16 @@ void BoxCollider::SetCenter(const Vec3& center)
   m_Internal->SetCenter(center);
 }
 
+void BoxCollider::SetMin(const Vec3& min)
+{
+  m_Min = min;
+}
+
+void BoxCollider::SetMax(const Vec3& max)
+{
+  m_Max = max;
+}
+
 void BoxCollider::SetIsTrigger(bool isTrigger)
 {
   m_Internal->SetIsTrigger(isTrigger);
@@ -305,4 +315,13 @@ void BoxCollider::SetIsTrigger(bool isTrigger)
 void BoxCollider::SetActive(bool active)
 {
   m_Internal->SetActive(active);
+}
+
+void BoxCollider::Set(BoxCollider* boxCollider)
+{
+  m_Internal->Set(boxCollider->GetInternal());
+
+  SetExtents(boxCollider->m_Extents);
+  SetMin(boxCollider->m_Min);
+  SetMax(boxCollider->m_Max);
 }

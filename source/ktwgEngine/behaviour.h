@@ -8,9 +8,12 @@
 #include "cbehaviour.h"
 #include "crigidbody.h"
 #include "cboxcollider.h"
+#include "crenderable.h"
+#include "hypegraphicobject.h"
 
 class InputSystem;
 class Time;
+class Scene;
 struct Collision;
 
 class Behaviour
@@ -25,6 +28,7 @@ public:
 
   static InputSystem&  Input();
   static Time& Time();
+  static Scene& Scene();
 
   virtual void OnCollisionEnter(Collision&) {};
   virtual void OnCollisionStay(Collision&) {};
@@ -33,7 +37,7 @@ public:
   virtual void OnTriggerStay(Collision&) {};
   virtual void OnTriggerExit(Collision&) {};
 
-  Transform& Transform();
+  Transform& GetTransform();
   
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 

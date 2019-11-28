@@ -54,6 +54,8 @@ public:
   inline void SetIsTrigger(bool isTrigger)          { m_IsTrigger = isTrigger; }
   inline void SetActive(bool active)                { m_Active = active; }
 
+  void Set(FCollider* fCollider);
+
 private:
   container_t<Vec3> m_Vertices;
   container_t<Plane> m_Planes;

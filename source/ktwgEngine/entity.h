@@ -52,11 +52,17 @@ public:
   inline const container_t<Component*>& GetComponents()     const { return m_Components; }
   inline const std::string&             GetName()           const { return m_Name; }
   inline uint32_t                       GetCollisionLayer() const { return m_LayerId; }
+  inline bool                           GetActive()         const { return m_State == ACTIVE; }
   inline bool                           IsDead()            const { return m_State == DEAD; }
 
   inline Transform& GetTransform() { return m_Transform; }
 
   inline void SetName(const std::string& name) { m_Name = name; }
+  
+  void SetActive(bool active);
+  void SetAllComponentsActive(bool active);
+  void SetAllChildrenActive(bool active);
+  void Set(Entity* ent);
 
 private:
   template<typename T> 

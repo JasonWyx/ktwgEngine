@@ -23,6 +23,13 @@ Scene::~Scene()
 {
 }
 
+Entity* Scene::CreateEntity(const std::string& name)
+{
+  Entity* entity = m_GameScene->AddChild();
+  entity->SetName(name);
+  return entity;
+}
+
 void Scene::InitializeInternal()
 {
   m_GameScene = Entity::CreateEntity("Scene");

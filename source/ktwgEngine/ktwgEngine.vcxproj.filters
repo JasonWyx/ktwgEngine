@@ -84,6 +84,8 @@
     <ClCompile Include="hypematerial.cpp" />
     <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="playercontroller.cpp" />
+    <ClCompile Include="enemypoolscript.cpp" />
+    <ClCompile Include="objectpoolscript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -200,5 +202,7 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="collisioneventtype.h" />
     <ClInclude Include="playercontroller.h" />
+    <ClInclude Include="enemypoolscript.h" />
+    <ClInclude Include="objectpoolscript.h" />
   </ItemGroup>
 </Project>

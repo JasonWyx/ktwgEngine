@@ -46,6 +46,16 @@ void CRigidBody::SetActive(bool active)
   m_Internal->SetActive(active);
 }
 
+void CRigidBody::Set(Component* comp)
+{
+  Component::Set(comp);
+
+  assert(m_Internal);
+
+  CRigidBody* rb = static_cast<CRigidBody*>(comp);
+  m_Internal->Set(rb->m_Internal);
+}
+
 void CRigidBody::AddForce(const Vec3& force)
 {
   assert(m_Internal);

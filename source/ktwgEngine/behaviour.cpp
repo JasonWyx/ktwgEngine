@@ -2,6 +2,7 @@
 
 #include "inputsystem.h"
 #include "time.h"
+#include "scene.h"
 
 Behaviour::Behaviour(const ::TypeInfo& info, Entity& entity)
   : m_Entity{ &entity },
@@ -13,17 +14,22 @@ Behaviour::~Behaviour()
 {
 }
 
-InputSystem & Behaviour::Input()
+InputSystem& Behaviour::Input()
 {
   return InputSystem::GetInstance();
 }
 
-Time & Behaviour::Time()
+Time& Behaviour::Time()
 {
   return Time::GetInstance();
 }
 
-Transform& Behaviour::Transform()
+Scene& Behaviour::Scene()
+{
+  return Scene::GetInstance();
+}
+
+Transform& Behaviour::GetTransform()
 {
   return m_Entity->GetTransform();
 }

@@ -268,6 +268,20 @@ void RigidBody::SetIgnorePhysics(bool flag)
     m_Flags &= ~RBF_IGNOREPHYSICS;
 }
 
+void RigidBody::Set(RigidBody* rb)
+{
+  SetBodyType(rb->m_Type);
+  SetMass(rb->m_Mass);
+  SetLinearDamping(rb->m_LinearDamping);
+  SetAngularDamping(rb->m_AngularDamping);
+  SetGravityScale(rb->m_GravityScale);
+  SetUseGravity(rb->m_UseGravity);
+  SetFreezeRotationX(rb->GetFreezeRotationX());
+  SetFreezeRotationY(rb->GetFreezeRotationY());
+  SetFreezeRotationZ(rb->GetFreezeRotationZ());
+  SetIgnorePhysics(rb->GetIgnorePhysics());
+}
+
 BoxCollider* RigidBody::CreateCollider(uint32_t id)
 {
   BoxCollider* collider = nullptr;

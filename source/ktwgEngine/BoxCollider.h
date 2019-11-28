@@ -69,8 +69,12 @@ public:
   void SetBroadphaseId(int32_t id);
   void SetExtents(const Vec3& extent);
   void SetCenter(const Vec3& center);
+  void SetMin(const Vec3& min);
+  void SetMax(const Vec3& max);
   void SetIsTrigger(bool isTrigger);
   void SetActive(bool active);
+
+  void Set(BoxCollider* boxCollider);
 
 private:
   UniquePtr<FCollider> m_Internal;
