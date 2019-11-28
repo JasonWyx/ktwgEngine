@@ -25,6 +25,8 @@ public:
   template <typename T>
   void Bind();
 
+  virtual void Set(Component* comp) override;
+
 private:
   void DispatchCollisionEvent(Collision& other, const CollisionEventType& cet);
 

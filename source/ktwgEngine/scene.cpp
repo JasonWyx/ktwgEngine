@@ -13,6 +13,7 @@
 // Behaviour
 #include "testbehaviour.h"
 #include "playercontroller.h"
+#include "EnemyManagerScript.h"
 
 Scene::Scene()
   : m_GameScene{ nullptr }
@@ -187,6 +188,15 @@ void Scene::InitializeInternal()
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
+  }
+
+  {
+    // EnemyManager
+    Entity* enemyMng = m_GameScene->AddChild();
+    enemyMng->SetName("enemyMng");
+
+    CBehaviour& beh = enemyMng->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    beh.Bind<EnemyManager>();
   }
 
 }

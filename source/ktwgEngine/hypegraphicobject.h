@@ -20,6 +20,8 @@ public:
   // This should only be used to set an overriding material, THE INSTANCE WILL OWN THE MATERIAL
   void SetMaterial(HypeMaterial* material) { m_Material = material; }
 
+  bool HasOverrideMaterial() const { return m_Material != nullptr; }
+
 protected:
   Entity* m_Owner;
   HypeGraphicObject* m_GraphicObject;
@@ -41,7 +43,7 @@ public:
 
   HypeMaterial* GetMaterial() { return &m_Material; }
   const HypeMaterial* GetMaterial() const { return &m_Material; }
-  
+    
 private:
   virtual HypeGraphicObjectInstance* NotifyInstanceCreatedInternal(Entity& instance) = 0;
 

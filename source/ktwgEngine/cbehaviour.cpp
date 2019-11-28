@@ -19,6 +19,11 @@ void CBehaviour::Destroy()
 {
 }
 
+void CBehaviour::Set(Component* comp)
+{
+  Component::Set(comp);
+}
+
 void CBehaviour::DispatchCollisionEvent(Collision& other, const CollisionEventType& cet)
 {
   switch (cet)

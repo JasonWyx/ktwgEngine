@@ -4,8 +4,11 @@
 #include "entity.h"
 #include "crigidbody.h"
 #include "cboxcollider.h"
-#include "crenderable.h"
+#include "cbehaviour.h"
 #include "hypegraphicobject.h"
+
+#include "crenderable.h"
+#include "EnemyBehaviour.h"
 
 EnemyPool::EnemyPool()
   : ObjectPool{}
@@ -26,6 +29,9 @@ EnemyPool::EnemyPool()
   renderable.SetGraphicObject("Cube");
   renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
   renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.75f, 0.25f, 0.25f, 1.0f);
+
+  CBehaviour& enemyBeh = obj->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+  enemyBeh.Bind<EnemyBehaviour>();
   
   m_Object->SetActive(false);
 

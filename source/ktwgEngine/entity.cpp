@@ -107,8 +107,11 @@ void Entity::Set(Entity* ent)
 
   for (auto& comp : ent->m_Components)
   {
-    Component* newComp = AddComponent(comp->GetType());
-    newComp->Set(comp);
+    if (comp->GetType() != CT_BEHAVIOUR)
+    {
+      Component* newComp = AddComponent(comp->GetType());
+      newComp->Set(comp);
+    }
   }
 
   for (auto& child : ent->m_Children)
