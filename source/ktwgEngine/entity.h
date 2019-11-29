@@ -48,6 +48,7 @@ public:
   Component* AddComponent(ComponentType type);
   void       RemoveComponent(Component* comp);
 
+  inline const container_t<Entity*>&    GetChildren()       const { return m_Children; }
   inline const Transform&               GetTransform()      const { return m_Transform; }
   inline const container_t<Component*>& GetComponents()     const { return m_Components; }
   inline const std::string&             GetName()           const { return m_Name; }

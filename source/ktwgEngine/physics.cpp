@@ -13,6 +13,9 @@ Physics::Physics()
     m_IsPaused{ false }, m_IsNewCollider{ false }, m_QueriesHitTriggers{ true },
     m_ContactManager{}
 {
+  for (unsigned i = 0; i < MAX_COLLISION_LAYER; ++i)
+    m_LayerCollisionMatrix[i] = UINT32_MAX;
+
   m_RigidBodies.reserve(MAX_RIGIDBODIES);
 }
 
@@ -294,7 +297,7 @@ void Physics::Solve(float dt)
       {
         auto b = island.bodies_[j];
         if (b->m_Type == RBT_STATIC)
-          b->m_Flags &= RBF_ISLAND;
+          b->m_Flags &= ~RBF_ISLAND;
       }
     }
   }

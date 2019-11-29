@@ -44,3 +44,10 @@ Matrix4 Transform::GetMatrix() const
   result.m_[3][3] = 1.f;
   return result;
 }
+
+Vec3 Transform::Forward() const
+{
+  Vec3 v = VECTOR_Z;
+  rot_.Rotate(v);
+  return v;
+}

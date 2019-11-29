@@ -9,6 +9,7 @@
 CBoxCollider::CBoxCollider(Entity& owner, uint32_t id)
   : Component{ typeid(CBoxCollider), owner, id }, m_Internal{ nullptr }
 {
+  SetType(CT_BOXCOLLIDER);
 }
 
 CBoxCollider::~CBoxCollider()

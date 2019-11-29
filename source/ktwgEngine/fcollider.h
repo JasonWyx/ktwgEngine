@@ -52,8 +52,8 @@ public:
   inline void SetOwner(BoxCollider* owner)          { m_Owner = owner; }
   inline void SetBroadphaseId(int32_t broadphaseId) { m_BroadphaseId = broadphaseId; }
   inline void SetIsTrigger(bool isTrigger)          { m_IsTrigger = isTrigger; }
-  inline void SetActive(bool active)                { m_Active = active; }
 
+  void SetActive(bool active);
   void Set(FCollider* fCollider);
 
 private:

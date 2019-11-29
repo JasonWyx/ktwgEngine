@@ -134,25 +134,6 @@ void Contact::Update(ContactListener* listener)
 
 void Contact::SolveCollision()
 {
-  // using CheckColliderFunctionTable = void(*)(Manifold& manifold, BoxCollider* colliderA, ICollider* colliderB);
-  // 
-  // // Collision function table
-  // static const CheckColliderFunctionTable sCollideTable[eCTMax][eCTMax] =
-  // {
-  //   { NULL, NULL              , NULL                 , NULL                  , NULL                },
-  //   { NULL, &CheckBoxToBox    , &CheckBoxToSphere    , &CheckBoxToCapsule    , &CheckBoxToMesh     },
-  //   { NULL, &CheckSphereToBox , &CheckSphereToSphere , &CheckSphereToCapsule , &CheckSphereToMesh  },
-  //   { NULL, &CheckCapsuleToBox, &CheckCapsuleToSphere, &CheckCapsuleToCapsule, &CheckCapsuleToMesh },
-  //   { NULL, &CheckMeshToBox   , &CheckMeshToSphere   , &CheckMeshToCapsule   , &CheckMeshToMesh    }
-  // };
-  // 
-  // manifold_.contactCount_ = 0;
-  // 
-  // auto typeA = pair_.colliders_[0]->GetType();
-  // auto typeB = pair_.colliders_[1]->GetType();
-  // 
-  // // Call respective collision function
-  // sCollideTable[typeA][typeB](manifold_, pair_.colliders_[0], pair_.colliders_[1]);
   CheckBoxToBox(manifold_, pair_.colliders_[0], pair_.colliders_[1]);
 }
 

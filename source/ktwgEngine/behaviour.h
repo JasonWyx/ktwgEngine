@@ -37,8 +37,12 @@ public:
   virtual void OnTriggerStay(Collision&) {};
   virtual void OnTriggerExit(Collision&) {};
 
+  void Set(Behaviour* comp);
+  void SetActive(bool active);
+
   Transform& GetTransform();
-  
+  bool GetActive() const;
+
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 
   template <typename T>
@@ -46,6 +50,7 @@ public:
 
   Entity* m_Entity;
   ::TypeInfo m_Info;
+  bool m_Active;
 };
 
 template<typename T>

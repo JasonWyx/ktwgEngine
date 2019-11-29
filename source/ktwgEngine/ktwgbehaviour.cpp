@@ -21,17 +21,20 @@ void KTWGBehaviour::ShutdownInternal()
 void KTWGBehaviour::Init()
 {
   for (auto& elem : m_Behaviours)
-    elem->Init();
+    if(elem->GetActive())
+      elem->Init();
 }
 
 void KTWGBehaviour::Start()
 {
   for (auto& elem : m_Behaviours)
-    elem->Start();
+    if(elem->GetActive())
+      elem->Start();
 }
 
 void KTWGBehaviour::Update()
 {
   for (auto& elem : m_Behaviours)
-    elem->Update();
+    if(elem->GetActive())
+      elem->Update();
 }

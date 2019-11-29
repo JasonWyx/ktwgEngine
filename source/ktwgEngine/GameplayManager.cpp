@@ -1,4 +1,4 @@
-#include "GameplayManager.h"
+#include "gameplaymanager.h"
 #include "entity.h"
 
 Entity * GameplayManager::GetNearestPlayer(const Vec3 & position)

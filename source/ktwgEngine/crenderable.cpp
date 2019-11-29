@@ -6,6 +6,7 @@
 CRenderable::CRenderable(Entity & entity, uint32_t id)
 :Component{typeid(CRenderable), entity, id}, m_GraphicObject{nullptr}, m_Instance{nullptr}
 {
+  SetType(CT_RENDERABLE);
 }
 
 void CRenderable::Set(Component* comp)
@@ -14,7 +15,8 @@ void CRenderable::Set(Component* comp)
 
   CRenderable* renderable = static_cast<CRenderable*>(comp);
 
-  m_GraphicObject->SetName(renderable->m_GraphicObject->GetName());
+  if (renderable->GetGraphicObject())
+    SetGraphicObject(renderable->m_GraphicObject->GetName());
 
   if (renderable->m_Instance->HasOverrideMaterial())
   {

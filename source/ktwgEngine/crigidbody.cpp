@@ -5,6 +5,7 @@
 CRigidBody::CRigidBody(Entity& entity, uint32_t id)
   : Component{ typeid(CRigidBody), entity, id }, m_Internal{ nullptr }
 {
+  SetType(CT_RIGIDBODY);
 }
 
 CRigidBody::~CRigidBody()

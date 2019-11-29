@@ -1,7 +1,7 @@
-#include "EnemyManagerScript.h"
-#include "GameplayManager.h"
-#include "enemypoolscript.h"
-#include "EnemyBehaviour.h"
+#include "enemymanagerscript.h"
+#include "gameplaymanager.h"
+#include "enemypool.h"
+#include "enemybehaviour.h"
 #include "entity.h"
 #include "time.h"
 
@@ -20,7 +20,7 @@ EnemyManager::~EnemyManager()
 void EnemyManager::Init()
 {
   EnemyPool::Initialize();
-  Spawn(GameplayManager::GetInstance().GetConnectedPlayers().size());
+  Spawn(4);
 }
 
 void EnemyManager::Update()
@@ -36,7 +36,7 @@ void EnemyManager::Spawn(unsigned size)
   float j = 1.0f;
   for (unsigned i = 0; i < size; ++i)
   {
-    Entity* obj = EnemyPool::GetInstance().GetObject();
+    Entity* obj = EnemyPool::GetInstance().GetEnemy();
     CBehaviour& beh = obj->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     beh.Bind<EnemyBehaviour>();
     

@@ -9,6 +9,9 @@ class Entity;
 class GameplayManager : public Singleton<GameplayManager>
 {
 public:
+  virtual void InitializeInternal() override {};
+  virtual void ShutdownInternal() override {};
+
   Entity* GetNearestPlayer(const Vec3& position);
   Vec3 GetNearestPlayerPosition(const Vec3& position);
 

@@ -67,6 +67,7 @@ public:
 
   Matrix4 GetMatrix() const;
 
+  Vec3 Forward() const;
 
 protected:
   Vec3       pos_;   // Stores the position of the transform

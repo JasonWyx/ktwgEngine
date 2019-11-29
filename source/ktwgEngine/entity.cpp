@@ -73,7 +73,7 @@ void Entity::RemoveComponent(Component* comp)
 void Entity::SetActive(bool active)
 {
   m_State = active ? ACTIVE : INACTIVE;
-  if (m_State)
+  if (active)
   {
     SetAllComponentsActive(true);
     SetAllChildrenActive(true);

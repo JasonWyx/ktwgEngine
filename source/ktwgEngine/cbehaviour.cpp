@@ -5,6 +5,7 @@
 CBehaviour::CBehaviour(Entity& owner, uint32_t id)
   : Component{ typeid(CBehaviour), owner, id }, m_Internal { nullptr }
 {
+  SetType(CT_BEHAVIOUR);
 }
 
 CBehaviour::~CBehaviour()
@@ -22,6 +23,11 @@ void CBehaviour::Destroy()
 void CBehaviour::Set(Component* comp)
 {
   Component::Set(comp);
+
+  CBehaviour* behComp = static_cast<CBehaviour*>(comp);
+
+  if (m_Internal && behComp->m_Internal)
+    m_Internal->Set(behComp->m_Internal);
 }
 
 void CBehaviour::DispatchCollisionEvent(Collision& other, const CollisionEventType& cet)
