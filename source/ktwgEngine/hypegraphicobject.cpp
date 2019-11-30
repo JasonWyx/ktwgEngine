@@ -25,6 +25,11 @@ HypeMaterial * HypeGraphicObjectInstance::GetMaterial() const
   return m_GraphicObject->GetMaterial();
 }
 
+bool HypeGraphicObjectInstance::GetActive() const
+{
+  return m_Owner->GetActive();
+}
+
 HypeGraphicObject::HypeGraphicObject()
 :m_Instances{}, m_Name{}, m_Material{}
 {

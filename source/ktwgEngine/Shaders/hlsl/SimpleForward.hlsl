@@ -23,9 +23,10 @@ PS_INPUT Shade_Vertex(in VS_INPUT input)
 {
   PS_INPUT output;
   output.m_SVPosition = mul(float4(input.m_Position, 1.0), g_ModelViewProjection);
+  float3 worldNormal = mul(input.m_Normal, (float3x3)g_WorldInverseTranspose);
   float3 lightDir = float3(1.0, 1.0, -1.0);
   lightDir = normalize(lightDir);
-  output.m_Color = saturate(0.2f + dot(input.m_Normal, lightDir)) * g_SimpleForwardParamsColor;
+  output.m_Color = saturate(0.2f + dot(worldNormal, lightDir)) * g_SimpleForwardParamsColor;
   return output;
 }
 
