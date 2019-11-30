@@ -12,12 +12,16 @@
 #include <vector>
 #include <queue>
 #include <tuple>
+#include <list>
 
-using TIME = std::chrono::time_point<std::chrono::system_clock>;
+#define CLOCK_TYPE steady_clock
+
+using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
 #define BUFLEN 512
 #define BETA 0.25f
 #define ALPHA 0.125f
+#define MAX_WINDOW 20
 
 void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown);
 
@@ -44,6 +48,7 @@ class SocketWindowData
   std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
   int                     timeOutPkt = 0;
+  bool                    shutdown = false;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
@@ -61,6 +66,9 @@ public:
   void SetPort(const u_short& p);
   UDPSocketPtr GetSocket();
   void Update();
+  void Init();
+  bool GetShutdown();
+  void ShutdownMessage();
 };
 
 class ConnectionManager : public Singleton <ConnectionManager>

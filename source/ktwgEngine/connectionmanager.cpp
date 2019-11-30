@@ -12,6 +12,7 @@ ConnectionManager::ConnectionManager()
   : mySocket{}, hostSocket(nullptr), host(false), shutdown(0)
 {
   SocketUtility::Init();
+  mySocket.Init();
 }
 
 ConnectionManager::~ConnectionManager()
@@ -60,6 +61,7 @@ void ConnectionManager::InitializeInternal()
 
 void ConnectionManager::ShutdownInternal()
 {
+  mySocket.ShutdownMessage();
   shutdown = 1;
   // serverThread.join();
   SocketUtility::CleanUp();
@@ -151,7 +153,9 @@ void ConnectionManager::ConnectToServer()
 
 void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
 {
-  std::vector<SocketWindowData> serverSockets;
+  bool playerActive[4];
+  playerActive[0] = playerActive[1] = playerActive[2] = playerActive[3] = false;
+  std::list<SocketWindowData> serverSockets;
   std::vector<bool> playersOnline;
   playersOnline.resize(4);
   int players = 0;
@@ -187,10 +191,15 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
         SocketAddress newServer{ AF_INET, inet_addr(SERVER), htons(newPort) };
         s->Bind(newServer);
         SocketWindowData tmp;
+        tmp.Init();
         tmp.SetSocket(s);
         tmp.SetPort(cPort);
         serverSockets.push_back(tmp);
         ++players;
+        if (!playerActive[0]) playerActive[0] = true;
+        else if (!playerActive[1]) playerActive[1] = true;
+        else if (!playerActive[2]) playerActive[2] = true;
+        else if (!playerActive[3]) playerActive[3] = true;
       }
     }
 
@@ -200,6 +209,20 @@ void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
       ss.Update();
     }
 
+    int player = 0;
+    for (auto it = serverSockets.begin(); it != serverSockets.end(); ++it)
+    {
+      if (it->GetShutdown())
+      {
+        // quit player remove player
+        std::cout << "Player " << player << " has exited" << std::endl;
+        it = serverSockets.erase(it);
+        --players;
+        // remove player here
+        playerActive[player] = false;
+      }
+      ++player;
+    }
   }
   std::cout << "Server is shutting down" << std::endl;
 }
@@ -250,7 +273,7 @@ void SocketWindowData::SlowStart(const bool& ss)
   if (!ss) return;
   if (windowSize < ssThres) windowSize *= 2;
   else ++windowSize;
-  if (windowSize > 20) windowSize = 20;
+  if (windowSize > MAX_WINDOW) windowSize = MAX_WINDOW;
 }
 
 void SocketWindowData::DeliverMessage()
@@ -260,7 +283,7 @@ void SocketWindowData::DeliverMessage()
   {
     timeTracker.clear();
     timeTracker.resize(windowSize);
-    PktTimer tmp = std::make_tuple(true, std::chrono::system_clock::now(), 0.f);
+    PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
     std::fill(timeTracker.begin(), timeTracker.end(), tmp);
   }
 
@@ -279,7 +302,7 @@ void SocketWindowData::DeliverMessage()
     --currWindowSize;
     float timeOut = rtt + 4 * devRTT;
     timeOut = timeOut < 1.f ? 1.f : timeOut;
-    PktTimer timer = std::make_tuple(false, std::chrono::system_clock::now(), timeOut);
+    PktTimer timer = std::make_tuple(false, std::chrono::CLOCK_TYPE::now(), timeOut);
     timeTracker[cumulativePktsSent] = timer;
     ++cumulativePktsSent;
     ++sentPkt;
@@ -292,13 +315,26 @@ void SocketWindowData::ReceiveMessage()
   char buffer[BUFLEN];
   ZeroMemory(buffer, BUFLEN);
   SocketAddress sender{ AF_INET, inet_addr(SERVER), htons(PORT) };
-  while (socket->ReceiveFrom(buffer, BUFLEN, sender) > 0)
+  int res = 0;
+  while ((res = socket->ReceiveFrom(buffer, BUFLEN, sender)) > 0)
   {
     // ++dynamicRecvPkt;
     if (sPort == 0)
     {
       sPort = ntohs(sender.GetAsSockAddrIn()->sin_port);
       std::cout << "MY PORT : " << sPort << std::endl;
+    }
+
+    std::cout << "Recieved Size is : " << res << std::endl;
+
+    if (res == 8)
+    {
+      std::string signal;
+      for (int i = 0; i < 8; ++i) signal.push_back(buffer[i]);
+      if (signal == "shutdown")
+        shutdown = true;
+      else
+        continue;
     }
 
     auto message = UnPackMessage(buffer);
@@ -322,26 +358,29 @@ void SocketWindowData::ReceiveMessage()
 
     // End of Debugging
 
-    if ((int)senderStartPkt + ackSlip.size() < 255 && std::get<1>(message) < senderStartPkt)
-    {
-      // send message to stream manager then return
-      // --dynamicRecvPkt;
-      return;
-    }
-
-    if (senderStartPkt == std::get<1>(message) && std::get<2>(message) != ackSlip.size() && !ackSlip.empty())
-    {
-      // send message to stream manager then return
-      // --dynamicRecvPkt;
-      return;
-    }
-
-    if (std::get<1>(message) > senderStartPkt && (std::get<1>(message) != senderStartPkt + ackSlip.size()))
-    {
-      // send message to stream manager then return
-      // --dynamicRecvPkt;
-      return;
-    }
+    // to check for duplicate delay packets a bit buggy
+    // if ((int)senderStartPkt + ackSlip.size() < 255 && std::get<1>(message) < senderStartPkt)
+    // {
+    //   // send message to stream manager then return
+    //   // --dynamicRecvPkt;
+    //   continue;
+    // }
+    // 
+    // 
+    // if ((int)senderStartPkt == (int)std::get<1>(message) && std::get<2>(message) != ackSlip.size())
+    // {
+    //   // send message to stream manager then return
+    //   // --dynamicRecvPkt;
+    //   continue;
+    // }
+    //  
+    // if ((int)std::get<1>(message) != (int)senderStartPkt && ((int)std::get<1>(message) != (((int)senderStartPkt + ackSlip.size()) % 256)))
+    // {
+    //   std::cout << "Start Pkt : " << (int)std::get<1>(message) << " shld be : " << (((int)senderStartPkt + ackSlip.size()) % 256) << std::endl;
+    //   // send message to stream manager then return
+    //   // --dynamicRecvPkt;
+    //   continue;
+    // }
 
     int index = ((int)std::get<0>(message)) - ((int)std::get<1>(message));
     // std::cout << "end size : " << (int)std::get<1>(message) + (int)std::get<2>(message) << std::endl;
@@ -351,7 +390,8 @@ void SocketWindowData::ReceiveMessage()
       std::cout << "index : " << index << std::endl;
     }
     if (index < 0) return;
-    if (ackSlip.size() != std::get<2>(message) || senderStartPkt != startPkt)
+
+    if (senderStartPkt != startPkt)
     {
       senderStartPkt = startPkt;
       ackSlip.clear();
@@ -378,7 +418,7 @@ void SocketWindowData::ReceiveMessage()
     }
     std::cout << std::endl;
 
-    if (std::get<3>(message) == recvPkt) recvAckSlip = recvAckSlip | std::get<4>(message);
+    recvAckSlip = recvAckSlip | std::get<4>(message);
     
     int tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
     dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
@@ -414,7 +454,7 @@ void SocketWindowData::ReceiveMessage()
 
 void SocketWindowData::UpdateTimer()
 {
-  auto now = std::chrono::system_clock::now();
+  auto now = std::chrono::CLOCK_TYPE::now();
   for (int i = 0; i < timeTracker.size(); ++i)
   {
     if (i < cumulativePktsSent)
@@ -427,7 +467,7 @@ void SocketWindowData::UpdateTimer()
         float timeOut = std::get<2>(timeTracker[i]);
         if (elapsedTime > timeOut)
         {
-          PktTimer tmp = std::make_tuple(true, std::chrono::system_clock::now(), 0.f);
+          PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
           timeTracker[i] = tmp;
           ++timeOutPkt;
           std::cout << "TimeOut : " << timeOut << " elapsedTime : " << elapsedTime << std::endl;
@@ -438,7 +478,7 @@ void SocketWindowData::UpdateTimer()
 
   if ((dynamicRecvPkt + timeOutPkt == windowSize) && sentMsg)
   {
-    std::cout << "DYNAMIC RECV PKT : " << (int)dynamicRecvPkt << " TIMEOUT PKT : " << timeOutPkt << std::endl;
+    std::cout << "DYNAMIC RECV PKT : " << (int)dynamicRecvPkt << " TIMEOUT PKT : " << timeOutPkt << " recvAckSlip : " << recvAckSlip <<std::endl;
     ReadACKS(recvAckSlip);
     dynamicRecvPkt = 0;
     recvAckSlip = 0;
@@ -469,8 +509,7 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
 {
   int recvPkts = 0;
   int bit = 0x1;
-  PktTimer tmp = std::make_tuple(true, std::chrono::system_clock::now(), 0.f);
-  auto now = std::chrono::system_clock::now();
+  PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
   for (int i = size - 1; i >= 0; --i)
   {
     int result = val & bit;
@@ -480,12 +519,13 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
       bool recv = std::get<0>(timeTracker[i]);
       if (i < cumulativePktsSent)
       {
+        auto now = std::chrono::CLOCK_TYPE::now();
         auto then = std::get<1>(timeTracker[i]);
         float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(now - then)).count();
         //std::cout << "RTT' :" << elapsedTime << std::endl;
         devRTT = (1.f - BETA) * devRTT + BETA * std::fabs((float)elapsedTime - rtt);
         rtt = (1.f - ALPHA) * (float)elapsedTime + ALPHA * rtt;
-        PktTimer tmp = std::make_tuple(true, std::chrono::system_clock::now(), 0.f);
+        PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
         //std::cout << "DevRtt : " << devRTT << std::endl;
         //std::cout << "RTT : " << rtt << std::endl;
         timeTracker[i] = tmp;
@@ -544,4 +584,24 @@ void SocketWindowData::Update()
   DeliverMessage();
   ReceiveMessage();
   UpdateTimer();
+}
+
+void SocketWindowData::Init()
+{
+  ackSlip.resize(1);
+  ackSlip[0] = false;
+}
+
+bool SocketWindowData::GetShutdown()
+{
+  return shutdown;
+}
+
+void SocketWindowData::ShutdownMessage()
+{
+  while(!msgQueue.empty())
+    msgQueue.pop();
+  std::string s = "shutdown";
+  SocketAddress reciever{ AF_INET, inet_addr(SERVER), htons(sPort) };
+  socket->SendTo(s.c_str(), s.size(), reciever);
 }
