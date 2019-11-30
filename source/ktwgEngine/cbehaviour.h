@@ -12,6 +12,7 @@ class Behaviour;
 class CBehaviour final : public Component
 {
   friend class ContactListener;
+  friend struct CollisionEvent;
 public:
   CBehaviour(Entity& owner, uint32_t id);
   ~CBehaviour();
@@ -24,6 +25,8 @@ public:
   
   template <typename T>
   void Bind();
+
+  virtual void Set(Component* comp) override;
 
 private:
   void DispatchCollisionEvent(Collision& other, const CollisionEventType& cet);

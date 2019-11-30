@@ -19,7 +19,7 @@ public:
   void Initialize() override;
   void Destroy()    override;
 
-  void SetActive(bool active);
+  void SetActive(bool active) override;
 
   void AddForce(const Vec3& force);
   void SynchroniseRigidBody();
@@ -56,6 +56,8 @@ public:
   void SetFreezeRotationY(bool freeze);
   void SetFreezeRotationZ(bool freeze);
   void SetIgnorePhysics(bool flag);
+
+  void Set(Component* comp) override;
 
 private:
   RigidBody* m_Internal;

@@ -1,6 +1,7 @@
 #include "gjk.h"
 #include <assert.h>
 #include "boxcollider.h"
+#include "rigidbody.h"
 
 void GJK::Simplex::Initialize(BoxCollider* colliderA, BoxCollider* colliderB)
 {
@@ -12,12 +13,12 @@ void GJK::Simplex::Initialize(BoxCollider* colliderA, BoxCollider* colliderB)
   Vec3 localPointB = colliderB->GetVertices()[0];
 
   // Retrieve transforms to convert local points to world points
-  //auto xfA = colliderA->GetRigidBody()->GetTransform();
-  //auto xfB = colliderB->GetRigidBody()->GetTransform();
+  Transform xfA = colliderA->GetRigidBody()->GetTransform();
+  Transform xfB = colliderB->GetRigidBody()->GetTransform();
 
   // Initialize the 1-simplex value 
-  // v->pointA_ = Multiply(xfA, localPointA);
-  // v->pointB_ = Multiply(xfB, localPointB);
+  v->pointA_ = Multiply(xfA, localPointA);
+  v->pointB_ = Multiply(xfB, localPointB);
   v->minkowskiPoint_ = v->pointB_ - v->pointA_;
   v->weight_ = 1.0f;
   v->indexA_ = 0;
@@ -526,8 +527,8 @@ GJK::GJKOutput GJK::GJK(BoxCollider* colliderA, BoxCollider* colliderB)
   Simplex s;
   s.Initialize(colliderA, colliderB);
 
-  //auto xfA = colliderA->GetRigidBody()->GetTransform();
-  //auto xfB = colliderB->GetRigidBody()->GetTransform();
+  Transform xfA = colliderA->GetRigidBody()->GetTransform();
+  Transform xfB = colliderB->GetRigidBody()->GetTransform();
 
   // Retrieve simplex vertices as an array
   SimplexVertex* vertices = s.vertices_;
@@ -584,10 +585,10 @@ GJK::GJKOutput GJK::GJK(BoxCollider* colliderA, BoxCollider* colliderB)
 
     // Generate a new vertex for the simplex
     auto vertex = vertices + s.count_;
-    //vertex->indexA_ = GetSupportIndex(colliderA, MultiplyT(xfA.GetRotation(), dir.Negate()));
-    //vertex->pointA_ = Multiply(xfA, colliderA->GetVertices()[vertex->indexA_]);
-    //vertex->indexB_ = GetSupportIndex(colliderB, MultiplyT(xfB.GetRotation(), dir));
-    //vertex->pointB_ = Multiply(xfB, colliderB->GetVertices()[vertex->indexB_]);
+    vertex->indexA_ = GetSupportIndex(colliderA, MultiplyT(xfA.GetRotation(), dir.Negate()));
+    vertex->pointA_ = Multiply(xfA, colliderA->GetVertices()[vertex->indexA_]);
+    vertex->indexB_ = GetSupportIndex(colliderB, MultiplyT(xfB.GetRotation(), dir));
+    vertex->pointB_ = Multiply(xfB, colliderB->GetVertices()[vertex->indexB_]);
     vertex->minkowskiPoint_ = vertex->pointB_ - vertex->pointA_;
 
     ++gjk_iteration;

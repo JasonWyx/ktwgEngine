@@ -93,6 +93,8 @@
     <ClCompile Include="bitstream.cpp" />
     <ClCompile Include="boxcollider.cpp" />
     <ClCompile Include="broadphase.cpp" />
+    <ClCompile Include="bulletbehaviourscript.cpp" />
+    <ClCompile Include="bulletpool.cpp" />
     <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
     <ClCompile Include="ccamera.cpp" />
@@ -119,11 +121,13 @@
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
     <ClCompile Include="dynamicaabb3tree.cpp" />
-    <ClCompile Include="EnemyBehaviour.cpp" />
+    <ClCompile Include="enemybehaviour.cpp" />
+    <ClCompile Include="enemymanagerscript.cpp" />
+    <ClCompile Include="enemypool.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="entitypool.cpp" />
     <ClCompile Include="fcollider.cpp" />
-    <ClCompile Include="GameplayManager.cpp" />
+    <ClCompile Include="gameplaymanager.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostobject.cpp" />
@@ -159,7 +163,7 @@
     <ClCompile Include="socketutility.cpp" />
     <ClCompile Include="streammanager.cpp" />
     <ClCompile Include="tcpsocket.cpp" />
-    <ClCompile Include="testbehaviour.cpp" />
+    <ClCompile Include="camerabehaviourscript.cpp" />
     <ClCompile Include="time.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="transform.cpp" />
@@ -175,6 +179,8 @@
     <ClInclude Include="bitstream.h" />
     <ClInclude Include="boxcollider.h" />
     <ClInclude Include="broadphase.h" />
+    <ClInclude Include="bulletbehaviourscript.h" />
+    <ClInclude Include="bulletpool.h" />
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="ccamera.h" />
@@ -205,11 +211,13 @@
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="dynamicaabb3tree.h" />
-    <ClInclude Include="EnemyBehaviour.h" />
+    <ClInclude Include="enemybehaviour.h" />
+    <ClInclude Include="enemymanagerscript.h" />
+    <ClInclude Include="enemypool.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="fcollider.h" />
-    <ClInclude Include="GameplayManager.h" />
+    <ClInclude Include="gameplaymanager.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="hypecamera.h" />
@@ -267,7 +275,7 @@
     <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="sweep.h" />
     <ClInclude Include="tcpsocket.h" />
-    <ClInclude Include="testbehaviour.h" />
+    <ClInclude Include="camerabehaviourscript.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="transform.h" />

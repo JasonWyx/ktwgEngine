@@ -79,13 +79,17 @@
     <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="behaviour.cpp" />
     <ClCompile Include="ktwgbehaviour.cpp" />
-    <ClCompile Include="testbehaviour.cpp" />
     <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
     <ClCompile Include="hypematerial.cpp" />
     <ClCompile Include="rigidbody.cpp" />
     <ClCompile Include="playercontroller.cpp" />
-    <ClCompile Include="GameplayManager.cpp" />
-    <ClCompile Include="EnemyBehaviour.cpp" />
+    <ClCompile Include="enemymanagerscript.cpp" />
+    <ClCompile Include="enemybehaviour.cpp" />
+    <ClCompile Include="gameplaymanager.cpp" />
+    <ClCompile Include="enemypool.cpp" />
+    <ClCompile Include="camerabehaviourscript.cpp" />
+    <ClCompile Include="bulletpool.cpp" />
+    <ClCompile Include="bulletbehaviourscript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -196,13 +200,17 @@
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="ktwgbehaviour.h" />
-    <ClInclude Include="testbehaviour.h" />
     <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
     <ClInclude Include="hypematerial.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="collisioneventtype.h" />
     <ClInclude Include="playercontroller.h" />
-    <ClInclude Include="GameplayManager.h" />
-    <ClInclude Include="EnemyBehaviour.h" />
+    <ClInclude Include="enemymanagerscript.h" />
+    <ClInclude Include="enemybehaviour.h" />
+    <ClInclude Include="gameplaymanager.h" />
+    <ClInclude Include="enemypool.h" />
+    <ClInclude Include="camerabehaviourscript.h" />
+    <ClInclude Include="bulletpool.h" />
+    <ClInclude Include="bulletbehaviourscript.h" />
   </ItemGroup>
 </Project>

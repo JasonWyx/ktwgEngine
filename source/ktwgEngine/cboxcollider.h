@@ -16,10 +16,12 @@ public:
   /* Override functions for abstract class */
   void Initialize() override;
   void Destroy()    override;
+  void Set(Component* comp) override;
 
   bool Contains(const Vec3& point);
 
   /* getters */
+  BoxCollider* GetInternal() const;
   Vec3 GetSize()       const;
   Vec3 GetCenter()     const;
   const Vec3& GetMin() const;
@@ -31,7 +33,7 @@ public:
   void SetSize(const Vec3& size);
   void SetCenter(const Vec3& center);
   void SetIsTrigger(bool isTrigger);
-  void SetActive(bool active);
+  void SetActive(bool active) override;
 
 private:
   BoxCollider* m_Internal;

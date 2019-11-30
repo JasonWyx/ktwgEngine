@@ -127,8 +127,8 @@ bool RigidBody::CanCollide(RigidBody* body)
     return false;
   
    // Collision layers are set to not collide
-   //if (!(Physics::GetInstance().m_LayerCollisionMatrix[this->GetLayerId()] & (1 << (MAX_COLLISION_LAYER - 1 - body->GetLayerId()))))
-   //  return false;
+   if (!(Physics::GetInstance().m_LayerCollisionMatrix[this->GetLayerId()] & (1 << (MAX_COLLISION_LAYER - 1 - body->GetLayerId()))))
+     return false;
 
   return true;
 }
@@ -140,7 +140,34 @@ uint32_t RigidBody::GetLayerId() const
 
 void RigidBody::SetBodyType(const RBType& type)
 {
+  if (m_Type == type)
+    return;
+
   m_Type = type;
+
+  ComputeInertia();
+
+  m_Force.SetZero();
+  m_Torque.SetZero();
+
+  if (m_Type == RBT_STATIC)
+  {
+    m_LinearVelocity.SetZero();
+    m_AngularVelocity.SetZero();
+    m_Sweep.worldCenterOld_ = m_Sweep.worldCenter_;
+    m_Sweep.orientationOld_ = m_Sweep.orientation_;
+    SynchroniseProxies();
+  }
+
+  SetAwake(true);
+
+  DestroyContacts();
+
+  // Move the shape proxies so new contacts can be created.
+  auto& broadphase = Physics::GetInstance().m_ContactManager.broadPhase_;
+
+  for (auto& collider : m_Colliders)
+    broadphase.BufferMove(collider->GetBroadphaseId());
 }
 
 void RigidBody::SetForce(const Vec3& force)
@@ -155,11 +182,23 @@ void RigidBody::SetTorque(const Vec3& torque)
 
 void RigidBody::SetLinearVelocity(const Vec3& linearVelocity)
 {
+  if (m_Type == RBT_STATIC)
+    return;
+
+  if (Dot(linearVelocity, linearVelocity) > 0.0f)
+    SetAwake(true);
+
   m_LinearVelocity = linearVelocity;
 }
 
 void RigidBody::SetAngularVelocity(const Vec3& angularVelocity)
 {
+  if (m_Type == RBT_STATIC)
+    return;
+
+  if (Dot(angularVelocity, angularVelocity) > 0.0f)
+    SetAwake(true);
+
   m_AngularVelocity = angularVelocity;
 }
 
@@ -197,7 +236,7 @@ void RigidBody::SetFreezeRotationX(bool freeze)
   }
   else
   {
-    m_Flags &= RBF_FIXEDROTATIONX;
+    m_Flags &= ~RBF_FIXEDROTATIONX;
   }
 
   ComputeInertia();
@@ -251,7 +290,7 @@ void RigidBody::SetAwake(bool flag)
   }
   else
   {
-    m_Flags &= RBF_AWAKE;
+    m_Flags &= ~RBF_AWAKE;
     m_SleepTime = 0.0f;
     m_Force.SetZero();
     m_Torque.SetZero();
@@ -268,14 +307,33 @@ void RigidBody::SetIgnorePhysics(bool flag)
     m_Flags &= ~RBF_IGNOREPHYSICS;
 }
 
+void RigidBody::Set(RigidBody* rb)
+{
+  SetBodyType(rb->m_Type);
+  SetMass(rb->m_Mass);
+  SetLinearDamping(rb->m_LinearDamping);
+  SetAngularDamping(rb->m_AngularDamping);
+  SetGravityScale(rb->m_GravityScale);
+  SetUseGravity(rb->m_UseGravity);
+
+  m_Force = rb->m_Force;
+  m_Transform = rb->m_Transform;
+  m_Sweep = rb->m_Sweep;
+
+  m_Flags &= RBF_AWAKE | RBF_ISLAND;
+  SetFreezeRotationX(rb->GetFreezeRotationX());
+  SetFreezeRotationY(rb->GetFreezeRotationY());
+  SetFreezeRotationZ(rb->GetFreezeRotationZ());
+  SetIgnorePhysics(rb->GetIgnorePhysics());
+}
+
 BoxCollider* RigidBody::CreateCollider(uint32_t id)
 {
   BoxCollider* collider = nullptr;
 
   // Create the correct collider
-  m_Colliders.emplace_back(std::make_unique<BoxCollider>(id));
+  m_Colliders.emplace_back(std::make_unique<BoxCollider>(this, id));
   collider = m_Colliders.back().get();
-  collider->SetRigidBody(this);
 
   ComputeInertia();
 

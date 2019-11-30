@@ -7,6 +7,8 @@
 class Entity;
 class Behaviour;
 
+constexpr unsigned MAX_BEHAVIOURS = 1 << 17;
+
 class KTWGBehaviour : public Singleton<KTWGBehaviour>
 {
   template <typename T>

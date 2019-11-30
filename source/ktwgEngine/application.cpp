@@ -9,6 +9,7 @@
 
 #include "hyperenderer.h"
 
+#include "gameplaymanager.h"
 #include "time.h"
 #include "inputsystem.h"
 #include "physics.h"
@@ -89,7 +90,7 @@ void Application::Run()
 
     accumulator += dtMs;
 
-    while (accumulator >= fixedDtMs)
+    if (accumulator >= fixedDtMs)
     {
       physicsSys.Update(fixedDt);
       accumulator -= fixedDtMs;
@@ -114,6 +115,8 @@ void Application::InitializeCoreSystems()
   Physics::Initialize();
 
   KTWGBehaviour::Initialize();
+
+  GameplayManager::Initialize();
 }
 
 void Application::InitializeResources()

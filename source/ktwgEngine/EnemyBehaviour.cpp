@@ -27,11 +27,11 @@ void EnemyBehaviour::Update()
 
   if (m_CurrentTime >= m_PollingInterval)
   {
-    UpdateTarget(currentPos);
+    //UpdateTarget(currentPos);
     m_CurrentTime = 0.0f;
   }
   
-  ChaseTarget(currentPos);
+  //ChaseTarget(currentPos);
 
   m_CurrentTime += dt;
 }

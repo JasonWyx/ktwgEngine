@@ -11,6 +11,8 @@ class CRenderable : public Component
 public:
   CRenderable(Entity& entity, uint32_t id);
 
+  void Set(Component* comp) override;
+
   HypeGraphicObject*  GetGraphicObject() const { return m_GraphicObject; }
   HypeGraphicObjectInstance*  GetGraphicObjectInstance() const { return m_Instance; }
   void                SetGraphicObject(HypeGraphicObject* graphicObject);

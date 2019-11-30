@@ -9,6 +9,7 @@
 CBoxCollider::CBoxCollider(Entity& owner, uint32_t id)
   : Component{ typeid(CBoxCollider), owner, id }, m_Internal{ nullptr }
 {
+  SetType(CT_BOXCOLLIDER);
 }
 
 CBoxCollider::~CBoxCollider()
@@ -20,16 +21,34 @@ void CBoxCollider::Initialize()
   RigidBody* rb = GetOwner()->GetComponent<CRigidBody>()->GetInternal();
 
   m_Internal = Physics::GetInstance().CreateCollider(rb, GetId());
+  m_Internal->m_Entity = rb->GetOwner();
 }
 
 void CBoxCollider::Destroy()
 {
 }
 
+void CBoxCollider::Set(Component* comp)
+{
+  Component::Set(comp);
+  CBoxCollider* bc = static_cast<CBoxCollider*>(comp);
+
+  assert(m_Internal);
+
+  m_Internal->Set(bc->GetInternal());
+}
+
 bool CBoxCollider::Contains(const Vec3& point)
 {
 
   return false;
+}
+
+BoxCollider* CBoxCollider::GetInternal() const
+{
+  assert(m_Internal);
+
+  return m_Internal;
 }
 
 Vec3 CBoxCollider::GetSize() const
@@ -97,9 +116,16 @@ void CBoxCollider::SetCenter(const Vec3& center)
 
 void CBoxCollider::SetIsTrigger(bool isTrigger)
 {
+  assert(m_Internal);
+
+  m_Internal->SetIsTrigger(isTrigger);
 }
 
 void CBoxCollider::SetActive(bool active)
 {
+  Component::SetActive(active);
+
+  assert(m_Internal);
+
   m_Internal->SetActive(active);
 }

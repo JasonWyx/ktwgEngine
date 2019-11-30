@@ -5,6 +5,7 @@
 CRigidBody::CRigidBody(Entity& entity, uint32_t id)
   : Component{ typeid(CRigidBody), entity, id }, m_Internal{ nullptr }
 {
+  SetType(CT_RIGIDBODY);
 }
 
 CRigidBody::~CRigidBody()
@@ -44,6 +45,16 @@ void CRigidBody::SetActive(bool active)
   assert(m_Internal);
 
   m_Internal->SetActive(active);
+}
+
+void CRigidBody::Set(Component* comp)
+{
+  Component::Set(comp);
+
+  assert(m_Internal);
+
+  CRigidBody* rb = static_cast<CRigidBody*>(comp);
+  m_Internal->Set(rb->m_Internal);
 }
 
 void CRigidBody::AddForce(const Vec3& force)

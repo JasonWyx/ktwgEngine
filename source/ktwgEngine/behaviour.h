@@ -8,9 +8,12 @@
 #include "cbehaviour.h"
 #include "crigidbody.h"
 #include "cboxcollider.h"
+#include "crenderable.h"
+#include "hypegraphicobject.h"
 
 class InputSystem;
 class Time;
+class Scene;
 struct Collision;
 
 class Behaviour
@@ -25,6 +28,7 @@ public:
 
   static InputSystem&  Input();
   static Time& Time();
+  static Scene& Scene();
 
   virtual void OnCollisionEnter(Collision&) {};
   virtual void OnCollisionStay(Collision&) {};
@@ -33,8 +37,12 @@ public:
   virtual void OnTriggerStay(Collision&) {};
   virtual void OnTriggerExit(Collision&) {};
 
-  Transform& Transform();
-  
+  void Set(Behaviour* comp);
+  void SetActive(bool active);
+
+  Transform& GetTransform();
+  bool GetActive() const;
+
   inline const ::TypeInfo& GetTypeInfo() const { return m_Info; }
 
   template <typename T>
@@ -42,6 +50,7 @@ public:
 
   Entity* m_Entity;
   ::TypeInfo m_Info;
+  bool m_Active;
 };
 
 template<typename T>

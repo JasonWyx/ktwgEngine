@@ -11,6 +11,7 @@ FCollider::FCollider()
     m_Local{}, m_Body{ nullptr }, m_Owner{ nullptr }, m_BroadphaseId{ -1 },
     m_IsTrigger{ false }, m_Active{ true }
 {
+  m_Local.SetIdentity();
 }
 
 FCollider::~FCollider()
@@ -98,4 +99,48 @@ void FCollider::DestroyContacts()
     contact_edge = contact_edge->next_;
     world.m_ContactManager.RemoveContact(to_destroy->contact_);
   }
+}
+
+void FCollider::SetActive(bool active)
+{
+  if (m_Active == active)
+    return;
+
+  m_Active = active;
+
+  if (!active)
+  {
+    if (m_BroadphaseId > -1)
+    {
+      m_Owner->DestroyContacts();
+      Physics::GetInstance().m_ContactManager.broadPhase_.DestroyProxy(GetBroadphaseId());
+      m_BroadphaseId = -1;
+    }
+  }
+  else
+  {
+    if (m_BroadphaseId == -1)
+    {
+      AABB3 aabb;
+      m_Owner->ComputeAABB(aabb, GetBody()->GetTransform());
+      Physics::GetInstance().m_IsNewCollider = true;
+      m_BroadphaseId = Physics::GetInstance().m_ContactManager.broadPhase_.CreateProxy(aabb, m_Owner);
+    }
+  }
+}
+
+void FCollider::Set(FCollider* fCollider)
+{
+  SetFriction(fCollider->m_Friction);
+  SetRestitution(fCollider->m_Restitution);
+  SetIsTrigger(fCollider->m_IsTrigger);
+  SetActive(fCollider->m_Active);
+
+  m_Local = fCollider->m_Local;
+
+  for (size_t i = 0; i < m_Vertices.size(); ++i)
+    m_Vertices[i] = fCollider->m_Vertices[i];
+
+  for (size_t i = 0; i < m_Planes.size(); ++i)
+    m_Planes[i] = fCollider->m_Planes[i];
 }

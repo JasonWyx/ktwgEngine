@@ -11,8 +11,9 @@
 #include "hypegraphicobject.h"
 
 // Behaviour
-#include "testbehaviour.h"
+#include "camerabehaviourscript.h"
 #include "playercontroller.h"
+#include "enemymanagerscript.h"
 
 Scene::Scene()
   : m_GameScene{ nullptr }
@@ -21,6 +22,18 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+}
+
+Entity* Scene::CreateEntity(const std::string& name)
+{
+  Entity* entity = m_GameScene->AddChild();
+  entity->SetName(name);
+  return entity;
+}
+
+Entity* Scene::FindEntityByName(const std::string& name)
+{
+  return FindEntityByNameInternal(m_GameScene, name);
 }
 
 void Scene::InitializeInternal()
@@ -33,12 +46,12 @@ void Scene::InitializeInternal()
     camera->SetName("camera");
 
     Transform& cameraTF = camera->GetTransform();
-    cameraTF.SetPosition(Vec3{ 0.f, 50.f, -2.f });
-    cameraTF.SetRotation(ConvertAxisAngleToQuaternion(Vec3{ 1.0f, 0.0f, 0.0f }, 70.0f));
+    cameraTF.SetPosition(Vec3{ 0.f, 10.f, 0.f });
+    cameraTF.SetRotation(ConvertAxisAngleToQuaternion(Vec3{ 1.0f, 0.0f, 0.0f }, 89.0f));
 
     CCamera& cameraCam = camera->AddComponent(CT_CAMERA)->Get<CCamera>();
-    //CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
-    //camBeh.Bind<TestBehaviour>();
+    CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    camBeh.Bind<CameraBehaviour>();
   }
 
   {
@@ -163,27 +176,33 @@ void Scene::InitializeInternal()
   }
 
   {
-    // BoxB
-    Entity* boxB = m_GameScene->AddChild();
-    boxB->SetName("boxB");
+    // EnemyManager
+    Entity* enemyMng = m_GameScene->AddChild();
+    enemyMng->SetName("enemyMng");
 
-    Transform& boxBTfm = boxB->GetTransform();
-    boxBTfm.SetPosition(Vec3{ -5.f, 1.0f, 0.0f });
-    boxBTfm.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });
-
-    CRigidBody& boxBRB = boxB->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
-    boxBRB.SetBodyType(RBT_DYNAMIC);
-
-    CBoxCollider& boxBCol = boxB->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
-
-    CRenderable& renderable = boxB->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
-    renderable.SetGraphicObject("Cube");
-    renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
+    CBehaviour& beh = enemyMng->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    beh.Bind<EnemyManager>();
   }
 
 }
 
 void Scene::ShutdownInternal()
 {
+}
+
+Entity* Scene::FindEntityByNameInternal(Entity* ent, const std::string& name)
+{
+  if (ent)
+  {
+    if (ent->GetName() == name)
+      return ent;
+
+    for (auto& child : ent->GetChildren())
+    {
+      if (FindEntityByNameInternal(child, name))
+        return child;
+    }
+  }
+
+  return nullptr;
 }

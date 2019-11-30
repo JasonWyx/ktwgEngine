@@ -52,6 +52,11 @@ Component::~Component()
 {
 }
 
+void Component::Set(Component* comp)
+{
+  m_State = comp->GetState();
+}
+
 void Component::FreeComponent(Component* comp)
 {
   std::get<RELEASE>(ComponentTable[comp->m_Type])(comp);

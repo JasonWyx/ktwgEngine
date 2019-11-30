@@ -3,15 +3,16 @@
 #include "rigidbody.h"
 #include "plane.h"
 
-BoxCollider::BoxCollider(uint32_t id)
+BoxCollider::BoxCollider(RigidBody* body, uint32_t id)
   : m_Internal{ nullptr }, 
     m_Extents { UNIT_EXTENTS }, 
     m_Min{}, m_Max{},
     m_Id{ id }
 {
   m_Internal = std::make_unique<FCollider>();
-  m_Internal->SetAsBox();
   m_Internal->SetOwner(this);
+  m_Internal->SetBody(body);
+  m_Internal->SetAsBox();
 }
 
 BoxCollider::~BoxCollider()
@@ -297,6 +298,16 @@ void BoxCollider::SetCenter(const Vec3& center)
   m_Internal->SetCenter(center);
 }
 
+void BoxCollider::SetMin(const Vec3& min)
+{
+  m_Min = min;
+}
+
+void BoxCollider::SetMax(const Vec3& max)
+{
+  m_Max = max;
+}
+
 void BoxCollider::SetIsTrigger(bool isTrigger)
 {
   m_Internal->SetIsTrigger(isTrigger);
@@ -305,4 +316,13 @@ void BoxCollider::SetIsTrigger(bool isTrigger)
 void BoxCollider::SetActive(bool active)
 {
   m_Internal->SetActive(active);
+}
+
+void BoxCollider::Set(BoxCollider* boxCollider)
+{
+  m_Internal->Set(boxCollider->GetInternal());
+
+  SetExtents(boxCollider->m_Extents);
+  SetMin(boxCollider->m_Min);
+  SetMax(boxCollider->m_Max);
 }

@@ -4,6 +4,7 @@
 CCamera::CCamera(Entity & owner, uint32_t id)
 :Component(typeid(CCamera), owner, id), m_Camera{nullptr}
 {
+  SetType(CT_CAMERA);
 }
 
 CCamera::~CCamera()
