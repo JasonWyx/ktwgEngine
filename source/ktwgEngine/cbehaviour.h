@@ -12,6 +12,7 @@ class Behaviour;
 class CBehaviour final : public Component
 {
   friend class ContactListener;
+  friend struct CollisionEvent;
 public:
   CBehaviour(Entity& owner, uint32_t id);
   ~CBehaviour();

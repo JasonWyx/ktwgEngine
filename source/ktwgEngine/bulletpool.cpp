@@ -13,7 +13,7 @@ BulletPool::BulletPool()
   m_Object = Scene::GetInstance().CreateEntity("Bullet");
 
   Transform& tf = m_Object->GetTransform();
-  tf.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });
+  tf.SetScale(Vec3{ 0.5f, 0.5f, 0.5f });
 
   CRigidBody& rb = m_Object->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
   rb.SetBodyType(RBT_DYNAMIC);
@@ -32,7 +32,7 @@ BulletPool::BulletPool()
 
   m_Object->SetActive(false);
 
-  IncreasePool(2);
+  IncreasePool(3);
 }
 
 BulletPool::~BulletPool()
@@ -55,7 +55,7 @@ Entity* BulletPool::GetBullet()
 
 void BulletPool::IncreasePool(unsigned size)
 {
-  for (int i = 0; i < size; ++i)
+  for (unsigned i = 0; i < size; ++i)
   {
     Entity* clone = Scene::GetInstance().CreateEntity();
     clone->Set(m_Object);

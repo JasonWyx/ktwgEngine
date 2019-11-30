@@ -8,7 +8,7 @@
 
 constexpr unsigned MAX_COLLISION_LAYER = 32;  // Max collision layer
 
-constexpr uint32_t MAX_RIGIDBODIES = 1000;
+constexpr uint32_t MAX_RIGIDBODIES = 1 << 17;
 
 constexpr uint32_t INVALID_ISLAND_ID = UINT32_MAX;
 

@@ -21,6 +21,8 @@ void BulletBehaviour::Update()
 
 void BulletBehaviour::OnTriggerEnter(Collision& collider)
 {
-  if (collider.entity->GetName() != "Player" || collider.entity->GetName() != "Bullet")
-    m_Entity->SetActive(false);
+  if (collider.entity->GetName() == "Player" || collider.entity->GetName() == "Bullet")
+    return;
+
+  m_Entity->SetActive(false);
 }

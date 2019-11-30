@@ -4,6 +4,7 @@
 KTWGBehaviour::KTWGBehaviour()
   : m_Behaviours{}
 {
+  m_Behaviours.reserve(MAX_BEHAVIOURS);
 }
 
 KTWGBehaviour::~KTWGBehaviour()

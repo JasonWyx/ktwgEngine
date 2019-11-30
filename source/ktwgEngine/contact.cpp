@@ -14,7 +14,7 @@ void Contact::Update(ContactListener* listener)
   BoxCollider* colliderB = pair_.colliders_[1];
   RigidBody* bodyA = colliderA->GetRigidBody();
   RigidBody* bodyB = colliderB->GetRigidBody();
-
+ 
   bool isTriggerContact = colliderA->GetIsTrigger() || colliderB->GetIsTrigger();
 
   // Contact is a trigger contact, no need for generating contact, so we do GJK collision detection check

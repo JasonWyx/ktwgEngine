@@ -23,11 +23,13 @@ struct MassData
 
 class BoxCollider
 {
+  friend class CBoxCollider;
+
   template <typename T>
   using UniquePtr = std::unique_ptr<T>;
   
 public:
-  BoxCollider(uint32_t id);
+  BoxCollider(RigidBody* body, uint32_t id);
   ~BoxCollider();
 
   /* Query if point is contained in collider */

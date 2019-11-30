@@ -16,9 +16,15 @@ PlayerController::~PlayerController()
 {
 }
 
-void PlayerController::Start()
+
+
+void PlayerController::Init()
 {
   BulletPool::Initialize();
+}
+
+void PlayerController::Start()
+{
 }
 
 void PlayerController::Update()

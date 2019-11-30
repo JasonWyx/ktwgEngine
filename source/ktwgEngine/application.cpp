@@ -90,7 +90,7 @@ void Application::Run()
 
     accumulator += dtMs;
 
-    while (accumulator >= fixedDtMs)
+    if (accumulator >= fixedDtMs)
     {
       physicsSys.Update(fixedDt);
       accumulator -= fixedDtMs;

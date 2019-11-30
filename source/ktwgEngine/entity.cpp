@@ -104,6 +104,7 @@ void Entity::Set(Entity* ent)
   m_State = ent->m_State;
   m_Name = ent->m_Name;
   m_LayerId = ent->m_LayerId;
+  m_Transform = ent->m_Transform;
 
   for (auto& comp : ent->m_Components)
   {

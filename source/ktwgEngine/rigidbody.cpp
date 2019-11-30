@@ -332,9 +332,8 @@ BoxCollider* RigidBody::CreateCollider(uint32_t id)
   BoxCollider* collider = nullptr;
 
   // Create the correct collider
-  m_Colliders.emplace_back(std::make_unique<BoxCollider>(id));
+  m_Colliders.emplace_back(std::make_unique<BoxCollider>(this, id));
   collider = m_Colliders.back().get();
-  collider->SetRigidBody(this);
 
   ComputeInertia();
 

@@ -23,6 +23,7 @@ public:
   PlayerController(Entity& entity);
   ~PlayerController();
 
+  void Init() override;
   void Start() override;
   void Update() override;
 

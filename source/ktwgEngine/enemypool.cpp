@@ -41,7 +41,7 @@ EnemyPool::~EnemyPool()
 
 void EnemyPool::IncreasePool(unsigned size)
 {
-	for (int i = 0; i < size; ++i)
+	for (unsigned i = 0; i < size; ++i)
 	{
 		Entity* clone = Scene::GetInstance().CreateEntity();
 		clone->Set(m_Object);
@@ -63,7 +63,7 @@ Entity* EnemyPool::GetEnemy()
   }
 
 	// All is being used, increment pool and return the first newly created object
-	size_t currSize = m_Pool.size();
+	unsigned currSize = static_cast<unsigned>(m_Pool.size());
 	IncreasePool(currSize);
 
 	return m_Pool[currSize];

@@ -21,6 +21,7 @@ void CBoxCollider::Initialize()
   RigidBody* rb = GetOwner()->GetComponent<CRigidBody>()->GetInternal();
 
   m_Internal = Physics::GetInstance().CreateCollider(rb, GetId());
+  m_Internal->m_Entity = rb->GetOwner();
 }
 
 void CBoxCollider::Destroy()
@@ -115,6 +116,9 @@ void CBoxCollider::SetCenter(const Vec3& center)
 
 void CBoxCollider::SetIsTrigger(bool isTrigger)
 {
+  assert(m_Internal);
+
+  m_Internal->SetIsTrigger(isTrigger);
 }
 
 void CBoxCollider::SetActive(bool active)

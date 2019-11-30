@@ -3,15 +3,16 @@
 #include "rigidbody.h"
 #include "plane.h"
 
-BoxCollider::BoxCollider(uint32_t id)
+BoxCollider::BoxCollider(RigidBody* body, uint32_t id)
   : m_Internal{ nullptr }, 
     m_Extents { UNIT_EXTENTS }, 
     m_Min{}, m_Max{},
     m_Id{ id }
 {
   m_Internal = std::make_unique<FCollider>();
-  m_Internal->SetAsBox();
   m_Internal->SetOwner(this);
+  m_Internal->SetBody(body);
+  m_Internal->SetAsBox();
 }
 
 BoxCollider::~BoxCollider()

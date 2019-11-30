@@ -1,6 +1,7 @@
 #pragma once
 
 #include "collisioninfo.h"
+#include "collisioneventtype.h"
 
 
 struct CollisionEvent
@@ -11,4 +12,6 @@ struct CollisionEvent
   Entity*       entityB_;
   CollisionInfo infoA_;
   CollisionInfo infoB_;
+
+  CollisionEventType type_;
 };

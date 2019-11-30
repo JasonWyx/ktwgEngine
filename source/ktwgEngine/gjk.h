@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vector3.h"
-//#include "transform.h"
+#include "transform.h"
 
 /* Forward declarations */
 class BoxCollider;
