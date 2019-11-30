@@ -19,10 +19,15 @@ void BulletBehaviour::Update()
   GetComponent<CRigidBody>()->SetLinearVelocity(m_Speed * GetTransform().Forward());
 }
 
-void BulletBehaviour::OnTriggerEnter(Collision& collider)
+void BulletBehaviour::OnTriggerEnter(Collision& other)
 {
-  if (collider.entity->GetName() == "Player" || collider.entity->GetName() == "Bullet")
+  if (other.entity->GetName() == "Player" || other.entity->GetName() == "Bullet")
     return;
 
   m_Entity->SetActive(false);
+  
+  if (other.entity->GetName() == "Enemy")
+  {
+
+  }
 }

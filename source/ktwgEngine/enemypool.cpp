@@ -12,7 +12,7 @@
 
 EnemyPool::EnemyPool()
 {
-  m_Object = Scene::GetInstance().CreateEntity("enemy");
+  m_Object = Scene::GetInstance().CreateEntity("Enemy");
   
   Transform& tf = m_Object->GetTransform();
   tf.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });

@@ -121,7 +121,7 @@
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
     <ClCompile Include="dynamicaabb3tree.cpp" />
-    <ClCompile Include="enemybehaviour.cpp" />
+    <ClCompile Include="enemybehaviourscript.cpp" />
     <ClCompile Include="enemymanagerscript.cpp" />
     <ClCompile Include="enemypool.cpp" />
     <ClCompile Include="entity.cpp" />
@@ -211,7 +211,7 @@
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="dynamicaabb3tree.h" />
-    <ClInclude Include="enemybehaviour.h" />
+    <ClInclude Include="enemybehaviourscript.h" />
     <ClInclude Include="enemymanagerscript.h" />
     <ClInclude Include="enemypool.h" />
     <ClInclude Include="entity.h" />

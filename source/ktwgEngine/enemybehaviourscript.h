@@ -11,6 +11,9 @@ public:
   void Start() override;
   void Update() override;
 
+  void TakeDamage();
+  void Reset();
+
 private:
 
   void ChaseTarget(const Vec3& currentPos);
@@ -20,4 +23,5 @@ private:
   float m_CurrentTime;
   float m_PollingInterval;
   float m_Speed;
+  unsigned m_Health;
 };
