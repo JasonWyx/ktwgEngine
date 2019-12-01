@@ -4,6 +4,7 @@
 #include "packet.h"
 #include "transmissionrecord.h"
 #include <list>
+#include <set>
 
 class GhostManager
 {
@@ -12,10 +13,11 @@ public:
     GhostManager();
     ~GhostManager();
 
-    bool ProcessIncomingPacket(Packet& packet);
-    bool ProcessOutgoingPacket(Packet& packet, TransmissionRecord& transmissionRecord);
-    void NotifyPacketStatus(PeerID netPeerID, PacketID packetID, PacketStatus packetStatus);
-    void DropRemainingData();
+    bool ReadStream(BitStream& stream);
+    bool WriteStream(BitStream& stream, TransmissionRecord& tr);
+    void NotifyTransmissionSuccess(TransmissionRecord& tr);
+    void NotifyTransmissionFailure(TransmissionRecord& tr);
+    void DropPendingStreamData();
 
     void RegisterGhostObject(GhostObject* ghostObject);
     void UnregisterGhostObject(GhostObject* ghostObject);
@@ -23,7 +25,9 @@ public:
 private:
 
     std::vector<GhostObject*> m_GhostObjects;
-    std::map<GhostID, GhostObject*> m_GhostObjectsNetIDMap;
+    std::map<GhostID, GhostObject*> m_GhostObjectsIDMap;
+    std::set<GhostID> m_GhostsToCreate;
+    std::set<GhostID> m_GhostsToDelete; 
 
     // Cached for packing
     std::vector<std::pair<GhostObject*, GhostStateMask>> m_ObjectsToPack;

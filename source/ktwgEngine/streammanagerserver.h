@@ -16,7 +16,7 @@ public:
     ~StreamManagerServer();
 
     // We only have outgoing packet here because we let the incoming packet be handled by the client stream manager
-    bool ProcessOutgoingPacket(Packet& packet);
+    bool ProcessOutgoingPackets(std::vector<std::pair<PeerID, Packet>>& packets);
     void NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus);
 
     void CreatePeer(PeerID peerID);

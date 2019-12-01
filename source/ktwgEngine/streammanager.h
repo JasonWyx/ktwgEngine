@@ -41,7 +41,4 @@ private:
 
     StreamManagerClient* m_ClientStreamManager;
     StreamManagerServer* m_ServerStreamManager;
-
-    std::vector<TransmissionRecord> m_TransmissionRecords;
-
 };
