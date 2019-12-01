@@ -90,6 +90,7 @@
     <ClCompile Include="bulletpool.cpp" />
     <ClCompile Include="bulletbehaviourscript.cpp" />
     <ClCompile Include="enemybehaviourscript.cpp" />
+    <ClCompile Include="randommodule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -212,5 +213,6 @@
     <ClInclude Include="bulletpool.h" />
     <ClInclude Include="bulletbehaviourscript.h" />
     <ClInclude Include="enemybehaviourscript.h" />
+    <ClInclude Include="randommodule.h" />
   </ItemGroup>
 </Project>

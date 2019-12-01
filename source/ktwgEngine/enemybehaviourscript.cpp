@@ -37,11 +37,11 @@ void EnemyBehaviour::Update()
   m_CurrentTime += dt;
 }
 
-void EnemyBehaviour::TakeDamage()
+void EnemyBehaviour::TakeDamage(unsigned damage)
 {
-  m_Health -= 1;
+  m_Health -= damage;
 
-  if (m_Health == 0)
+  if (m_Health <= 0)
     m_Entity->SetActive(false);
 }
 

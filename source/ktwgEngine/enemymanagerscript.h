@@ -18,4 +18,5 @@ private:
   float m_SpawnInterval;
   float m_AccumulateTime;
 
+  std::vector<Vec3> m_SpawnPosition;
 };

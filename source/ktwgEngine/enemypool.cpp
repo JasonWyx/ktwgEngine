@@ -8,7 +8,7 @@
 #include "hypegraphicobject.h"
 
 #include "crenderable.h"
-#include "enemybehaviour.h"
+#include "enemybehaviourscript.h"
 
 EnemyPool::EnemyPool()
 {

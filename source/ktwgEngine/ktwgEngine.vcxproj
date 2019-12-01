@@ -151,6 +151,7 @@
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="playercontroller.cpp" />
+    <ClCompile Include="randommodule.cpp" />
     <ClCompile Include="raycastcallbacks.cpp" />
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="rigidbody.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="crenderable.h" />
     <ClInclude Include="hypesimplemesh.h" />
     <ClInclude Include="d3d11inputlayout.h" />
+    <ClInclude Include="randommodule.h" />
     <ClInclude Include="raycast.h" />
     <ClInclude Include="raycastcallbacks.h" />
     <ClInclude Include="sat.h" />

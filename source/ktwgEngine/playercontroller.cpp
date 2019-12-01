@@ -2,6 +2,7 @@
 #include "time.h"
 #include "inputsystem.h"
 #include "bulletpool.h"
+#include "bulletbehaviourscript.h"
 
 PlayerController::PlayerController(Entity& entity)
   : Behaviour{ typeid(PlayerController), entity }
@@ -80,5 +81,9 @@ void PlayerController::Fire()
   
   bullet->GetTransform().SetPosition(GetTransform().GetPosition());
   bullet->GetTransform().SetRotation(LookRotation(GetTransform().Forward()));
+
+  BulletBehaviour* bb = bullet->GetComponent<BulletBehaviour>();
+  bb->SetAttack(m_Attack);
+
   bullet->SetActive(true);
 }

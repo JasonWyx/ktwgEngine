@@ -1,5 +1,6 @@
 #include "bulletbehaviourscript.h"
 #include "collision.h"
+#include "enemybehaviourscript.h"
 
 BulletBehaviour::BulletBehaviour(Entity& entity)
   : Behaviour{ typeid(BulletBehaviour), entity}
@@ -28,6 +29,12 @@ void BulletBehaviour::OnTriggerEnter(Collision& other)
   
   if (other.entity->GetName() == "Enemy")
   {
-
+    EnemyBehaviour* enemyBeh = other.entity->GetComponent<EnemyBehaviour>();
+    enemyBeh->TakeDamage(m_Attack);
   }
+}
+
+void BulletBehaviour::SetAttack(unsigned attack)
+{
+  m_Attack = attack;
 }

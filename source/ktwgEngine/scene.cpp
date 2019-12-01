@@ -46,7 +46,7 @@ void Scene::InitializeInternal()
     camera->SetName("camera");
 
     Transform& cameraTF = camera->GetTransform();
-    cameraTF.SetPosition(Vec3{ 0.f, 10.f, 0.f });
+    cameraTF.SetPosition(Vec3{ 0.f, 100.f, 0.f });
     cameraTF.SetRotation(ConvertAxisAngleToQuaternion(Vec3{ 1.0f, 0.0f, 0.0f }, 89.0f));
 
     CCamera& cameraCam = camera->AddComponent(CT_CAMERA)->Get<CCamera>();
