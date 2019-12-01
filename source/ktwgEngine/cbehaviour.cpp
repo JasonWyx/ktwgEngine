@@ -20,6 +20,11 @@ void CBehaviour::Destroy()
 {
 }
 
+bool CBehaviour::IsComponent(const TypeInfo& type)
+{
+  return m_Internal->m_Info == type;
+}
+
 void CBehaviour::Set(Component* comp)
 {
   Component::Set(comp);

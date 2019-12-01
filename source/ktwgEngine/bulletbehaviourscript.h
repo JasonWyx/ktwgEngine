@@ -15,6 +15,10 @@ public:
 
   void OnTriggerEnter(Collision& collider) override;
 
+  void SetAttack(unsigned attack);
+
 private:
   const float m_Speed = 50.0f;
+
+  unsigned m_Attack;
 };

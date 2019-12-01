@@ -7,6 +7,7 @@
 #include "componenttype.h"
 #include "componentmanager.h"
 #include "transform.h"
+#include "cbehaviour.h"
 
 class Component;
 
@@ -97,8 +98,17 @@ T* Entity::GetComponent()
   for (Component*& comp : m_Components)
   {
     if (comp->GetTypeInfo() == info)
-      return static_cast<T*>(comp);
+      return reinterpret_cast<T*>(comp);
   }
+
+  const auto& behaviours = GetAllComponentsOfType<CBehaviour>();
+
+  for (auto& beh : behaviours)
+  {
+    if (beh->IsComponent(info))
+      return reinterpret_cast<T*>(beh->GetInternal());
+  }
+
   return nullptr;
 }
 

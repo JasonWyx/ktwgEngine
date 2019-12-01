@@ -35,6 +35,8 @@ private:
 
   const float m_Speed = 20.0f;
 
+  unsigned m_Attack = 1;
+
   Vec3 m_Directions[PD_MAX];
   uint8_t m_DirectionFlag;
 };

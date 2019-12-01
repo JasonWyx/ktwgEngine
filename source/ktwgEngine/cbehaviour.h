@@ -22,6 +22,8 @@ public:
   void Destroy()    override;
 
   Behaviour* GetInternal() const { return m_Internal; }
+
+  bool IsComponent(const TypeInfo& type);
   
   template <typename T>
   void Bind();

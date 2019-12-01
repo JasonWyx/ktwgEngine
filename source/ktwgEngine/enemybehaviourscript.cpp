@@ -1,5 +1,5 @@
-#include "EnemyBehaviour.h"
-#include "GameplayManager.h"
+#include "enemybehaviourscript.h"
+#include "gameplaymanager.h"
 #include "time.h"
 
 EnemyBehaviour::EnemyBehaviour(Entity & entity)
@@ -7,6 +7,7 @@ EnemyBehaviour::EnemyBehaviour(Entity & entity)
 ,m_CurrentTime{0.0f}
 ,m_PollingInterval{10.0f}
 ,m_Speed{5.0f}
+,m_Health{5}
 {
 }
 
@@ -34,6 +35,19 @@ void EnemyBehaviour::Update()
   //ChaseTarget(currentPos);
 
   m_CurrentTime += dt;
+}
+
+void EnemyBehaviour::TakeDamage(unsigned damage)
+{
+  m_Health -= damage;
+
+  if (m_Health <= 0)
+    m_Entity->SetActive(false);
+}
+
+void EnemyBehaviour::Reset()
+{
+  m_Health = 5;
 }
 
 void EnemyBehaviour::ChaseTarget(const Vec3 & currentPos)
