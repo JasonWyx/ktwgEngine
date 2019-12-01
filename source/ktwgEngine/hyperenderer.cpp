@@ -11,6 +11,7 @@
 #include "matrix4.h"
 #include "hypesimpleforwardrendernode.h"
 
+#include "Shaders/cpp/ShaderCommon.h"
 #include "Shaders/cpp/SimpleForwardParams.h"
 
 #include <fstream>
@@ -95,7 +96,7 @@ void HypeRenderer::UnloadSystemShaders()
 void HypeRenderer::CreateCommonResources()
 {
   D3D11Device* device = D3D11RenderAPI::GetInstance().GetDevice();
-  GET_STATIC_RESOURCE(GeometryConstantBuffer) = new D3D11HardwareBuffer{device, D3D11_BT_CONSTANT, D3D11_USAGE_DYNAMIC, 1, sizeof(Matrix4), false, false, true, false};
+  GET_STATIC_RESOURCE(GeometryConstantBuffer) = new D3D11HardwareBuffer{device, D3D11_BT_CONSTANT, D3D11_USAGE_DYNAMIC, 1, sizeof(GeometryConstantBufferInputs), false, false, true, false};
   device->GetImmediateContext().AddConstantBuffer<VS>(GET_STATIC_RESOURCE(GeometryConstantBuffer));
   device->GetImmediateContext().AddConstantBuffer<PS>(GET_STATIC_RESOURCE(GeometryConstantBuffer));
   device->GetImmediateContext().FlushConstantBuffers(GeometryConstantBufferSlot);

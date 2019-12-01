@@ -17,6 +17,7 @@ public:
   void DestroyOverrideMaterial();
 
   HypeMaterial* GetMaterial() const;
+  bool GetActive() const;
   // This should only be used to set an overriding material, THE INSTANCE WILL OWN THE MATERIAL
   void SetMaterial(HypeMaterial* material) { m_Material = material; }
 
