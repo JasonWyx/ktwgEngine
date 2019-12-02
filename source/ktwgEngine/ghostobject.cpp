@@ -1,34 +1,96 @@
 #include "ghostobject.h"
+#include "ghostmanager.h"
+#include "streammanager.h"
 
-GhostObject::GhostObject(uint32_t ghostNetID)
+GhostObject::GhostObject(GhostID ghostNetID)
     : m_GhostNetID(ghostNetID)
+    , m_GhostProperties()
 {
-    // Maybe register to ghost manager here?
+    StreamManager::GetInstance().GetClient()->GetGhostManager().RegisterGhostObject(this);
 }
 
 GhostObject::~GhostObject()
 {
-    // Maybe unsubscribe to ghost manager here?
+    StreamManager::GetInstance().GetClient()->GetGhostManager().UnregisterGhostObject(this);
+
+    for (GhostProperty* property : m_GhostProperties)
+    {
+        delete property;
+    }
 }
 
-void GhostObject::WriteStream(BitStream& stream, const std::vector<bool>& propertyFlags)
+GhostStateMask GhostObject::GetStateMask() const
 {
-    for (size_t i = 0; i < propertyFlags.size(); ++i)
+    GhostStateMask result(m_GhostProperties.size());
+
+    bool isServer = StreamManager::GetInstance().IsServer();
+
+    for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
-        if (propertyFlags[i])
+        NetAuthority authority = m_GhostProperties[i]->GetAuthority();
+        if ((authority == Client && !isServer || authority == Server && isServer) &&
+            m_GhostProperties[i]->IsPropertyChanged())
         {
-            m_Properties[i]->WriteStream(stream);
+            result[i] = true;
+        }
+    }
+
+    return result;
+}
+
+GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
+{
+    GhostStateMask result(m_GhostProperties.size());
+
+    bool isServer = StreamManager::GetInstance().IsServer();
+
+    for (size_t i = 0; i < m_GhostProperties.size(); ++i)
+    {
+        NetAuthority authority = m_GhostProperties[i]->GetAuthority();
+
+        if ((authority == Client && !isServer || authority == Server && isServer) && 
+            m_GhostProperties[i]->IsPropertyChanged())
+        {
+            result[i] = true;
+            needUpdate = true;
+        }
+    }
+
+    return result;
+}
+
+bool GhostObject::NeedUpdate() const
+{
+    for (GhostProperty* property : m_GhostProperties)
+    {
+        if (property->IsPropertyChanged())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask)
+{
+    stream << m_GhostNetID;
+
+    for (size_t i = 0; i < stateMask.size(); ++i)
+    {
+        if (stateMask[i])
+        {
+            m_GhostProperties[i]->WriteStream(stream);
         }
     }
 }
 
-void GhostObject::ReadStream(BitStream& stream, const std::vector<bool>& propertyFlags)
+void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)
 {
-    for (size_t i = 0; i < propertyFlags.size(); ++i)
-    {
-        if (propertyFlags[i])
+    for (size_t i = 0; i < stateMask.size(); ++i)
+    { 
+        if (stateMask[i])
         {
-            m_Properties[i]->ReadStream(stream);
+            m_GhostProperties[i]->ReadStream(stream);
         }
     }
 }

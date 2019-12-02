@@ -1,22 +1,24 @@
 #pragma once
-#include "istreammanager.h"
+#include "ghostmanager.h"
+#include "eventmanager.h"
 
 // The local client stream manager. Accepts packets from server and sends updates to server for ghost objects.
-class StreamManagerClient : public IStreamManager
+class StreamManagerClient
 {
 public:
 
     StreamManagerClient();
     ~StreamManagerClient();
 
-    virtual bool ProcessIncomingPacket(BitStream& stream) override;
-    virtual bool ProcessOutgoingPacket(BitStream& stream) override;
+    bool ProcessIncomingPacket(Packet& stream);
+    bool ProcessOutgoingPacket(Packet& stream);
+    void NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus);
+
+    GhostManager& GetGhostManager() { return m_GhostManager; }
+    EventManager& GetEventManager() { return m_EventManager; }
 
 private:
-
-    std::uint32_t m_NetPeerID;
-
-    // GhostManager
-    // EventManager
-    // MoveManager
+     
+    GhostManager m_GhostManager;
+    EventManager m_EventManager;
 };

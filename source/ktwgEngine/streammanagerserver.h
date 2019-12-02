@@ -1,27 +1,31 @@
 #pragma once
-#include "istreammanager.h"
+#include <map>
 #include <list>
-#include <memory>
+#include <vector>
+#include "transmissionrecord.h"
+#include "netdefs.h"
 
-struct NetPeerStreamManager
-{
-    uint32_t m_NetPeerID;
-
-    // GhostManager
-    // EventManager
-    // MoveManager
-};
+class StreamManagerClient;
 
 // The server stream manager. Accepts packets from clients and broadcasts them to other connected peers.
-class StreamManagerServer : public IStreamManager
+class StreamManagerServer
 {
 public:
 
-    virtual bool ProcessIncomingPacket(BitStream& stream) override;
-    virtual bool ProcessOutgoingPacket(BitStream& stream) override;
+    StreamManagerServer(StreamManagerClient* streamManagerClient);
+    ~StreamManagerServer();
+
+    // We only have outgoing packet here because we let the incoming packet be handled by the client stream manager
+    bool ProcessOutgoingPacket(Packet& packet);
+    void NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus);
+
+    void CreatePeer(PeerID peerID);
+    void RemovePeer(PeerID peerID);
 
 private:
 
-    std::list<std::unique_ptr<NetPeerStreamManager>> m_NetPeerStreamManagers;
+    std::map<PeerID, std::vector<TransmissionRecord>> m_PeerTransmissionRecords;
+
+    StreamManagerClient* m_LocalClientStreamManager;
 
 };

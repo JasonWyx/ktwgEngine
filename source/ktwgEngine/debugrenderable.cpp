@@ -3,10 +3,10 @@
 
 DebugRenderable::DebugRenderable()
 {
-    DebugRenderer::GetInstance().InsertDebugRenderable(this);
+    DebugRenderer::GetInstance().RegisterDebugRenderable(this);
 }
 
 DebugRenderable::~DebugRenderable()
 {
-    DebugRenderer::GetInstance().RemoveDebugRenderable(this);
+    DebugRenderer::GetInstance().UnregisterDebugRenderable(this);
 }

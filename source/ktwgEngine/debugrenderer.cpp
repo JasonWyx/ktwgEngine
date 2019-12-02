@@ -18,12 +18,12 @@ void DebugRenderer::Update(float deltaTime)
     }
 }
 
-void DebugRenderer::InsertDebugRenderable(DebugRenderable* renderable)
+void DebugRenderer::RegisterDebugRenderable(DebugRenderable* renderable)
 {
     m_DebugRenderables.push_back(renderable);
 }
 
-void DebugRenderer::RemoveDebugRenderable(DebugRenderable* renderable)
+void DebugRenderer::UnregisterDebugRenderable(DebugRenderable* renderable)
 {
     m_DebugRenderables.erase(std::remove(m_DebugRenderables.begin(), m_DebugRenderables.end(), renderable));
 }

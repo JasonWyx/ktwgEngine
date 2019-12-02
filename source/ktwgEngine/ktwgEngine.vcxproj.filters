@@ -1,96 +1,147 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="application.cpp" />
-    <ClCompile Include="bitstream.cpp" />
-    <ClCompile Include="component.cpp" />
-    <ClCompile Include="connectionmanager.cpp" />
-    <ClCompile Include="connectionmanager.h" />
-    <ClCompile Include="d3d11device.cpp" />
-    <ClCompile Include="d3d11renderapi.cpp" />
-    <ClCompile Include="d3d11renderwindow.cpp" />
-    <ClCompile Include="d3d11renderwindowmanager.cpp" />
-    <ClCompile Include="debugrenderable.cpp" />
-    <ClCompile Include="debugrenderer.cpp" />
-    <ClCompile Include="entity.cpp" />
-    <ClCompile Include="entitypool.cpp" />
-    <ClCompile Include="gamerenderable.cpp" />
-    <ClCompile Include="gamerenderer.cpp" />
-    <ClCompile Include="ghostobject.cpp" />
+    <Filter Include="renderers">
+      <UniqueIdentifier>{1d6c3ee0-ff48-4938-8bce-75e243d70362}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui lib">
+      <UniqueIdentifier>{7a72d05b-9f68-452c-9dd8-1205535b1a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket api">
+      <UniqueIdentifier>{bb6f2ae9-5728-4350-aae7-75743391b140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="streammanagers">
+      <UniqueIdentifier>{d786acd0-41ac-4f22-b44f-132316ac59cf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>imgui lib</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>imgui lib</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>imgui lib</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>imgui lib</Filter>
+    </ClCompile>
     <ClCompile Include="imguimanager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="crigidbody.cpp" />
-    <ClCompile Include="scene.cpp" />
-    <ClCompile Include="socketaddress.cpp" />
-    <ClCompile Include="socketaddressfactory.cpp" />
-    <ClCompile Include="socketutility.cpp" />
-    <ClCompile Include="streammanager.cpp" />
-    <ClCompile Include="tcpsocket.cpp" />
-    <ClCompile Include="udpsocket.cpp" />
-    <ClCompile Include="win32platform.cpp" />
-    <ClCompile Include="win32window.cpp" />
-    <ClCompile Include="d3d11renderapi.cpp" />
-    <ClCompile Include="d3d11device.cpp" />
-    <ClCompile Include="d3d11renderwindow.cpp" />
-    <ClCompile Include="application.cpp" />
-    <ClCompile Include="d3d11renderwindowmanager.cpp" />
-    <ClCompile Include="d3d11hardwarebuffer.cpp" />
     <ClCompile Include="windowmanager.cpp" />
-    <ClCompile Include="inputsystem.cpp" />
-    <ClCompile Include="timer.cpp" />
-    <ClCompile Include="time.cpp" />
-    <ClCompile Include="physics.cpp" />
+    <ClCompile Include="udpsocket.cpp">
+      <Filter>socket api</Filter>
+    </ClCompile>
+    <ClCompile Include="tcpsocket.cpp">
+      <Filter>socket api</Filter>
+    </ClCompile>
+    <ClCompile Include="socketutility.cpp">
+      <Filter>socket api</Filter>
+    </ClCompile>
+    <ClCompile Include="socketaddressfactory.cpp">
+      <Filter>socket api</Filter>
+    </ClCompile>
+    <ClCompile Include="socketaddress.cpp">
+      <Filter>socket api</Filter>
+    </ClCompile>
+    <ClCompile Include="gamerenderable.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="gamerenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="connectionmanager.h" />
+    <ClCompile Include="connectionmanager.cpp" />
+    <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="debugrenderable.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="debugrenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="ghostobject.cpp" />
+    <ClCompile Include="ghostproperty.cpp" />
+    <ClCompile Include="ghostmanager.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="streammanager.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="streammanagerclient.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="streammanagerserver.cpp">
+      <Filter>streammanagers</Filter>
+    </ClCompile>
+    <ClCompile Include="aabb3.cpp" />
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="behaviour.cpp" />
+    <ClCompile Include="boxcollider.cpp" />
+    <ClCompile Include="broadphase.cpp" />
+    <ClCompile Include="bulletbehaviourscript.cpp" />
+    <ClCompile Include="bulletpool.cpp" />
+    <ClCompile Include="cbehaviour.cpp" />
+    <ClCompile Include="cboxcollider.cpp" />
+    <ClCompile Include="ccamera.cpp" />
+    <ClCompile Include="collisionevent.cpp" />
+    <ClCompile Include="collisionfunctions.cpp" />
+    <ClCompile Include="component.cpp" />
+    <ClCompile Include="crenderable.cpp" />
+    <ClCompile Include="contact.cpp" />
+    <ClCompile Include="contactdispatcher.cpp" />
+    <ClCompile Include="contactlistener.cpp" />
+    <ClCompile Include="contactmanager.cpp" />
+    <ClCompile Include="contactsolver.cpp" />
+    <ClCompile Include="d3d11device.cpp" />
+    <ClCompile Include="d3d11hardwarebuffer.cpp" />
+    <ClCompile Include="d3d11inputlayout.cpp" />
+    <ClCompile Include="d3d11renderapi.cpp" />
+    <ClCompile Include="d3d11renderwindow.cpp" />
+    <ClCompile Include="d3d11renderwindowmanager.cpp" />
     <ClCompile Include="d3d11resource.cpp" />
     <ClCompile Include="d3d11shader.cpp" />
     <ClCompile Include="d3d11texture.cpp" />
-    <ClCompile Include="hyperenderer.cpp" />
-    <ClCompile Include="matrix4.cpp" />
-    <ClCompile Include="hypesimpleforwardrendernode.cpp" />
-    <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
-    <ClCompile Include="hypesimplemesh.cpp" />
-    <ClCompile Include="d3d11inputlayout.cpp" />
-    <ClCompile Include="crenderable.cpp" />
-    <ClCompile Include="cboxcollider.cpp" />
-    <ClCompile Include="boxcollider.cpp" />
-    <ClCompile Include="fcollider.cpp" />
-    <ClCompile Include="aabb3.cpp" />
     <ClCompile Include="dynamicaabb3tree.cpp" />
-    <ClCompile Include="contact.cpp" />
-    <ClCompile Include="gjk.cpp" />
-    <ClCompile Include="contactlistener.cpp" />
-    <ClCompile Include="sat.cpp" />
-    <ClCompile Include="collisionfunctions.cpp" />
-    <ClCompile Include="transform.cpp" />
-    <ClCompile Include="collisionevent.cpp" />
-    <ClCompile Include="contactdispatcher.cpp" />
-    <ClCompile Include="broadphase.cpp" />
-    <ClCompile Include="contactmanager.cpp" />
-    <ClCompile Include="raycastcallbacks.cpp" />
-    <ClCompile Include="island.cpp" />
-    <ClCompile Include="contactsolver.cpp" />
-    <ClCompile Include="ccamera.cpp" />
-    <ClCompile Include="hypegraphicsworld.cpp" />
-    <ClCompile Include="hypegraphicobject.cpp" />
-    <ClCompile Include="hypecamera.cpp" />
-    <ClCompile Include="cbehaviour.cpp" />
-    <ClCompile Include="behaviour.cpp" />
-    <ClCompile Include="ktwgbehaviour.cpp" />
-    <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
-    <ClCompile Include="hypematerial.cpp" />
-    <ClCompile Include="rigidbody.cpp" />
-    <ClCompile Include="playercontroller.cpp" />
-    <ClCompile Include="enemymanagerscript.cpp" />
-    <ClCompile Include="gameplaymanager.cpp" />
-    <ClCompile Include="enemypool.cpp" />
-    <ClCompile Include="camerabehaviourscript.cpp" />
-    <ClCompile Include="bulletpool.cpp" />
-    <ClCompile Include="bulletbehaviourscript.cpp" />
     <ClCompile Include="enemybehaviourscript.cpp" />
+    <ClCompile Include="enemymanagerscript.cpp" />
+    <ClCompile Include="enemypool.cpp" />
+    <ClCompile Include="entity.cpp" />
+    <ClCompile Include="entitypool.cpp" />
+    <ClCompile Include="fcollider.cpp" />
+    <ClCompile Include="gameplaymanager.cpp" />
+    <ClCompile Include="inputsystem.cpp" />
+    <ClCompile Include="island.cpp" />
+    <ClCompile Include="ktwgbehaviour.cpp" />
+    <ClCompile Include="crigidbody.cpp" />
+    <ClCompile Include="physics.cpp" />
+    <ClCompile Include="playercontroller.cpp" />
     <ClCompile Include="randommodule.cpp" />
+    <ClCompile Include="raycastcallbacks.cpp" />
+    <ClCompile Include="matrix4.cpp" />
+    <ClCompile Include="rigidbody.cpp" />
+    <ClCompile Include="sat.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
+    <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
+    <ClCompile Include="camerabehaviourscript.cpp" />
+    <ClCompile Include="time.cpp" />
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="transform.cpp" />
+    <ClCompile Include="win32platform.cpp" />
+    <ClCompile Include="win32window.cpp" />
+    <ClCompile Include="gjk.cpp" />
+    <ClCompile Include="hypecamera.cpp" />
+    <ClCompile Include="hypegraphicobject.cpp" />
+    <ClCompile Include="hypegraphicsworld.cpp" />
+    <ClCompile Include="hypematerial.cpp" />
+    <ClCompile Include="hyperenderer.cpp" />
+    <ClCompile Include="hypesimpleforwardrendernode.cpp" />
+    <ClCompile Include="hypesimplemesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -105,8 +156,6 @@
     <ClInclude Include="d3d11renderwindowmanager.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
-    <ClInclude Include="entity.h" />
-    <ClInclude Include="entitypool.h" />
     <ClInclude Include="ghostobject.h" />
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="object.h" />
@@ -119,100 +168,145 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="istreammanager.h" />
-    <ClInclude Include="crigidbody.h" />
-    <ClInclude Include="rigidbodytype.h" />
-    <ClInclude Include="scene.h" />
     <ClInclude Include="singleton.h" />
     <ClInclude Include="singletons.h" />
-    <ClInclude Include="socketaddress.h" />
-    <ClInclude Include="socketaddressfactory.h" />
-    <ClInclude Include="sockets.h" />
-    <ClInclude Include="socketutility.h" />
-    <ClInclude Include="streammanager.h" />
-    <ClInclude Include="streammanagerclient.h" />
-    <ClInclude Include="streammanagerserver.h" />
-    <ClInclude Include="tcpsocket.h" />
-    <ClInclude Include="udpsocket.h" />
-    <ClInclude Include="win32platform.h" />
-    <ClInclude Include="d3d11renderapi.h" />
-    <ClInclude Include="d3d11device.h" />
-    <ClInclude Include="d3d11defines.h" />
-    <ClInclude Include="d3d11renderwindow.h" />
-    <ClInclude Include="application.h" />
-    <ClInclude Include="d3d11renderwindowmanager.h" />
-    <ClInclude Include="d3d11hardwarebuffer.h" />
-    <ClInclude Include="win32window.h" />
     <ClInclude Include="windowmanager.h" />
-    <ClInclude Include="win32input.h" />
-    <ClInclude Include="inputsystem.h" />
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="time.h" />
-    <ClInclude Include="rigidbody.h" />
-    <ClInclude Include="physics.h" />
-    <ClInclude Include="physicsconstants.h" />
+    <ClInclude Include="udpsocket.h">
+      <Filter>socket api</Filter>
+    </ClInclude>
+    <ClInclude Include="tcpsocket.h">
+      <Filter>socket api</Filter>
+    </ClInclude>
+    <ClInclude Include="socketutility.h">
+      <Filter>socket api</Filter>
+    </ClInclude>
+    <ClInclude Include="sockets.h">
+      <Filter>socket api</Filter>
+    </ClInclude>
+    <ClInclude Include="socketaddressfactory.h">
+      <Filter>socket api</Filter>
+    </ClInclude>
+    <ClInclude Include="socketaddress.h">
+      <Filter>socket api</Filter>
+    </ClInclude>
+    <ClInclude Include="debugrenderable.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="debugrenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="gamerenderable.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="gamerenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="bitstream.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="ghostobject.h" />
+    <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="ghostproperty.h" />
+    <ClInclude Include="netdefs.h" />
+    <ClInclude Include="packet.h" />
+    <ClInclude Include="ghostmanager.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="streammanager.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="streammanagerclient.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="streammanagerserver.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="eventmanager.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="transmissionrecord.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="ghosttransmissionrecord.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="eventtransmissionrecord.h">
+      <Filter>streammanagers</Filter>
+    </ClInclude>
+    <ClInclude Include="aabb3.h" />
+    <ClInclude Include="behaviour.h" />
+    <ClInclude Include="boxcollider.h" />
+    <ClInclude Include="broadphase.h" />
+    <ClInclude Include="bulletbehaviourscript.h" />
+    <ClInclude Include="bulletpool.h" />
+    <ClInclude Include="cbehaviour.h" />
+    <ClInclude Include="cboxcollider.h" />
+    <ClInclude Include="ccamera.h" />
+    <ClInclude Include="collision.h" />
+    <ClInclude Include="collisionevent.h" />
+    <ClInclude Include="collisioneventtype.h" />
+    <ClInclude Include="collisionfunctions.h" />
+    <ClInclude Include="collisioninfo.h" />
+    <ClInclude Include="contact.h" />
+    <ClInclude Include="contactdispatcher.h" />
+    <ClInclude Include="contactlistener.h" />
+    <ClInclude Include="contactmanager.h" />
+    <ClInclude Include="contactsolver.h" />
+    <ClInclude Include="customlist.h" />
+    <ClInclude Include="d3d11device.hpp" />
+    <ClInclude Include="d3d11hardwarebuffer.h" />
     <ClInclude Include="d3d11resource.h" />
     <ClInclude Include="d3d11shader.h" />
-    <ClInclude Include="hyperenderer.h" />
-    <ClInclude Include="d3d11texture.h" />
-    <ClInclude Include="Shaders\cpp\ShaderCommon.h" />
-    <ClInclude Include="vector3.h" />
-    <ClInclude Include="matrix4.h" />
-    <ClInclude Include="matrix3.h" />
-    <ClInclude Include="quaternion.h" />
-    <ClInclude Include="math.h" />
-    <ClInclude Include="hypesimpleforwardrendernode.h" />
-    <ClInclude Include="hyperendernode.h" />
     <ClInclude Include="d3d11staticresources.h" />
-    <ClInclude Include="d3d11shader.hpp" />
-    <ClInclude Include="hypesimplemesh.h" />
-    <ClInclude Include="d3d11inputlayout.h" />
-    <ClInclude Include="crenderable.h" />
-    <ClInclude Include="hypegraphicobject.h" />
-    <ClInclude Include="d3d11device.hpp" />
-    <ClInclude Include="hypecamera.h" />
-    <ClInclude Include="cboxcollider.h" />
-    <ClInclude Include="boxcollider.h" />
-    <ClInclude Include="fcollider.h" />
-    <ClInclude Include="dynamicaabb3tree.h" />
-    <ClInclude Include="aabb3.h" />
-    <ClInclude Include="raycast.h" />
-    <ClInclude Include="contact.h" />
-    <ClInclude Include="plane.h" />
-    <ClInclude Include="gjk.h" />
-    <ClInclude Include="contactlistener.h" />
-    <ClInclude Include="collisionfunctions.h" />
-    <ClInclude Include="sat.h" />
-    <ClInclude Include="transform.h" />
-    <ClInclude Include="collisioninfo.h" />
-    <ClInclude Include="collisionevent.h" />
-    <ClInclude Include="contactdispatcher.h" />
-    <ClInclude Include="typeinfo.h" />
-    <ClInclude Include="customlist.h" />
-    <ClInclude Include="contactmanager.h" />
-    <ClInclude Include="broadphase.h" />
-    <ClInclude Include="raycastcallbacks.h" />
     <ClInclude Include="sweep.h" />
-    <ClInclude Include="triggerinteraction.h" />
-    <ClInclude Include="island.h" />
-    <ClInclude Include="contactsolver.h" />
-    <ClInclude Include="hypegraphicsworld.h" />
-    <ClInclude Include="ccamera.h" />
-    <ClInclude Include="cbehaviour.h" />
-    <ClInclude Include="behaviour.h" />
-    <ClInclude Include="ktwgbehaviour.h" />
-    <ClInclude Include="Shaders\cpp\SimpleForwardParams.h" />
-    <ClInclude Include="hypematerial.h" />
-    <ClInclude Include="collision.h" />
-    <ClInclude Include="collisioneventtype.h" />
-    <ClInclude Include="playercontroller.h" />
-    <ClInclude Include="enemymanagerscript.h" />
-    <ClInclude Include="gameplaymanager.h" />
-    <ClInclude Include="enemypool.h" />
+    <ClInclude Include="vector3.h" />
+    <ClInclude Include="win32input.h" />
+    <ClInclude Include="win32platform.h" />
+    <ClInclude Include="win32window.h" />
     <ClInclude Include="camerabehaviourscript.h" />
-    <ClInclude Include="bulletpool.h" />
-    <ClInclude Include="bulletbehaviourscript.h" />
+    <ClInclude Include="crenderable.h" />
+    <ClInclude Include="crigidbody.h" />
+    <ClInclude Include="d3d11inputlayout.h" />
+    <ClInclude Include="d3d11shader.hpp" />
+    <ClInclude Include="d3d11texture.h" />
+    <ClInclude Include="dynamicaabb3tree.h" />
     <ClInclude Include="enemybehaviourscript.h" />
+    <ClInclude Include="enemymanagerscript.h" />
+    <ClInclude Include="enemypool.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="entitypool.h" />
+    <ClInclude Include="fcollider.h" />
+    <ClInclude Include="gjk.h" />
+    <ClInclude Include="hypecamera.h" />
+    <ClInclude Include="hypegraphicobject.h" />
+    <ClInclude Include="hypegraphicsworld.h" />
+    <ClInclude Include="hypematerial.h" />
+    <ClInclude Include="hyperenderer.h" />
+    <ClInclude Include="hyperendernode.h" />
+    <ClInclude Include="hypesimpleforwardrendernode.h" />
+    <ClInclude Include="hypesimplemesh.h" />
+    <ClInclude Include="inputsystem.h" />
+    <ClInclude Include="island.h" />
+    <ClInclude Include="ktwgbehaviour.h" />
+    <ClInclude Include="math.h" />
+    <ClInclude Include="matrix3.h" />
+    <ClInclude Include="matrix4.h" />
+    <ClInclude Include="physics.h" />
+    <ClInclude Include="physicsconstants.h" />
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="playercontroller.h" />
+    <ClInclude Include="quaternion.h" />
     <ClInclude Include="randommodule.h" />
+    <ClInclude Include="raycast.h" />
+    <ClInclude Include="raycastcallbacks.h" />
+    <ClInclude Include="rigidbody.h" />
+    <ClInclude Include="rigidbodytype.h" />
+    <ClInclude Include="sat.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="time.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="triggerinteraction.h" />
+    <ClInclude Include="typeinfo.h" />
+    <ClInclude Include="gameplaymanager.h" />
   </ItemGroup>
 </Project>
