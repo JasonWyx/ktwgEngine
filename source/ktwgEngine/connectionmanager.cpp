@@ -405,7 +405,7 @@ void SocketWindowData::ReceiveMessage()
     //   --dynamicRecvPkt;
     // }
 
-    if (!(pktNum != 0 && !(pktNum % 9)))
+    // if (!(pktNum != 0 && !(pktNum % 9)))
       ackSlip[index] = true;
 
     std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
