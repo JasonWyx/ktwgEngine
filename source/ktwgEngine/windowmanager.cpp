@@ -1,5 +1,5 @@
 #include "windowmanager.h"
-
+#include "singletons.h"
 
 WindowManager::WindowManager() : Singleton<WindowManager>{ }
   , m_Window{ nullptr }
@@ -59,11 +59,18 @@ void WindowManager::InitializeInternal()
   glfwSwapInterval(0);
 
   assert(glewInit() == GLEW_OK);
+
+  ImGuiManager::GetInstance().RegisterCallback(this, &WindowManager::OnImGui, "Window Manager");
 }
 
 void WindowManager::ShutdownInternal()
 {
   glfwTerminate();
+}
+
+void WindowManager::OnImGui()
+{
+
 }
 
 void WindowManager::WindowsCharCallbackFnInternal(GLFWwindow* window, unsigned int codepoint)

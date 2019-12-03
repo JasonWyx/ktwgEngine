@@ -16,7 +16,7 @@
 #define GLFW_HAS_VULKAN             (GLFW_VERSION_MAJOR * 1000 + GLFW_VERSION_MINOR * 100 >= 3200) // 3.2+ glfwCreateWindowSurface
 #include <stdio.h>
 #include <stdint.h>
-#include "imguirenderable.h"
+#include <vector>
 
 class ImGuiManager : public Singleton<ImGuiManager>
 {
@@ -25,10 +25,14 @@ public:
   ImGuiManager();
   ~ImGuiManager();
 
-
+  void LateInitialize();
   void Update();
-  void AddRenderable(ImGuiRenderable* renderable);
-  void RemoveRenderable(ImGuiRenderable* renderable);
+
+  template<typename T>
+  void RegisterCallback(T* target, void(T::* function)(), const char* tabHeader)
+  {
+    m_OnImGuiCallbacks.push_back(new CallbackFunctor<T>(target, function, tabHeader));
+  }
 
 private:
 
@@ -80,5 +84,41 @@ private:
   GLint m_AttribLocationVtxColor;
   GLuint m_VboHandle;
   GLuint m_ElementsHandle;
+
+  // Functor object helpers to invoke member function with bound target
+  class Functor
+  {
+  public:
+    virtual void Invoke() = 0;
+    virtual const char* GetTabHeader() = 0;
+  };
+
+  template<typename T>
+  class CallbackFunctor : public Functor
+  {
+  public:
+
+    CallbackFunctor(T* target, void(T::* functionPtr)(), const char* tabHeader)
+      : m_Target(target)
+      , m_FunctionPtr(functionPtr)
+      , m_TabHeader(tabHeader) { }
+
+    T* m_Target;
+    void (T::* m_FunctionPtr)();
+    const char* m_TabHeader;
+
+    virtual void Invoke() override
+    {
+      (m_Target->*m_FunctionPtr)();
+    }
+
+    // This tab header should only be a string literal
+    virtual const char* GetTabHeader() override
+    {
+      return m_TabHeader;
+    }
+  };
+
+  std::vector<Functor*> m_OnImGuiCallbacks;
 
 };

@@ -6,16 +6,20 @@
 
 int main()
 {
-  WindowManager::Initialize();
   ImGuiManager::Initialize();
-  ConnectionManager::Initialize();
+  WindowManager::Initialize();
+  //ConnectionManager::Initialize();
+
+  ImGuiManager::GetInstance().LateInitialize();
 
   // Main loop
   while (WindowManager::GetInstance().PollEvents())
   {
-	  ConnectionManager::GetInstance().Update();
+	  //ConnectionManager::GetInstance().Update();
     glClearColor(.2f, .2f, .2f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    ImGuiManager::GetInstance().Update();
     WindowManager::GetInstance().SwapBuffers();
   }
 
