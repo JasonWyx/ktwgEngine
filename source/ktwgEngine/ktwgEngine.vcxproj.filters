@@ -97,15 +97,6 @@
     <ClCompile Include="contactlistener.cpp" />
     <ClCompile Include="contactmanager.cpp" />
     <ClCompile Include="contactsolver.cpp" />
-    <ClCompile Include="d3d11device.cpp" />
-    <ClCompile Include="d3d11hardwarebuffer.cpp" />
-    <ClCompile Include="d3d11inputlayout.cpp" />
-    <ClCompile Include="d3d11renderapi.cpp" />
-    <ClCompile Include="d3d11renderwindow.cpp" />
-    <ClCompile Include="d3d11renderwindowmanager.cpp" />
-    <ClCompile Include="d3d11resource.cpp" />
-    <ClCompile Include="d3d11shader.cpp" />
-    <ClCompile Include="d3d11texture.cpp" />
     <ClCompile Include="dynamicaabb3tree.cpp" />
     <ClCompile Include="enemybehaviourscript.cpp" />
     <ClCompile Include="enemymanagerscript.cpp" />
@@ -142,6 +133,15 @@
     <ClCompile Include="hyperenderer.cpp" />
     <ClCompile Include="hypesimpleforwardrendernode.cpp" />
     <ClCompile Include="hypesimplemesh.cpp" />
+    <ClCompile Include="d3d11device.cpp" />
+    <ClCompile Include="d3d11hardwarebuffer.cpp" />
+    <ClCompile Include="d3d11inputlayout.cpp" />
+    <ClCompile Include="d3d11renderapi.cpp" />
+    <ClCompile Include="d3d11renderwindow.cpp" />
+    <ClCompile Include="d3d11renderwindowmanager.cpp" />
+    <ClCompile Include="d3d11resource.cpp" />
+    <ClCompile Include="d3d11shader.cpp" />
+    <ClCompile Include="d3d11texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -149,11 +149,6 @@
     <ClInclude Include="component.h" />
     <ClInclude Include="componentmanager.h" />
     <ClInclude Include="componenttype.h" />
-    <ClInclude Include="d3d11defines.h" />
-    <ClInclude Include="d3d11device.h" />
-    <ClInclude Include="d3d11renderapi.h" />
-    <ClInclude Include="d3d11renderwindow.h" />
-    <ClInclude Include="d3d11renderwindowmanager.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
     <ClInclude Include="ghostobject.h" />
@@ -252,11 +247,6 @@
     <ClInclude Include="contactmanager.h" />
     <ClInclude Include="contactsolver.h" />
     <ClInclude Include="customlist.h" />
-    <ClInclude Include="d3d11device.hpp" />
-    <ClInclude Include="d3d11hardwarebuffer.h" />
-    <ClInclude Include="d3d11resource.h" />
-    <ClInclude Include="d3d11shader.h" />
-    <ClInclude Include="d3d11staticresources.h" />
     <ClInclude Include="sweep.h" />
     <ClInclude Include="vector3.h" />
     <ClInclude Include="win32input.h" />
@@ -265,9 +255,6 @@
     <ClInclude Include="camerabehaviourscript.h" />
     <ClInclude Include="crenderable.h" />
     <ClInclude Include="crigidbody.h" />
-    <ClInclude Include="d3d11inputlayout.h" />
-    <ClInclude Include="d3d11shader.hpp" />
-    <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="dynamicaabb3tree.h" />
     <ClInclude Include="enemybehaviourscript.h" />
     <ClInclude Include="enemymanagerscript.h" />
@@ -308,5 +295,18 @@
     <ClInclude Include="triggerinteraction.h" />
     <ClInclude Include="typeinfo.h" />
     <ClInclude Include="gameplaymanager.h" />
+    <ClInclude Include="d3d11defines.h" />
+    <ClInclude Include="d3d11device.h" />
+    <ClInclude Include="d3d11device.hpp" />
+    <ClInclude Include="d3d11hardwarebuffer.h" />
+    <ClInclude Include="d3d11inputlayout.h" />
+    <ClInclude Include="d3d11renderapi.h" />
+    <ClInclude Include="d3d11renderwindow.h" />
+    <ClInclude Include="d3d11renderwindowmanager.h" />
+    <ClInclude Include="d3d11resource.h" />
+    <ClInclude Include="d3d11shader.h" />
+    <ClInclude Include="d3d11shader.hpp" />
+    <ClInclude Include="d3d11staticresources.h" />
+    <ClInclude Include="d3d11texture.h" />
   </ItemGroup>
 </Project>
