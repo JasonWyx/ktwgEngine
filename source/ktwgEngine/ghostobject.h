@@ -29,13 +29,14 @@ public:
     void ReadStream(BitStream& stream, const GhostStateMask& stateMask);
 
     template<typename T>
-    void RegisterGhostPropertyImpl(T& property, NetAuthority authority = NetAuthority::Client, size_t bitSize = sizeof(T) * 8)
+    void RegisterGhostProperty(T& property, NetAuthority authority, size_t bitCount = sizeof(T) * 8)
     {
-        m_GhostProperties.push_back(new GhostPropertyVirtual<T>(property, authority, bitSize));
+        m_GhostProperties.push_back(new GhostPropertyVirtual<T>(property, authority, bitCount));
     }
 
 private:
 
+    bool m_IsLocalOwner; // Does this object belong to this client?
     GhostID m_GhostNetID;
     GhostTransmissionRecord* m_LatestGhostTransmissionRecord;
     std::vector<GhostProperty*> m_GhostProperties;

@@ -23,19 +23,20 @@ GhostObject::~GhostObject()
 
 GhostStateMask GhostObject::GetStateMask() const
 {
-    GhostStateMask result(m_GhostProperties.size());
-
-    for (size_t i = 0; i < m_RetransmissionMask.size(); ++i)
-    {
-        result[i] = m_RetransmissionMask[i];
-    }
-    
+    GhostStateMask result = m_RetransmissionMask;
     bool isServer = StreamManager::GetInstance().IsServer();
 
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
         NetAuthority authority = m_GhostProperties[i]->GetAuthority();
-        if ((authority == NetAuthority::Client && !isServer || authority == NetAuthority::Server && isServer) && m_GhostProperties[i]->IsPropertyChanged())
+
+        if (result[i] == true)
+        {
+            continue;
+        }
+
+        if (((authority == NetAuthority::Client && !isServer && m_IsLocalOwner) ||
+             (authority == NetAuthority::Server && isServer)) && m_GhostProperties[i]->IsPropertyChanged())
         {
             result[i] = true;
         }
@@ -56,11 +57,13 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
         if (result[i] == true)
         {
             needUpdate = true;
+            continue;
         }
-        else if ((authority == NetAuthority::Client && !isServer || authority == NetAuthority::Server && isServer) && m_GhostProperties[i]->IsPropertyChanged())
+
+        if (((authority == NetAuthority::Client && !isServer && m_IsLocalOwner) ||
+             (authority == NetAuthority::Server && isServer)) && m_GhostProperties[i]->IsPropertyChanged())
         {
             result[i] = true;
-            needUpdate = true;
         }
     }
 
@@ -69,7 +72,8 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
 
 void GhostObject::SetRetransmissionMask(const GhostStateMask& stateMask)
 {
-    assert(m_GhostProperties.size() == stateMask.size(), "GhostObject::SetTransmissionMask: The size of the state mask should the same as the number of ghost properties!");  
+    // The size of the state mask should the same as the number of ghost properties!
+    assert(m_GhostProperties.size() == stateMask.size());
     m_RetransmissionMask = stateMask;
 }
 
@@ -87,8 +91,6 @@ bool GhostObject::NeedUpdate() const
 
 void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask)
 {
-    stream << m_GhostNetID;
-
     if (m_RetransmissionMask.size() != stateMask.size())
     {
         m_RetransmissionMask.resize(stateMask.size());

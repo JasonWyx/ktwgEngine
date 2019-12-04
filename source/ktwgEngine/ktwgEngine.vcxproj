@@ -92,6 +92,7 @@
     <ClCompile Include="connectionmanager.h" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
+    <ClCompile Include="eventmanager.cpp" />
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostmanager.cpp" />
@@ -103,6 +104,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="movemanager.cpp" />
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -117,6 +119,7 @@
     <ClInclude Include="bitstream.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
+    <ClInclude Include="event.h" />
     <ClInclude Include="eventmanager.h" />
     <ClInclude Include="eventtransmissionrecord.h" />
     <ClInclude Include="ghostmanager.h" />
@@ -124,6 +127,7 @@
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="ghostproperty.h" />
     <ClInclude Include="ghosttransmissionrecord.h" />
+    <ClInclude Include="movemanager.h" />
     <ClInclude Include="netdefs.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="gamerenderable.h" />

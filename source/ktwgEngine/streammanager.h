@@ -18,18 +18,20 @@ public:
     StreamManager();
     ~StreamManager();
 
-    bool ProcessIncomingPacket(Packet& packet);
-    bool ProcessOutgoingPacket(Packet& packet);
-    void NotifyPacketStatus(PeerID fromPeerID, PacketID packetID, PacketStatus packetStatus);
+    bool SendPacket(Packet& packet);
+    bool ReceivePacket(Packet& packet);
+    void NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus);
 
     // Client Functions
     void InitializeClient();
     void ShutdownClient();
+    void UpdateClient();
     StreamManagerClient* GetClient() { return m_ClientStreamManager; }
     
     // Server Functions
     void InitializeServer();
     void ShutdownServer();
+    void UpdateServer();
     StreamManagerServer* GetServer() { return m_ServerStreamManager; }
 
     bool IsServer() { return m_ServerStreamManager != nullptr; }

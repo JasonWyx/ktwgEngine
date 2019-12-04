@@ -12,25 +12,14 @@ StreamManagerServer::~StreamManagerServer()
 
 }
 
-bool StreamManagerServer::ProcessOutgoingPackets(std::vector<std::pair<PeerID, Packet>>& packets)
+void StreamManagerServer::Update()
 {
-    // Process local transmission first
-    BitStream localBitStream;
-    TransmissionRecord localTransmissionRecord;
 
-    m_LocalClientStreamManager->GetGhostManager().WriteStream(localBitStream, localTransmissionRecord);
-    //m_LocalClientStreamManager->GetEventManager().WritePacketBitStream(localBitStream, localTransmissionRecord);
+}
 
-    // Fill all packets
-    for (auto& [peerID, packet] : packets)
-    {
-        // Update transmission record of peer
-        std::vector<TransmissionRecord>& peerTransmissionRecords = m_PeerTransmissionRecords[peerID];
-        peerTransmissionRecords.push_back(localTransmissionRecord);
-        peerTransmissionRecords.back().m_PacketID = packet.m_ID;
-    }
+bool StreamManagerServer::SendPacket(PeerID targetSourceID, Packet& packet)
+{
 
-    return true;
 }
 
 void StreamManagerServer::NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus)
@@ -67,8 +56,7 @@ void StreamManagerServer::CreatePeer(PeerID peerID)
         _ASSERT(false); // Trying to create a peer with an existing peer ID!
     }
 
-    // Implicitly create new peer entry
-    m_PeerTransmissionRecords[peerID].clear();
+    m_PeerTransmissionRecords.try_emplace(peerID, std::vector<TransmissionRecord>());
 }
 
 void StreamManagerServer::RemovePeer(PeerID peerID)

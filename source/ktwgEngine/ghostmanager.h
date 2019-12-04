@@ -13,11 +13,11 @@ public:
     GhostManager();
     ~GhostManager();
 
-    bool ReadStream(BitStream& stream);
-    bool WriteStream(BitStream& stream, TransmissionRecord& tr);
+    bool ReadPacket(Packet& packet);
+    bool WritePacket(Packet& packet, TransmissionRecord& tr);
     void NotifyTransmissionSuccess(TransmissionRecord& tr);
     void NotifyTransmissionFailure(TransmissionRecord& tr);
-    void DropPendingStreamData();
+    void DropPendingData();
 
     void RegisterGhostObject(GhostObject* ghostObject);
     void UnregisterGhostObject(GhostObject* ghostObject);
@@ -26,6 +26,7 @@ private:
 
     std::vector<GhostObject*> m_GhostObjects;
     std::map<GhostID, GhostObject*> m_GhostObjectsIDMap;
+
     std::set<GhostID> m_GhostsToCreate;
     std::set<GhostID> m_GhostsToDelete; 
 

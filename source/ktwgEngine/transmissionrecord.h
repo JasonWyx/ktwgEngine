@@ -7,8 +7,7 @@ struct TransmissionRecord
 {
     PacketID m_PacketID;
     std::vector<GhostTransmissionRecord> m_GhostTransmissionRecords;
-    std::vector<EventTransmissionRecord> m_EventRecordList;
-    bool m_ACKed;
+    std::vector<EventTransmissionRecord> m_EventTransmissionRecords;
 
     bool operator<(const TransmissionRecord& rhs)
     {

@@ -74,6 +74,8 @@
     <ClCompile Include="streammanagerserver.cpp">
       <Filter>streammanagers</Filter>
     </ClCompile>
+    <ClCompile Include="eventmanager.cpp" />
+    <ClCompile Include="movemanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -159,5 +161,7 @@
     <ClInclude Include="eventtransmissionrecord.h">
       <Filter>streammanagers</Filter>
     </ClInclude>
+    <ClInclude Include="movemanager.h" />
+    <ClInclude Include="event.h" />
   </ItemGroup>
 </Project>
