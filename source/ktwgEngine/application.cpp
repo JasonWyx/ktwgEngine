@@ -34,8 +34,10 @@ void Application::ShutdownInternal()
 
   InputSystem::Shutdown();
 
+#ifdef CLIENT
   D3D11RenderWindowManager::Shutdown();
   D3D11RenderAPI::Shutdown();
+#endif
 
   Time::Shutdown();
 }
@@ -57,7 +59,11 @@ void Application::Run()
   // Retrieve input instance
   InputSystem& inputSys = InputSystem::GetInstance();
   Physics& physicsSys = Physics::GetInstance();
+
+#ifdef CLIENT
   HypeRenderer& renderSys = HypeRenderer::GetInstance();
+#endif
+
   KTWGBehaviour& behSys = KTWGBehaviour::GetInstance();
 
   behSys.Init();
@@ -97,7 +103,9 @@ void Application::Run()
     }
 
     behSys.Update();
+#ifdef CLIENT
     renderSys.Update();
+#endif
     inputSys.PostUpdate();
   }
 }
@@ -107,8 +115,10 @@ void Application::InitializeCoreSystems()
   // Initialize the instance of time
   Time::Initialize();
 
+#ifdef CLIENT
   D3D11RenderAPI::Initialize();
   D3D11RenderWindowManager::Initialize();
+#endif
 
   InputSystem::Initialize(::GetCapture());
 
@@ -121,12 +131,16 @@ void Application::InitializeCoreSystems()
 
 void Application::InitializeResources()
 {
+#ifdef CLIENT
   HypeRenderer::LoadSystemShaders();
   HypeRenderer::CreateCommonResources();
+#endif
 }
 
 void Application::LateInitialize()
 {
+#ifdef CLIENT
   HypeRenderer::Initialize();
+#endif
   Scene::Initialize();
 }

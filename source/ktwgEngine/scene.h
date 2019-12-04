@@ -19,6 +19,8 @@ private:
 	virtual void InitializeInternal() override;
 	virtual void ShutdownInternal() override;
 
+  void CreateStaticScene();
+
   Entity* FindEntityByNameInternal(Entity* ent, const std::string& name);
 
   Entity* m_GameScene;

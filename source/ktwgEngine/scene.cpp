@@ -40,6 +40,8 @@ void Scene::InitializeInternal()
 {
   m_GameScene = Entity::CreateEntity("Scene");
 
+  CreateStaticScene();
+#ifdef CLIENT
   {
     // Camera
     Entity* camera = m_GameScene->AddChild();
@@ -53,7 +55,15 @@ void Scene::InitializeInternal()
     CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     camBeh.Bind<CameraBehaviour>();
   }
+#endif
+}
 
+void Scene::ShutdownInternal()
+{
+}
+
+void Scene::CreateStaticScene()
+{
   {
     // Ground
     Entity* ground = m_GameScene->AddChild();
@@ -67,8 +77,10 @@ void Scene::InitializeInternal()
 
     CBoxCollider& groundBC = ground->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
+#ifdef CLIENT
     CRenderable& renderable = ground->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
+#endif
   }
 
   {
@@ -77,7 +89,7 @@ void Scene::InitializeInternal()
     wall->SetName("wall");
 
     Transform& wallTf = wall->GetTransform();
-    wallTf.SetPosition(Vec3{0.0f, 0.0f, 95.f});
+    wallTf.SetPosition(Vec3{ 0.0f, 0.0f, 95.f });
     wallTf.SetScale(Vec3{ 200.0f, 200.0f, 10.0f });
 
     CRigidBody& wallRB = wall->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
@@ -85,10 +97,12 @@ void Scene::InitializeInternal()
 
     CBoxCollider& wallBC = wall->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
+#ifdef CLIENT
     CRenderable& renderable = wall->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.f, 0.25f, 0.25f, 1.0f);
+#endif
   }
 
   {
@@ -105,10 +119,12 @@ void Scene::InitializeInternal()
 
     CBoxCollider& wallBC = wall->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
+#ifdef CLIENT
     CRenderable& renderable = wall->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.25f, 0.25f, 1.0f);
+#endif
   }
 
   {
@@ -125,10 +141,12 @@ void Scene::InitializeInternal()
 
     CBoxCollider& wallBC = wall->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
+#ifdef CLIENT
     CRenderable& renderable = wall->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.25f, 0.25f, 1.0f);
+#endif
   }
 
   {
@@ -145,10 +163,12 @@ void Scene::InitializeInternal()
 
     CBoxCollider& wallBC = wall->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
+#ifdef CLIENT
     CRenderable& renderable = wall->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.25f, 0.25f, 1.0f);
+#endif
   }
   //{
   //  // Player
@@ -183,11 +203,6 @@ void Scene::InitializeInternal()
     CBehaviour& beh = enemyMng->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     beh.Bind<EnemyManager>();
   }
-
-}
-
-void Scene::ShutdownInternal()
-{
 }
 
 Entity* Scene::FindEntityByNameInternal(Entity* ent, const std::string& name)
