@@ -8,17 +8,17 @@ StreamManager::~StreamManager()
 {
 }
 
-bool StreamManager::ProcessIncomingPacket(Packet& packet)
+bool StreamManager::SendPacket(Packet& packet)
 {
     return false;
 }
 
-bool StreamManager::ProcessOutgoingPacket(Packet& packet)
+bool StreamManager::ReceivePacket(Packet& packet)
 {
     return false;
 }
 
-void StreamManager::NotifyPacketStatus(PeerID fromPeerID, PacketID packetID, PacketStatus packetStatus)
+void StreamManager::NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus)
 {
 }
 
@@ -30,11 +30,19 @@ void StreamManager::ShutdownClient()
 {
 }
 
+void StreamManager::UpdateClient()
+{
+}
+
 void StreamManager::InitializeServer()
 {
 }
 
 void StreamManager::ShutdownServer()
+{
+}
+
+void StreamManager::UpdateServer()
 {
 }
 

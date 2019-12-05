@@ -191,6 +191,7 @@
     <ClCompile Include="d3d11texture.cpp" />
     <ClCompile Include="debugrenderable.cpp" />
     <ClCompile Include="debugrenderer.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="dynamicaabb3tree.cpp" />
     <ClCompile Include="enemybehaviourscript.cpp" />
     <ClCompile Include="enemymanagerscript.cpp" />
@@ -199,6 +200,9 @@
     <ClCompile Include="entitypool.cpp" />
     <ClCompile Include="fcollider.cpp" />
     <ClCompile Include="gameplaymanager.cpp" />
+=======
+    <ClCompile Include="eventmanager.cpp" />
+>>>>>>> stream-manager
     <ClCompile Include="gamerenderable.cpp" />
     <ClCompile Include="gamerenderer.cpp" />
     <ClCompile Include="ghostmanager.cpp" />
@@ -221,6 +225,7 @@
     <ClCompile Include="island.cpp" />
     <ClCompile Include="ktwgbehaviour.cpp" />
     <ClCompile Include="main.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="crigidbody.cpp" />
     <ClCompile Include="physics.cpp" />
     <ClCompile Include="playercontroller.cpp" />
@@ -232,6 +237,9 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="Shaders\cpp\ShaderCommon.cpp" />
     <ClCompile Include="Shaders\cpp\SimpleForwardParams.cpp" />
+=======
+    <ClCompile Include="movemanager.cpp" />
+>>>>>>> stream-manager
     <ClCompile Include="socketaddress.cpp" />
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
@@ -292,12 +300,16 @@
     <ClInclude Include="d3d11texture.h" />
     <ClInclude Include="debugrenderable.h" />
     <ClInclude Include="debugrenderer.h" />
+<<<<<<< HEAD
     <ClInclude Include="dynamicaabb3tree.h" />
     <ClInclude Include="enemybehaviourscript.h" />
     <ClInclude Include="enemymanagerscript.h" />
     <ClInclude Include="enemypool.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="entitypool.h" />
+=======
+    <ClInclude Include="event.h" />
+>>>>>>> stream-manager
     <ClInclude Include="eventmanager.h" />
     <ClInclude Include="eventtransmissionrecord.h" />
     <ClInclude Include="fcollider.h" />
@@ -307,6 +319,7 @@
     <ClInclude Include="ghostobjectids.h" />
     <ClInclude Include="ghostproperty.h" />
     <ClInclude Include="ghosttransmissionrecord.h" />
+<<<<<<< HEAD
     <ClInclude Include="gjk.h" />
     <ClInclude Include="hypecamera.h" />
     <ClInclude Include="hypegraphicobject.h" />
@@ -322,6 +335,9 @@
     <ClInclude Include="math.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="matrix4.h" />
+=======
+    <ClInclude Include="movemanager.h" />
+>>>>>>> stream-manager
     <ClInclude Include="netdefs.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="gamerenderable.h" />

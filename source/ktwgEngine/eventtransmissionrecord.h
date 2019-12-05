@@ -2,5 +2,5 @@
 
 struct EventTransmissionRecord
 {
-    // SomeEventData
+    EventSequenceID m_EventSequenceID;
 };
