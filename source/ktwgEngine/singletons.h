@@ -4,3 +4,4 @@
 #include "imguimanager.h"
 #include "gamerenderer.h"
 #include "debugrenderer.h"
+#include "scene.h"
