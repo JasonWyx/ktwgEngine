@@ -13,6 +13,7 @@
 #include <queue>
 #include <tuple>
 #include <list>
+#include <stack>
 
 #define CLOCK_TYPE steady_clock
 
@@ -22,8 +23,6 @@ using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 #define BETA 0.25f
 #define ALPHA 0.125f
 #define MAX_WINDOW 20
-
-void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown);
 
 class SocketWindowData
 {
@@ -45,10 +44,14 @@ class SocketWindowData
   UDPSocketPtr            socket;
   std::vector<bool>       ackSlip;
   std::queue<std::string> msgQueue;
+  std::queue<int>         streamIDQueue;
+  std::stack<int>         sentStreamIDStack;
   std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
   int                     timeOutPkt = 0;
   bool                    shutdown = false;
+  // for server side only
+  int                     player = -1;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
@@ -58,10 +61,11 @@ class SocketWindowData
   std::string PacketMessage(const std::string & msg, const unsigned char& startPkt);
   int UpdateRecvAckSlip(int val, int size);
   int GetAcks();
+  void DeliverMessage();
 public:
-  void DeliverMessage(); // to transfer to private
   std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
   void AddMessage(std::string msg);
+  void AddStreamPktID(int id);
   void SetSocket(UDPSocketPtr s);
   void SetPort(const u_short& p);
   UDPSocketPtr GetSocket();
@@ -69,14 +73,19 @@ public:
   void Init();
   bool GetShutdown();
   void ShutdownMessage();
+  void SetPlayer(int p);
+  int GetPlayer();
 };
 
+#ifdef CLIENT
 class ConnectionManager : public Singleton <ConnectionManager>
 {
 public:
   ConnectionManager();
   ~ConnectionManager();
   void Update();
+  void AddPackets(std::string msg, int pktid);
+  void RecieveMessage(std::string msg);
 private:
   virtual void InitializeInternal() override;
   virtual void ShutdownInternal() override;
@@ -84,12 +93,35 @@ private:
   void ConnectToServer();
   
   SocketWindowData mySocket;
-  UDPSocketPtr hostSocket;
-  std::thread serverThread;
-  int shutdown;
-  bool host;
 
   // temporary buffer for testing
   char buf[BUFLEN];
-
+  std::vector<std::string> recievedMessages;
 };
+#else
+
+class ConnectionManager : public Singleton<ConnectionManager>
+{
+  virtual void InitializeInternal() override;
+  virtual void ShutdownInternal() override;
+
+  bool playerActive[4];
+  std::list<SocketWindowData> serverSockets;
+  std::vector<bool> playersOnline;
+  int players;
+
+  u_short startingPort;
+
+  char buffer[BUFLEN];
+
+  UDPSocketPtr hostSocket;
+
+  std::vector<std::string> recievedMessages;
+public:
+  ConnectionManager();
+  ~ConnectionManager();
+  void Update();
+  void RecieveMessage(std::string msg);
+};
+
+#endif

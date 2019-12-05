@@ -25,11 +25,13 @@ EnemyPool::EnemyPool()
 
   CBoxCollider& bc = m_Object->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
+#ifdef CLIENT
   CRenderable& renderable = m_Object->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
   renderable.SetGraphicObject("Cube");
   renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
   renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.75f, 0.25f, 0.25f, 1.0f);
-  
+#endif
+
   m_Object->SetActive(false);
 
   IncreasePool(10);
