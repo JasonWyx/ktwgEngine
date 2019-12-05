@@ -1,6 +1,7 @@
 #pragma once
+#include "event.h"
 
 struct EventTransmissionRecord
 {
-    // SomeEventData
+    EventSequenceID m_EventSequenceID;
 };

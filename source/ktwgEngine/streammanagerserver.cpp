@@ -12,10 +12,14 @@ StreamManagerServer::~StreamManagerServer()
 
 }
 
-bool StreamManagerServer::ProcessOutgoingPacket(Packet& packet)
+void StreamManagerServer::Update()
 {
-    
-    return false;
+
+}
+
+bool StreamManagerServer::SendPacket(PeerID targetPeerID, Packet& packet)
+{
+	return true;
 }
 
 void StreamManagerServer::NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus)
@@ -36,6 +40,7 @@ void StreamManagerServer::NotifyPacketStatus(PeerID peerID, PacketID packetID, P
         for (const TransmissionRecord& transmissionRecord : iter->second)
         {
             // Jason TODO: find ghost record with matching packet id and append into list of next properties
+            // Need to make sure retransmission takes into account the packets in flight also
             
         }
         // And vice versa for events
@@ -51,8 +56,7 @@ void StreamManagerServer::CreatePeer(PeerID peerID)
         _ASSERT(false); // Trying to create a peer with an existing peer ID!
     }
 
-    // Implicitly create new peer entry
-    m_PeerTransmissionRecords[peerID].clear();
+    m_PeerTransmissionRecords.try_emplace(peerID, std::vector<TransmissionRecord>());
 }
 
 void StreamManagerServer::RemovePeer(PeerID peerID)

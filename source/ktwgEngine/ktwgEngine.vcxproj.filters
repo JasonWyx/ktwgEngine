@@ -78,6 +78,7 @@
     <ClCompile Include="streammanagerserver.cpp">
       <Filter>streammanagers</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="aabb3.cpp" />
     <ClCompile Include="application.cpp" />
     <ClCompile Include="behaviour.cpp" />
@@ -142,6 +143,10 @@
     <ClCompile Include="d3d11resource.cpp" />
     <ClCompile Include="d3d11shader.cpp" />
     <ClCompile Include="d3d11texture.cpp" />
+=======
+    <ClCompile Include="eventmanager.cpp" />
+    <ClCompile Include="movemanager.cpp" />
+>>>>>>> stream-manager
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -227,6 +232,7 @@
     <ClInclude Include="eventtransmissionrecord.h">
       <Filter>streammanagers</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="aabb3.h" />
     <ClInclude Include="behaviour.h" />
     <ClInclude Include="boxcollider.h" />
@@ -308,5 +314,9 @@
     <ClInclude Include="d3d11shader.hpp" />
     <ClInclude Include="d3d11staticresources.h" />
     <ClInclude Include="d3d11texture.h" />
+=======
+    <ClInclude Include="movemanager.h" />
+    <ClInclude Include="event.h" />
+>>>>>>> stream-manager
   </ItemGroup>
 </Project>

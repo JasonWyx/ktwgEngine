@@ -4,9 +4,9 @@
 constexpr size_t MAX_PACKET_SIZE = 512;
 constexpr size_t MAX_PACKET_BIT_SIZE = 512 * 8;
 
-using PacketID = unsigned int;
+using PacketID = unsigned char;
 
-enum PacketStatus
+enum class PacketStatus
 {
     Success,
     Failed,
