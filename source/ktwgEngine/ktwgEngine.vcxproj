@@ -238,8 +238,6 @@
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
     <ClCompile Include="streammanager.cpp" />
-    <ClCompile Include="streammanagerclient.cpp" />
-    <ClCompile Include="streammanagerserver.cpp" />
     <ClCompile Include="tcpsocket.cpp" />
     <ClCompile Include="camerabehaviourscript.cpp" />
     <ClCompile Include="time.cpp" />
@@ -357,8 +355,6 @@
     <ClInclude Include="sockets.h" />
     <ClInclude Include="socketutility.h" />
     <ClInclude Include="streammanager.h" />
-    <ClInclude Include="streammanagerclient.h" />
-    <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="sweep.h" />
     <ClInclude Include="tcpsocket.h" />
     <ClInclude Include="time.h" />

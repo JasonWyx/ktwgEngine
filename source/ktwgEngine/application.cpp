@@ -17,6 +17,8 @@
 
 #include "scene.h"
 
+#include "connectionmanager.h"
+
 void Application::InitializeInternal()
 {
   InitializeCoreSystems();
@@ -68,6 +70,10 @@ void Application::Run()
 
   behSys.Init();
   behSys.Start();
+
+#ifndef CLIENT
+  // Connect to server
+#endif // CLIENT
 
   // For now just a loop forever
   while (true)

@@ -38,6 +38,8 @@ bool GhostManager::ReadPacket(Packet& packet)
                 packet.m_BitStream.Read(ghostClassID, 0u);
                 // jason todo: create object here with m_IsLocalOwner set to false in ghost object so
                 // that local client does not send updates to server for broadcast
+				
+				// read data here and send to scene to create
             }
             else
             {

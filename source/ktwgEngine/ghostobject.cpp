@@ -5,15 +5,16 @@
 
 GhostObject::GhostObject(GhostID ghostID, PeerID owner)
     : m_GhostID(ghostID)
+    , m_Owner(owner)
     , m_LatestGhostTransmissionRecord(nullptr)
     , m_GhostProperties()
 {
-    StreamManager::GetInstance().GetClient()->GetGhostManager().RegisterGhostObject(this);
+    StreamManager::GetInstance().GetGhostManager().RegisterGhostObject(this);
 }
 
 GhostObject::~GhostObject()
 {
-    StreamManager::GetInstance().GetClient()->GetGhostManager().UnregisterGhostObject(this);
+    StreamManager::GetInstance().GetGhostManager().UnregisterGhostObject(this);
 
     for (GhostProperty* property : m_GhostProperties)
     {
@@ -24,7 +25,6 @@ GhostObject::~GhostObject()
 GhostStateMask GhostObject::GetStateMask() const
 {
     GhostStateMask result = m_RetransmissionMask;
-    bool isServer = StreamManager::GetInstance().IsServer();
 
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
@@ -35,8 +35,11 @@ GhostStateMask GhostObject::GetStateMask() const
             continue;
         }
 
-        if (((authority == NetAuthority::Client && !isServer && m_Owner == StreamManager::GetInstance().GetPeerID()) ||
-             (authority == NetAuthority::Server && isServer)) && m_GhostProperties[i]->IsPropertyChanged())
+#ifdef CLIENT
+        if (m_GhostProperties[i]->IsPropertyChanged() && m_Owner == StreamManager::GetInstance().GetPeerID())
+#else
+        if (m_GhostProperties[i]->IsPropertyChanged())
+#endif
         {
             result[i] = true;
         }
@@ -48,8 +51,7 @@ GhostStateMask GhostObject::GetStateMask() const
 GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
 {
     GhostStateMask result = m_RetransmissionMask;
-    bool isServer = StreamManager::GetInstance().IsServer();
-                 
+
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
         NetAuthority authority = m_GhostProperties[i]->GetAuthority();
@@ -60,8 +62,11 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
             continue;
         }
 
-        if (((authority == NetAuthority::Client && !isServer && m_Owner == StreamManager::GetInstance().GetPeerID()) ||
-             (authority == NetAuthority::Server && isServer)) && m_GhostProperties[i]->IsPropertyChanged())
+#ifdef CLIENT
+        if (m_GhostProperties[i]->IsPropertyChanged() && m_Owner == StreamManager::GetInstance().GetPeerID())
+#else
+        if (m_GhostProperties[i]->IsPropertyChanged())
+#endif
         {
             result[i] = true;
         }
