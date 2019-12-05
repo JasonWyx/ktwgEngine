@@ -14,6 +14,7 @@ void EventManager::ReadPacket(Packet& packet)
 
 bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 {
+	return true;
 }
 
 void EventManager::NotifyTransmissionSuccess(TransmissionRecord& tr)

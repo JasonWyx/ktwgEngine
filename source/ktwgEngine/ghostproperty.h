@@ -60,7 +60,6 @@ public:
         {
             stream >> m_ValueRef;
         }
-
         m_PreviousValue = m_ValueRef;
     }
 

@@ -3,8 +3,8 @@
 #include "streammanager.h"
 #include <cassert>
 
-GhostObject::GhostObject(GhostID ghostNetID)
-    : m_GhostNetID(ghostNetID)
+GhostObject::GhostObject(GhostID ghostID, PeerID owner)
+    : m_GhostID(ghostID)
     , m_LatestGhostTransmissionRecord(nullptr)
     , m_GhostProperties()
 {
@@ -35,7 +35,7 @@ GhostStateMask GhostObject::GetStateMask() const
             continue;
         }
 
-        if (((authority == NetAuthority::Client && !isServer && m_IsLocalOwner) ||
+        if (((authority == NetAuthority::Client && !isServer && m_Owner == StreamManager::GetInstance().GetPeerID()) ||
              (authority == NetAuthority::Server && isServer)) && m_GhostProperties[i]->IsPropertyChanged())
         {
             result[i] = true;
@@ -60,7 +60,7 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
             continue;
         }
 
-        if (((authority == NetAuthority::Client && !isServer && m_IsLocalOwner) ||
+        if (((authority == NetAuthority::Client && !isServer && m_Owner == StreamManager::GetInstance().GetPeerID()) ||
              (authority == NetAuthority::Server && isServer)) && m_GhostProperties[i]->IsPropertyChanged())
         {
             result[i] = true;
@@ -117,4 +117,14 @@ void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)
             m_GhostProperties[i]->ReadStream(stream);
         }
     }
+
+    if (StreamManager::GetInstance().IsServer())
+    {
+        m_ServerTransmissionMask = stateMask;
+    }
+}
+
+inline bool GhostObject::IsOwner()
+{
+    return StreamManager::GetInstance().GetPeerID();
 }

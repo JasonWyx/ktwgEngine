@@ -3,8 +3,6 @@
 #include "connectionmanager.h"
 #include "streammanagerclient.h"
 #include "streammanagerserver.h"
-#include "ghostmanager.h"
-#include "eventmanager.h"
 #include "bitstream.h"
 #include <memory>
 #include <vector>
@@ -18,9 +16,7 @@ public:
     StreamManager();
     ~StreamManager();
 
-    bool SendPacket(Packet& packet);
-    bool ReceivePacket(Packet& packet);
-    void NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus);
+    void Update();
 
     // Client Functions
     void InitializeClient();
@@ -35,12 +31,25 @@ public:
     StreamManagerServer* GetServer() { return m_ServerStreamManager; }
 
     bool IsServer() { return m_ServerStreamManager != nullptr; }
+    PeerID GetPeerID() const { return m_PeerID; }
+    void SetPeerID(const PeerID& peerID) { m_PeerID = peerID; }
 
 private:
 
     virtual void InitializeInternal() override;
     virtual void ShutdownInternal() override;
 
+    bool SendPacket(Packet& packet);
+    bool ReceivePacket(Packet& packet);
+    void NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus);
+    
+    Packet CreatePacket();
+
     StreamManagerClient* m_ClientStreamManager;
     StreamManagerServer* m_ServerStreamManager;
+
+    PeerID m_PeerID;
+    PacketID m_LastPacketID;
+    size_t m_FramePacketCount; // This is the number of packets that have been created this frame
+    size_t m_MaxFramePacketCount;
 };

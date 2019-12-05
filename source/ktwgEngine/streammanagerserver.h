@@ -17,7 +17,7 @@ public:
 
     // We only have outgoing packet here because we let the incoming packet be handled by the client stream manager
     void Update();
-    bool SendPacket(PeerID targetSourceID, Packet& packet);
+    bool SendPacket(PeerID targetPeerID, Packet& packet);
     void NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus);
 
     void CreatePeer(PeerID peerID);

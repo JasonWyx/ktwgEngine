@@ -17,9 +17,9 @@ void StreamManagerServer::Update()
 
 }
 
-bool StreamManagerServer::SendPacket(PeerID targetSourceID, Packet& packet)
+bool StreamManagerServer::SendPacket(PeerID targetPeerID, Packet& packet)
 {
-
+	return true;
 }
 
 void StreamManagerServer::NotifyPacketStatus(PeerID peerID, PacketID packetID, PacketStatus packetStatus)

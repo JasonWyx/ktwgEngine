@@ -4,6 +4,7 @@
 #include "ghostobjectids.h"
 #include <vector>
 #include <type_traits>
+#include "netdefs.h"
 
 using GhostID = unsigned int;
 
@@ -13,10 +14,10 @@ class GhostObject
 {
 public:
 
-    GhostObject(GhostID ghostNetID);
+    GhostObject(GhostID ghostNetID, PeerID owner);
     virtual ~GhostObject();
     
-    GhostID GetGhostID() const { return m_GhostNetID; }
+    GhostID GetGhostID() const { return m_GhostID; }
     size_t GetPropertyCount() const { return m_GhostProperties.size(); }
     GhostStateMask GetStateMask() const;
     GhostStateMask GetStateMaskAndCheckNeedUpdate(bool& needUpdate);
@@ -27,6 +28,8 @@ public:
     bool NeedUpdate() const;
     void WriteStream(BitStream& stream, const GhostStateMask& stateMask);
     void ReadStream(BitStream& stream, const GhostStateMask& stateMask);
+    
+    inline bool IsOwner();
 
     template<typename T>
     void RegisterGhostProperty(T& property, NetAuthority authority, size_t bitCount = sizeof(T) * 8)
@@ -34,11 +37,14 @@ public:
         m_GhostProperties.push_back(new GhostPropertyVirtual<T>(property, authority, bitCount));
     }
 
+
 private:
 
-    bool m_IsLocalOwner; // Does this object belong to this client?
-    GhostID m_GhostNetID;
+    PeerID m_Owner;
+    GhostID m_GhostID;
     GhostTransmissionRecord* m_LatestGhostTransmissionRecord;
     std::vector<GhostProperty*> m_GhostProperties;
+    
     GhostStateMask m_RetransmissionMask;
+    GhostStateMask m_ServerTransmissionMask;
 };

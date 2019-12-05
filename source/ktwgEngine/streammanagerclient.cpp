@@ -50,7 +50,7 @@ bool StreamManagerClient::ProcessOutgoingPacket(Packet& packet)
         if (packet.m_BitStream.GetBitLength() > bitStreamSize)
         {
             hasMoveStuff = true;
-            return;
+            return false;
         }
     }
     else if (packet.m_BitStream.GetBitLength() > bitStreamSize)
@@ -67,7 +67,7 @@ bool StreamManagerClient::ProcessOutgoingPacket(Packet& packet)
         if (packet.m_BitStream.GetBitLength() > bitStreamSize)
         {
             hasEventStuff = true;
-            return;
+			return false;
         }
     }
     else if (packet.m_BitStream.GetBitLength() > bitStreamSize)
@@ -84,7 +84,7 @@ bool StreamManagerClient::ProcessOutgoingPacket(Packet& packet)
         if (packet.m_BitStream.GetBitLength() > bitStreamSize)
         {
             hasGhostStuff = true;
-            return;
+            return false;
         }
     }
     else if (packet.m_BitStream.GetBitLength() > bitStreamSize)
@@ -92,6 +92,8 @@ bool StreamManagerClient::ProcessOutgoingPacket(Packet& packet)
         hasGhostStuff = true;
     }
     m_IsDonePackingGhost = true;
+
+	return true;
 }
 
 void StreamManagerClient::NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus)
