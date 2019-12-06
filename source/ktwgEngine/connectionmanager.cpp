@@ -2,6 +2,7 @@
 #include "socketaddress.h"
 #include <vector>
 #include "windowmanager.h"
+#include "streammanager.h"
 
 #define SERVERIP "127.0.0.1" // localhost
 #define PORT 6666 // Port for listen to get new port
@@ -11,8 +12,6 @@
 ConnectionManager::ConnectionManager()
   : mySocket{}
 {
-  SocketUtility::Init();
-  mySocket.Init();
 }
 
 ConnectionManager::~ConnectionManager()
@@ -30,7 +29,17 @@ void ConnectionManager::RecieveMessage(std::string msg)
   recievedMessages.push_back(msg);
 }
 
-void ConnectionManager::AddPackets(std::string msg, int pktid)
+int ConnectionManager::GetPlayerID()
+{
+  return mySocket.GetPlayer();
+}
+
+std::vector<std::string>& ConnectionManager::GetRecievedMessages()
+{
+  return recievedMessages;
+}
+
+void ConnectionManager::AddPacket(std::string msg, int pktid)
 {
   mySocket.AddMessage(msg);
   mySocket.AddStreamPktID(pktid);
@@ -38,13 +47,14 @@ void ConnectionManager::AddPackets(std::string msg, int pktid)
 
 void ConnectionManager::InitializeInternal()
 {
+  SocketUtility::Init();
+  mySocket.Init();
   ConnectToServer();
 }
 
 void ConnectionManager::ShutdownInternal()
 {
   mySocket.ShutdownMessage();
-  // serverThread.join();
   SocketUtility::CleanUp();
 }
 
@@ -72,7 +82,8 @@ void ConnectionManager::ConnectToServer()
   SocketAddress outserver{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
 
   // receive message of new port
-  if (s->ReceiveFrom(buf, BUFLEN, outserver) < 0)
+  int msgSize = 0;
+  if ((msgSize = s->ReceiveFrom(buf, BUFLEN, outserver)) < 0)
   {
     std::cout << "There is no server" << std::endl;
     // Create Server and connect here
@@ -83,16 +94,38 @@ void ConnectionManager::ConnectToServer()
 
     mySocket.AddMessage(message);
 
-    u_short port = std::stoi(buf);
+    std::string portMsg;
+    std::string playerID;
+    bool change = false;
+
+    for (int i = 0; i < msgSize; ++i)
+    {
+      if (buf[i] == ',')
+      {
+        change = true;
+        continue;
+      }
+
+      if (!change)
+        portMsg.push_back(buf[i]);
+      else
+        playerID.push_back(buf[i]);
+    }
+
+    u_short port = std::stoi(portMsg.c_str());
+
     std::cout << "Recieve new port to connect to as " << port << std::endl;
     s->SetBlockingMode(1);
     mySocket.SetSocket(s);
     mySocket.SetPort(port);
+    mySocket.SetPlayer(std::stoi(playerID.c_str()));
+    std::cout << "I am Player " << mySocket.GetPlayer() << std::endl;
+    // StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
   }
 }
 #else
 ConnectionManager::ConnectionManager()
-  : players{0}, startingPort{1234}, hostSocket(nullptr)
+  : players{1}, startingPort{1234}, hostSocket(nullptr)
 {
   SocketUtility::Init();
   playerActive[0] = playerActive[1] = playerActive[2] = playerActive[3] = false;
@@ -112,14 +145,34 @@ void ConnectionManager::Update()
     // std::cout << "Server: Recieve packet" << std::endl;
     // std::cout << "Server: Data : " << buffer << std::endl;
 
+    if (players > 4)
+    {
+      std::cout << "Server : Max Players" << std::endl;
+      return;
+    }
+
     u_short cPort = ntohs(client.GetAsSockAddrIn()->sin_port);
 
     u_short newPort = startingPort;
     std::string message = std::to_string(startingPort++);
+    message += ",";
 
-    if (players > 4 || hostSocket->SendTo(message.c_str(), message.size(), client) < 0)
+    int connectedPlayerID = -1;
+
+    if (!playerActive[0])
+      connectedPlayerID = 0;
+    else if (!playerActive[1])
+      connectedPlayerID = 1;
+    else if (!playerActive[2])
+      connectedPlayerID = 2;
+    else if (!playerActive[3])
+      connectedPlayerID = 3;
+
+    message += std::to_string(connectedPlayerID);
+
+    if (hostSocket->SendTo(message.c_str(), message.size(), client) < 0)
     {
-      std::cout << "Server: Send To Fail or Max Players" << std::endl;
+      std::cout << "Server: Send To Fail" << std::endl;
     }
     else
     {
@@ -132,27 +185,11 @@ void ConnectionManager::Update()
       tmp.SetSocket(s);
       tmp.SetPort(cPort);
       ++players;
-      if (!playerActive[0])
-      {
-        tmp.SetPlayer(0);
-        playerActive[0] = true;
-      }
-      else if (!playerActive[1])
-      {
-        tmp.SetPlayer(1);
-        playerActive[1] = true;
-      }
-      else if (!playerActive[2])
-      {
-        tmp.SetPlayer(2);
-        playerActive[2] = true;
-      }
-      else if (!playerActive[3])
-      {
-        tmp.SetPlayer(3);
-        playerActive[3] = true;
-      }
+      tmp.SetPlayer(connectedPlayerID);
+      playerActive[connectedPlayerID] = true;
       serverSockets.push_back(tmp);
+      // inform upper level here
+      // StreamManager::GetInstance().CreatePeer(connectedPlayerID);
     }
   }
 
@@ -172,7 +209,9 @@ void ConnectionManager::Update()
       it = serverSockets.erase(it);
       --players;
       // remove player here
+      // inform upper level here
       playerActive[player] = false;
+      // StreamManager::GetInstance().RemovePeer(player);
     }
   }
 }
@@ -197,6 +236,24 @@ void ConnectionManager::ShutdownInternal()
 void ConnectionManager::RecieveMessage(std::string msg)
 {
   recievedMessages.push_back(msg);
+}
+
+std::vector<std::string>& ConnectionManager::GetRecievedMessages()
+{
+  return recievedMessages;
+}
+
+void ConnectionManager::AddPacket(std::string msg, int pktid, int player)
+{
+  for (auto start = serverSockets.begin(); start != serverSockets.end(); ++start)
+  {
+    if (player = start->GetPlayer())
+    {
+      start->AddMessage(msg);
+      start->AddStreamPktID(pktid);
+      return;
+    }
+  }
 }
 #endif
 
@@ -294,6 +351,10 @@ void SocketWindowData::DeliverMessage()
     ++sentPkt;
     sentMsg = true;
   }
+
+  // to be removed if cause random DCs
+  if (msgQueue.empty())
+    timeOutTimer = std::chrono::CLOCK_TYPE::now();
 }
 
 void SocketWindowData::ReceiveMessage()
@@ -473,6 +534,12 @@ void SocketWindowData::UpdateTimer()
     recvAckSlip = 0;
     timeOutPkt = 0;
   }
+  // ungracefull disconnection
+  if (timeOutPkt == windowSize)
+  {
+    shutdown = true;
+  }
+
 }
 
 std::string SocketWindowData::PacketMessage(const std::string& msg, const unsigned char& startPkt)
@@ -578,6 +645,14 @@ void SocketWindowData::Update()
   DeliverMessage();
   ReceiveMessage();
   UpdateTimer();
+
+  // to be removed if cause random DCs
+  if (msgQueue.empty() && sentMsg)
+  {
+    auto current = std::chrono::CLOCK_TYPE::now();
+    float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(current - timeOutTimer)).count();
+    if (elapsedTime > 10.f) shutdown = true;
+  }
 }
 
 void SocketWindowData::Init()

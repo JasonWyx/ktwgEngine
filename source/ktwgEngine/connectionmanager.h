@@ -52,6 +52,8 @@ class SocketWindowData
   bool                    shutdown = false;
   // for server side only
   int                     player = -1;
+  // to be removed if cause random DCs
+  TIME                    timeOutTimer;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
@@ -84,8 +86,10 @@ public:
   ConnectionManager();
   ~ConnectionManager();
   void Update();
-  void AddPackets(std::string msg, int pktid);
+  void AddPacket(std::string msg, int pktid);
   void RecieveMessage(std::string msg);
+  int GetPlayerID();
+  std::vector<std::string>& GetRecievedMessages();
 private:
   virtual void InitializeInternal() override;
   virtual void ShutdownInternal() override;
@@ -122,6 +126,8 @@ public:
   ~ConnectionManager();
   void Update();
   void RecieveMessage(std::string msg);
+  std::vector<std::string>& GetRecievedMessages();
+  void AddPacket(std::string msg, int pktid, int player);
 };
 
 #endif
