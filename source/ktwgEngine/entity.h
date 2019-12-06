@@ -10,6 +10,7 @@
 #include "cbehaviour.h"
 
 class Component;
+class GhostObject;
 
 class Entity
 {
@@ -60,11 +61,16 @@ public:
   inline Transform& GetTransform() { return m_Transform; }
 
   inline void SetName(const std::string& name) { m_Name = name; }
-  
+
+  inline bool GetIsGhost() const { return m_IsGhost; }
+  inline GhostObject* GetGhostObject() const { return m_GhostObject; }
+
   void SetActive(bool active);
   void SetAllComponentsActive(bool active);
   void SetAllChildrenActive(bool active);
   void Set(Entity* ent);
+
+  void MarkEntityForGhost();
 
 private:
   template<typename T> 
@@ -79,6 +85,9 @@ private:
   std::string m_Name;
   uint32_t    m_Id;
   uint32_t    m_LayerId;
+
+  GhostObject* m_GhostObject; // Corresponding ghost object on the ghost manager
+  bool         m_IsGhost; // If this is set then this entity is a ghost (Owned by another client)
 };
 
 template <typename T>

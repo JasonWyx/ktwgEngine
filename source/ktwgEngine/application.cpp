@@ -1,4 +1,5 @@
 #include "application.h"
+#include "connectionmanager.h"
 
 #include <iostream>
 #include <fstream>
@@ -14,6 +15,7 @@
 #include "inputsystem.h"
 #include "physics.h"
 #include "ktwgbehaviour.h"
+
 
 #include "scene.h"
 
@@ -42,6 +44,8 @@ void Application::ShutdownInternal()
 #endif
 
   Time::Shutdown();
+
+  ConnectionManager::Shutdown();
 }
 
 void Application::Run()
@@ -67,6 +71,8 @@ void Application::Run()
 #endif
 
   KTWGBehaviour& behSys = KTWGBehaviour::GetInstance();
+
+  ConnectionManager& conSys = ConnectionManager::GetInstance();
 
   behSys.Init();
   behSys.Start();
@@ -108,6 +114,8 @@ void Application::Run()
       accumulator -= fixedDtMs;
     }
 
+    conSys.Update();
+
     behSys.Update();
 #ifdef CLIENT
     renderSys.Update();
@@ -120,6 +128,8 @@ void Application::InitializeCoreSystems()
 {
   // Initialize the instance of time
   Time::Initialize();
+
+  ConnectionManager::Initialize();
 
 #ifdef CLIENT
   D3D11RenderAPI::Initialize();

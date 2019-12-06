@@ -8,9 +8,13 @@
 #include "crenderable.h"
 #include "ccamera.h"
 
+// Network
+#include "ghostobject.h"
+#include "streammanager.h"
+
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
-    m_Transform{}, m_State{ ACTIVE }, m_Id{ id }, m_Name{ name }, m_LayerId{ 0 }
+    m_Transform{}, m_State{ ACTIVE }, m_Id{ id }, m_Name{ name }, m_LayerId{ 0 }, m_IsGhost{false}, m_GhostObject{nullptr}
 {
 }
 
@@ -120,4 +124,17 @@ void Entity::Set(Entity* ent)
     Entity* newChild = AddChild();
     newChild->Set(child);
   }
+
+  if (ent->GetGhostObject() && !ent->GetIsGhost())
+  {
+    MarkEntityForGhost();
+  }
+}
+
+void Entity::MarkEntityForGhost()
+{
+  m_GhostObject = new GhostObject{};
+  m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
+  m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
+  m_IsGhost = true;
 }

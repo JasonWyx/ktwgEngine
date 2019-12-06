@@ -2,17 +2,16 @@
 #include "socketaddress.h"
 #include <vector>
 #include "windowmanager.h"
-#define GLFW_EXPOSE_NATIVE_WIN32 1
-#include <glfw/glfw3native.h>
+#include "streammanager.h"
 
-#define SERVER "127.0.0.1" // localhost
+#define SERVERIP "127.0.0.1" // localhost
 #define PORT 6666 // Port for listen to get new port
 
+#ifdef CLIENT
+
 ConnectionManager::ConnectionManager()
-  : mySocket{}, hostSocket(nullptr), host(false), shutdown(0)
+  : mySocket{}
 {
-  SocketUtility::Init();
-  mySocket.Init();
 }
 
 ConnectionManager::~ConnectionManager()
@@ -21,59 +20,50 @@ ConnectionManager::~ConnectionManager()
 
 void ConnectionManager::Update()
 {
-  // auto win = WindowManager::GetInstance().GetWindow();
-  // auto hwnd = glfwGetWin32Window(win);
-  // DWORD processID;
-  // GetWindowThreadProcessId(hwnd, &processID);
-
-  SocketAddress server{ AF_INET, inet_addr(SERVER), htons(PORT) };
-
-  // if (elapsed_milliseconds.count() > 5.0)
-  // {
-  //   then = now;
-  //   
-  //   std::string message = "client ";
-  //   message += std::to_string(processID);
-  //   message += " : Hello Server";
-  //   
-  //   socket.AddMessage(message);
-  // 
-  //   socket.DeliverMessage();
-  // 
-  //   // if ()
-  //   // {
-  //   //   std::cout << "Fail Send To" << std::endl;
-  //   // }
-  // }
-  // 
-  // ZeroMemory(buf, BUFLEN);
-  // if (socket.GetSocket()->ReceiveFrom(buf, BUFLEN, server) > 0)
-  // {
-  //   std::cout << "Server Sent you message" << std::endl;
-  // }
+  SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
   mySocket.Update();
+}
+
+void ConnectionManager::RecieveMessage(std::string msg)
+{
+  recievedMessages.push_back(msg);
+}
+
+int ConnectionManager::GetPlayerID()
+{
+  return mySocket.GetPlayer();
+}
+
+std::vector<std::string>& ConnectionManager::GetRecievedMessages()
+{
+  return recievedMessages;
+}
+
+void ConnectionManager::AddPacket(std::string msg, int pktid)
+{
+  mySocket.AddMessage(msg);
+  mySocket.AddStreamPktID(pktid);
 }
 
 void ConnectionManager::InitializeInternal()
 {
+  SocketUtility::Init();
+  mySocket.Init();
   ConnectToServer();
 }
 
 void ConnectionManager::ShutdownInternal()
 {
   mySocket.ShutdownMessage();
-  shutdown = 1;
-  // serverThread.join();
   SocketUtility::CleanUp();
 }
 
 void ConnectionManager::ConnectToServer()
 {
+  SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+
   // create udp socket
   UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
-
-  // setup address structure
-  SocketAddress server{ AF_INET, inet_addr(SERVER), htons(PORT) };
 
   // create message to send to server
   std::string message = "What is the port for the new UDP socket?";
@@ -89,143 +79,183 @@ void ConnectionManager::ConnectToServer()
   ZeroMemory(buf, BUFLEN);
 
   // setup out address structure
-  SocketAddress outserver{ AF_INET, inet_addr(SERVER), htons(PORT) };
+  SocketAddress outserver{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
 
   // receive message of new port
-  if (s->ReceiveFrom(buf, BUFLEN, outserver) < 0)
+  int msgSize = 0;
+  if ((msgSize = s->ReceiveFrom(buf, BUFLEN, outserver)) < 0)
   {
     std::cout << "There is no server" << std::endl;
     // Create Server and connect here
-
-    hostSocket = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
-    hostSocket->SetBlockingMode(1);
-    hostSocket->Bind(server);
-    host = true;
-
-    serverThread = std::thread{ ListeningServer, std::ref(hostSocket), std::ref(shutdown) };
-    serverThread.detach();
-    if (s->SendTo(message.c_str(), message.size(), server) < 0)
-    {
-      std::cout << "Send To Fail" << std::endl;
-    }
-    if (s->ReceiveFrom(buf, BUFLEN, outserver) < 0)
-    {
-      std::cout << "Fail Recieve From" << std::endl;
-    }
-    else
-    {
-      auto win = WindowManager::GetInstance().GetWindow();
-      auto hwnd = glfwGetWin32Window(win);
-      DWORD processID;
-      GetWindowThreadProcessId(hwnd, &processID);
-
-      std::string message = "Hello Server";
-
-      mySocket.AddMessage(message);
-
-
-      u_short port = std::stoi(buf);
-      std::cout << "Recieve new port to connect to as " << port << std::endl;
-      s->SetBlockingMode(1);
-      mySocket.SetSocket(s);
-      mySocket.SetPort(port);
-    }
   }
   else
   {
-    auto win = WindowManager::GetInstance().GetWindow();
-    auto hwnd = glfwGetWin32Window(win);
-    DWORD processID;
-    GetWindowThreadProcessId(hwnd, &processID);
-
     std::string message = "Hello Server";
 
     mySocket.AddMessage(message);
 
-    u_short port = std::stoi(buf);
+    std::string portMsg;
+    std::string playerID;
+    bool change = false;
+
+    for (int i = 0; i < msgSize; ++i)
+    {
+      if (buf[i] == ',')
+      {
+        change = true;
+        continue;
+      }
+
+      if (!change)
+        portMsg.push_back(buf[i]);
+      else
+        playerID.push_back(buf[i]);
+    }
+
+    u_short port = std::stoi(portMsg.c_str());
+
     std::cout << "Recieve new port to connect to as " << port << std::endl;
     s->SetBlockingMode(1);
     mySocket.SetSocket(s);
     mySocket.SetPort(port);
+    mySocket.SetPlayer(std::stoi(playerID.c_str()));
+    std::cout << "I am Player " << mySocket.GetPlayer() << std::endl;
+    // StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
   }
-
 }
-
-void ListeningServer(UDPSocketPtr& hostSocket, int& shutdown)
+#else
+ConnectionManager::ConnectionManager()
+  : players{1}, startingPort{1234}, hostSocket(nullptr)
 {
-  bool playerActive[4];
+  SocketUtility::Init();
   playerActive[0] = playerActive[1] = playerActive[2] = playerActive[3] = false;
-  std::list<SocketWindowData> serverSockets;
-  std::vector<bool> playersOnline;
   playersOnline.resize(4);
-  int players = 0;
+}
 
-  std::cout << "Server : Started listening" << std::endl;
-  u_short startingPort = 1234;
-  // setup address structure
-  SocketAddress client{ AF_INET, inet_addr(SERVER), htons(PORT) };
+ConnectionManager::~ConnectionManager()
+{
+}
 
-  char buffer[BUFLEN];
-
-  while (!shutdown)
+void ConnectionManager::Update()
+{
+  SocketAddress client{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  ZeroMemory(buffer, BUFLEN);
+  if (hostSocket->ReceiveFrom(buffer, BUFLEN, client) > 0)
   {
-    ZeroMemory(buffer, BUFLEN);
-    if (hostSocket->ReceiveFrom(buffer, BUFLEN, client) > 0)
+    // std::cout << "Server: Recieve packet" << std::endl;
+    // std::cout << "Server: Data : " << buffer << std::endl;
+
+    if (players > 4)
     {
-      // std::cout << "Server: Recieve packet" << std::endl;
-      // std::cout << "Server: Data : " << buffer << std::endl;
-
-      u_short cPort =ntohs(client.GetAsSockAddrIn()->sin_port);
-
-      u_short newPort = startingPort;
-      std::string message = std::to_string(startingPort++);
-
-      if (players < 4 && hostSocket->SendTo(message.c_str(), message.size(), client) < 0)
-      {
-        std::cout << "Server: Send To Fail" << std::endl;
-      }
-      else
-      {
-        UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
-        s->SetBlockingMode(1);
-        SocketAddress newServer{ AF_INET, inet_addr(SERVER), htons(newPort) };
-        s->Bind(newServer);
-        SocketWindowData tmp;
-        tmp.Init();
-        tmp.SetSocket(s);
-        tmp.SetPort(cPort);
-        serverSockets.push_back(tmp);
-        ++players;
-        if (!playerActive[0]) playerActive[0] = true;
-        else if (!playerActive[1]) playerActive[1] = true;
-        else if (!playerActive[2]) playerActive[2] = true;
-        else if (!playerActive[3]) playerActive[3] = true;
-      }
+      std::cout << "Server : Max Players" << std::endl;
+      return;
     }
 
-    // Looping through all the server Sockets
-    for (auto& ss : serverSockets)
-    {
-      ss.Update();
-    }
+    u_short cPort = ntohs(client.GetAsSockAddrIn()->sin_port);
 
-    int player = 0;
-    for (auto it = serverSockets.begin(); it != serverSockets.end(); ++it)
+    u_short newPort = startingPort;
+    std::string message = std::to_string(startingPort++);
+    message += ",";
+
+    int connectedPlayerID = -1;
+
+    if (!playerActive[0])
+      connectedPlayerID = 0;
+    else if (!playerActive[1])
+      connectedPlayerID = 1;
+    else if (!playerActive[2])
+      connectedPlayerID = 2;
+    else if (!playerActive[3])
+      connectedPlayerID = 3;
+
+    message += std::to_string(connectedPlayerID);
+
+    if (hostSocket->SendTo(message.c_str(), message.size(), client) < 0)
     {
-      if (it->GetShutdown())
-      {
-        // quit player remove player
-        std::cout << "Player " << player << " has exited" << std::endl;
-        it = serverSockets.erase(it);
-        --players;
-        // remove player here
-        playerActive[player] = false;
-      }
-      ++player;
+      std::cout << "Server: Send To Fail" << std::endl;
+    }
+    else
+    {
+      UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
+      s->SetBlockingMode(1);
+      SocketAddress newServer{ AF_INET, inet_addr(SERVERIP), htons(newPort) };
+      s->Bind(newServer);
+      SocketWindowData tmp;
+      tmp.Init();
+      tmp.SetSocket(s);
+      tmp.SetPort(cPort);
+      ++players;
+      tmp.SetPlayer(connectedPlayerID);
+      playerActive[connectedPlayerID] = true;
+      serverSockets.push_back(tmp);
+      // inform upper level here
+      // StreamManager::GetInstance().CreatePeer(connectedPlayerID);
     }
   }
-  std::cout << "Server is shutting down" << std::endl;
+
+  // Looping through all the server Sockets
+  for (auto& ss : serverSockets)
+  {
+    ss.Update();
+  }
+
+  for (auto it = serverSockets.begin(); it != serverSockets.end(); ++it)
+  {
+    int player = it->GetPlayer();
+    if (it->GetShutdown())
+    {
+      // quit player remove player
+      std::cout << "Player " << player << " has exited" << std::endl;
+      it = serverSockets.erase(it);
+      --players;
+      // remove player here
+      // inform upper level here
+      playerActive[player] = false;
+      // StreamManager::GetInstance().RemovePeer(player);
+    }
+  }
 }
+
+void ConnectionManager::InitializeInternal()
+{
+  // setup address structure
+  SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+
+  hostSocket = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
+  hostSocket->SetBlockingMode(1);
+  hostSocket->Bind(server);
+  std::cout << "Server : Started listening" << std::endl;
+}
+
+void ConnectionManager::ShutdownInternal()
+{
+  std::cout << "Server is shutting down" << std::endl;
+  SocketUtility::CleanUp();
+}
+
+void ConnectionManager::RecieveMessage(std::string msg)
+{
+  recievedMessages.push_back(msg);
+}
+
+std::vector<std::string>& ConnectionManager::GetRecievedMessages()
+{
+  return recievedMessages;
+}
+
+void ConnectionManager::AddPacket(std::string msg, int pktid, int player)
+{
+  for (auto start = serverSockets.begin(); start != serverSockets.end(); ++start)
+  {
+    if (player = start->GetPlayer())
+    {
+      start->AddMessage(msg);
+      start->AddStreamPktID(pktid);
+      return;
+    }
+  }
+}
+#endif
 
 void SocketWindowData::ReadACKS(const int& acks)
 {
@@ -237,15 +267,22 @@ void SocketWindowData::ReadACKS(const int& acks)
   unsigned char tmpAckPkt = sentPkt - 1;
   ackPkt = tmpAckPkt;
   bool ss = true;
-  std::vector<unsigned char> nackSlip;
+  std::vector<int> nackSlip;
   std::cout << ackVal << std::endl;
   recvPkt += windowSize;
   while (tmpWindowSize)
   {
     int currAck = ackVal & bit;
+    int streamPktID = -1;
+    if (!sentStreamIDStack.empty())
+    {
+      streamPktID = sentStreamIDStack.top();
+      sentStreamIDStack.pop();
+    }
     if (!currAck)
     {
-      nackSlip.push_back(tmpAckPkt);
+      // nackSlip.push_back(tmpAckPkt);
+      nackSlip.push_back(streamPktID);
       windowSize /= 2;
       if (windowSize <= 0) windowSize = 1;
       ss = false;
@@ -289,14 +326,20 @@ void SocketWindowData::DeliverMessage()
 
   unsigned char startPkt = sentPkt - cumulativePktsSent;
   int currWindowSize = windowSize - cumulativePktsSent;
-  SocketAddress reciever{ AF_INET, inet_addr(SERVER), htons(sPort) };
+  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), htons(sPort) };
 
   while (currWindowSize != 0)
   {
     if (msgQueue.empty()) break;
     // std::cout << (int)startPkt << std::endl;
-    std::string message = msgQueue.back();
+    std::string message = msgQueue.front();
     msgQueue.pop();
+    if (!streamIDQueue.empty())
+    {
+      int streamPktID = streamIDQueue.front();
+      streamIDQueue.pop();
+      sentStreamIDStack.push(streamPktID);
+    }
     message = PacketMessage(message, startPkt);
     socket->SendTo(message.c_str(), message.size(), reciever);
     --currWindowSize;
@@ -308,13 +351,17 @@ void SocketWindowData::DeliverMessage()
     ++sentPkt;
     sentMsg = true;
   }
+
+  // to be removed if cause random DCs
+  if (msgQueue.empty())
+    timeOutTimer = std::chrono::CLOCK_TYPE::now();
 }
 
 void SocketWindowData::ReceiveMessage()
 {
   char buffer[BUFLEN];
   ZeroMemory(buffer, BUFLEN);
-  SocketAddress sender{ AF_INET, inet_addr(SERVER), htons(PORT) };
+  SocketAddress sender{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
   int res = 0;
   while ((res = socket->ReceiveFrom(buffer, BUFLEN, sender)) > 0)
   {
@@ -405,8 +452,11 @@ void SocketWindowData::ReceiveMessage()
     //   --dynamicRecvPkt;
     // }
 
-    // if (!(pktNum != 0 && !(pktNum % 9)))
+    if (!(pktNum != 0 && !(pktNum % 9)))
+    {
       ackSlip[index] = true;
+      ConnectionManager::GetInstance().RecieveMessage(msg);
+    }
 
     std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
 
@@ -484,6 +534,12 @@ void SocketWindowData::UpdateTimer()
     recvAckSlip = 0;
     timeOutPkt = 0;
   }
+  // ungracefull disconnection
+  if (timeOutPkt == windowSize)
+  {
+    shutdown = true;
+  }
+
 }
 
 std::string SocketWindowData::PacketMessage(const std::string& msg, const unsigned char& startPkt)
@@ -564,6 +620,11 @@ void SocketWindowData::AddMessage(std::string msg)
   msgQueue.push(msg);
 }
 
+void SocketWindowData::AddStreamPktID(int id)
+{
+  streamIDQueue.push(id);
+}
+
 void SocketWindowData::SetSocket(UDPSocketPtr s)
 {
   socket = s;
@@ -584,6 +645,14 @@ void SocketWindowData::Update()
   DeliverMessage();
   ReceiveMessage();
   UpdateTimer();
+
+  // to be removed if cause random DCs
+  if (msgQueue.empty() && sentMsg)
+  {
+    auto current = std::chrono::CLOCK_TYPE::now();
+    float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(current - timeOutTimer)).count();
+    if (elapsedTime > 10.f) shutdown = true;
+  }
 }
 
 void SocketWindowData::Init()
@@ -602,6 +671,16 @@ void SocketWindowData::ShutdownMessage()
   while(!msgQueue.empty())
     msgQueue.pop();
   std::string s = "shutdown";
-  SocketAddress reciever{ AF_INET, inet_addr(SERVER), htons(sPort) };
+  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), htons(sPort) };
   socket->SendTo(s.c_str(), s.size(), reciever);
+}
+
+void SocketWindowData::SetPlayer(int p)
+{
+  player = p;
+}
+
+int SocketWindowData::GetPlayer()
+{
+  return player;
 }
