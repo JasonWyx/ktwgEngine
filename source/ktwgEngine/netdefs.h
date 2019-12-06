@@ -2,7 +2,7 @@
 #include <map>
 #include <vector>
 
-using PeerID     = unsigned int;
+using PeerID = unsigned char;
 
 
 

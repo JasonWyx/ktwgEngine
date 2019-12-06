@@ -8,7 +8,7 @@ EventManager::~EventManager()
 {
 }
 
-void EventManager::ReadPacket(Packet& packet)
+void EventManager::ReadStream(BitStream& stream)
 {
 
 }

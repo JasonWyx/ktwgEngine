@@ -1,11 +1,12 @@
 #include "ghostobject.h"
 #include "ghostmanager.h"
+#include "ghosttransmissionrecord.h"
 #include "streammanager.h"
 #include <cassert>
 
-GhostObject::GhostObject(GhostID ghostID, PeerID owner)
-    : m_GhostID(ghostID)
-    , m_Owner(owner)
+GhostObject::GhostObject()
+    : m_GhostID(0)
+    , m_PeerID(0)
     //, m_LatestGhostTransmissionRecord(nullptr)
     , m_GhostProperties()
 {
@@ -24,14 +25,14 @@ GhostObject::~GhostObject()
 
 GhostStateMask GhostObject::GetFullStateMask() const
 {
-    GhostStateMask result = m_StatesToRetransmit;
+    GhostStateMask result(m_GhostProperties.size());
 
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
         const NetAuthority authority = m_GhostProperties[i]->GetAuthority();
 
 #ifdef CLIENT
-        if (authority == NetAuthority::Client && m_Owner == StreamManager::GetInstance().GetPeerID())
+        if (authority == NetAuthority::Client && m_PeerID == StreamManager::GetInstance().GetPeerID())
         {
             result[i] = true;
         }
@@ -64,7 +65,7 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& outNeedUpdate)
             continue;
         }
 
-        if (authority == NetAuthority::Client && m_GhostProperties[i]->IsPropertyChanged() && m_Owner == StreamManager::GetInstance().GetPeerID())
+        if (authority == NetAuthority::Client && m_GhostProperties[i]->IsPropertyChanged() && m_PeerID == StreamManager::GetInstance().GetPeerID())
         {
             result[i] = true;
         }
@@ -113,7 +114,7 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPe
     
     for (size_t i = 0; i < result.size(); ++i)
     {
-        result = m_StatesToRetransmit[targetPeerID][i] && m_StatesToBroadcast[i];
+        result[i] = m_StatesToRetransmit[targetPeerID][i] && m_StatesToBroadcast[i];
     }
 
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
@@ -123,7 +124,7 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPe
         // Already true from broadcast or retransmission, continue
         if (result[i] == true)
         {
-            needUpdate = true;
+            outNeedUpdate = true;
             continue;
         }
 
@@ -140,7 +141,7 @@ void GhostObject::SetRetransmissionMask(const PeerID targetPeerID, const GhostSt
 {
     // The size of the state mask should the same as the number of ghost properties!
     assert(m_GhostProperties.size() == stateMask.size());
-    assert(m_GhostProperties.size() == m_StatesToRetransmit[i].size());
+    assert(m_GhostProperties.size() == m_StatesToRetransmit[targetPeerID].size());
 
     m_StatesToRetransmit[targetPeerID] = stateMask;
 }

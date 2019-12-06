@@ -9,13 +9,9 @@ MoveManager::~MoveManager()
 {
 }
 
-bool MoveManager::ReadPacket(Packet& packet)
+void MoveManager::ReadStream(BitStream& stream)
 {
-    if (StreamManager::GetInstance().IsServer())
-    {
-        // Something about reading the input once and discarding the rest
-    }
-    return false;
+    // Something about reading client input and moving control objects
 }
 
 bool MoveManager::WritePacket(Packet& packet)

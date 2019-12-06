@@ -5,6 +5,7 @@
 #include "transmissionrecord.h"
 #include <list>
 #include <set>
+#include <queue>
 
 class GhostManager
 {
@@ -13,8 +14,11 @@ public:
     GhostManager();
     ~GhostManager();
 
-    bool ReadStream(BitStream& stream);
-    bool WriteStream(BitStream& stream, TransmissionRecord& tr, const size_t packetSizeInBits);
+    void GenerateGhostIDs();
+    GhostID GetAvailableGhostID();
+
+    void ReadStream(BitStream& stream);
+    bool WritePacket(Packet& packet, TransmissionRecord& tr);
     void NotifyTransmissionSuccess(TransmissionRecord& tr);
     void NotifyTransmissionFailure(TransmissionRecord& tr);
     void SyncObjectPropertyValues();
@@ -29,15 +33,18 @@ private:
     std::vector<GhostObject*> m_GhostObjects;
     std::map<GhostID, GhostObject*> m_GhostObjectsIDMap;
 
-    std::set<GhostID> m_GhostsToCreate;
-    std::set<GhostID> m_GhostsToDelete; 
+    std::queue<GhostID> m_AvailableGhostIDs;
 
     struct PackingInfo
     {
         std::vector<std::pair<GhostObject*, GhostStateMask>> m_ObjectsToPack;
         unsigned m_LastPackedIndex;
         BitStream m_CachedObjectStream;
+        GhostTransmissionRecord m_CachedTransmissionRecord;
         bool m_IsDonePacking;
+
+        std::set<GhostID> m_GhostsToCreate;
+        std::set<GhostID> m_GhostsToDelete; 
     };
 
 #ifdef CLIENT

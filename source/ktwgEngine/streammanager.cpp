@@ -45,89 +45,103 @@ void StreamManager::ShutdownClient()
 
 void StreamManager::UpdateClient()
 {
+    // Get Packet notifications
+
     // Process incoming packets
 
     // Process outgoing packets
-    m_TransmissionInfo.m_IsDonePackingMove = false;
-    m_TransmissionInfo.m_IsDonePackingEvent = false;
-    m_TransmissionInfo.m_IsDonePackingGhost = false;
+    bool isDonePacking = false;
 
-    while (m_TransmissionInfo.m_IsDonePackingMove && 
-           m_TransmissionInfo.m_IsDonePackingEvent && 
-           m_TransmissionInfo.m_IsDonePackingGhost)
+    while (!isDonePacking)
     {
         Packet newPacket = { m_LastPacketID++ };
-        PackPacket(newPacket);
+        isDonePacking = PackPacket(newPacket);
+
+        // Send using connection manager
     }
 }
 
 bool StreamManager::PackPacket(Packet& packet)
 {
-    TransmissionRecord& tr = m_TransmissionInfo.m_TransmissionRecords.emplace_back(packet.m_ID);
+    TransmissionRecord& tr = m_TransmissionInfo.m_TransmissionRecords.emplace_back(TransmissionRecord{ packet.m_ID, 0 }); // Server is peer 0
     tr.m_PacketID = packet.m_ID;
     m_TransmissionRecordMap[packet.m_ID] = &tr;
 
-    bool hasMoveStuff = false;
-    bool hasEventStuff = false;
-    bool hasGhostStuff = false;
-
     // MoveManager
-    size_t bitStreamSize = packet.m_BitStream.GetBitLength();
+    size_t packetStreamSize = packet.GetStreamSize();
 
     if (!m_MoveManager.WritePacket(packet))
     {
-        if (packet.m_BitStream.GetBitLength() > bitStreamSize)
+        if (packet.GetStreamSize() > packetStreamSize)
         {
-            hasMoveStuff = true;
+            packet.m_HasMove = true;
+
+            // We have packed stream with 
             return false;
         }
     }
-    else if (packet.m_BitStream.GetBitLength() > bitStreamSize)
+    else if (packet.GetStreamSize() > packetStreamSize)
     {
-        hasMoveStuff = true;
+        packet.m_HasMove = true;
     }
-    m_TransmissionInfo.m_IsDonePackingMove = true;
 
     // EventManager
-    bitStreamSize = packet.m_BitStream.GetBitLength();
+    packetStreamSize = packet.GetStreamSize();
 
     if (!m_EventManager.WritePacket(packet, m_TransmissionInfo.m_TransmissionRecords.back()))
     {
-        if (packet.m_BitStream.GetBitLength() > bitStreamSize)
+        if (packet.GetStreamSize() > packetStreamSize)
         {
-            hasEventStuff = true;
+            packet.m_HasEvent = true;
             return false;
         }
     }
-    else if (packet.m_BitStream.GetBitLength() > bitStreamSize)
+    else if (packet.GetStreamSize() > packetStreamSize)
     {
-        hasEventStuff = true;
+        packet.m_HasEvent = true;
     }
-    m_TransmissionInfo.m_IsDonePackingEvent = true;
 
     // GhostManager
-    bitStreamSize = packet.m_BitStream.GetBitLength();
+    packetStreamSize = packet.GetStreamSize();
 
-    if (!m_GhostManager.WriteStream(packet, m_TransmissionInfo.m_TransmissionRecords.back()))
+    if (!m_GhostManager.WritePacket(packet, m_TransmissionInfo.m_TransmissionRecords.back()))
     {
-        if (packet.m_BitStream.GetBitLength() > bitStreamSize)
+        if (packet.GetStreamSize() > packetStreamSize)
         {
-            hasGhostStuff = true;
+            packet.m_HasGhost = true;
             return false;
         }
     }
-    else if (packet.m_BitStream.GetBitLength() > bitStreamSize)
+    else if (packet.GetStreamSize() > packetStreamSize)
     {
-        hasGhostStuff = true;
+        packet.m_HasGhost = true;
     }
-    m_TransmissionInfo.m_IsDonePackingGhost = true;
 
     return true;
 }
 
-void StreamManager::UnpackPacket(Packet& packet)
+void StreamManager::UnpackStream(BitStream& stream)
 {
+    bool hasMove = false;
+    bool hasEvent = false;
+    bool hasGhost = false;
 
+    stream >> hasMove >> hasEvent >> hasGhost;
+
+    if (hasMove)
+    {
+        m_MoveManager.ReadStream(stream);
+    }
+
+    if (hasEvent)
+    {
+        m_EventManager.ReadStream(stream);
+    }
+
+    if (hasGhost)
+    {
+        m_GhostManager.ReadStream(stream);
+    }
 }
 
 #else
@@ -144,7 +158,49 @@ void StreamManager::ShutdownServer()
 
 void StreamManager::UpdateServer()
 {
+    // Get packet notification
+    
+    // Process incoming packets
+    
+    // Process outgoing packets
+    std::map<PeerID, bool> isDonePacking;
 
+    for (auto& [peerID, transmissionInfo] : m_PeerTransmissionInfos)
+    {
+        isDonePacking[peerID] = false;
+    }
+
+    bool isAllDonePacking = false;
+
+    while (!isAllDonePacking)
+    {
+        // We do packing in round robins
+        for (auto& [peerID, transmissionInfo] : m_PeerTransmissionInfos)
+        {
+            if (!isDonePacking[peerID])
+            {
+                Packet newPacket = { m_LastPacketID++ };
+                isDonePacking[peerID] = PackPacket(peerID, newPacket);
+                // Add message to connection manager
+
+            }
+        }
+
+        bool isDone = true;
+
+        for (auto& [peerID, transmissionInfo] : m_PeerTransmissionInfos)
+        {
+            if (!isDonePacking[peerID])
+            {
+                isDone = false;
+            }
+        }
+
+        if (isDone)
+        {
+            isAllDonePacking = true;
+        }
+    }
 }
 
 void StreamManager::CreatePeer(PeerID peerID)
@@ -169,10 +225,65 @@ void StreamManager::RemovePeer(PeerID peerID)
 
 bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
 {
-    return false;
+    TransmissionRecord& tr = m_PeerTransmissionInfos[peerID].m_TransmissionRecords.emplace_back(TransmissionRecord{ packet.m_ID, peerID });
+    tr.m_PacketID = packet.m_ID;
+    tr.m_PeerID = peerID;
+    m_TransmissionRecordMap[packet.m_ID] = &tr;
+
+    // MoveManager
+    size_t packetStreamSize = packet.GetStreamSize();
+
+    if (!m_MoveManager.WritePacket(packet))
+    {
+        if (packet.GetStreamSize() > packetStreamSize)
+        {
+            packet.m_HasMove = true;
+
+            // We have packed stream with 
+            return false;
+        }
+    }
+    else if (packet.GetStreamSize() > packetStreamSize)
+    {
+        packet.m_HasMove = true;
+    }
+
+    // EventManager
+    packetStreamSize = packet.GetStreamSize();
+
+    if (!m_EventManager.WritePacket(packet, m_PeerTransmissionInfos[peerID].m_TransmissionRecords.back()))
+    {
+        if (packet.GetStreamSize() > packetStreamSize)
+        {
+            packet.m_HasEvent = true;
+            return false;
+        }
+    }
+    else if (packet.GetStreamSize() > packetStreamSize)
+    {
+        packet.m_HasEvent = true;
+    }
+
+    // GhostManager
+    packetStreamSize = packet.GetStreamSize();
+
+    if (!m_GhostManager.WritePacket(packet, m_PeerTransmissionInfos[peerID].m_TransmissionRecords.back()))
+    {
+        if (packet.GetStreamSize() > packetStreamSize)
+        {
+            packet.m_HasGhost = true;
+            return false;
+        }
+    }
+    else if (packet.GetStreamSize() > packetStreamSize)
+    {
+        packet.m_HasGhost = true;
+    }
+
+    return true;
 }
 
-void StreamManager::UnpackPacket(PeerID peerID, Packet& packet)
+void StreamManager::UnpackStream(PeerID peerID, BitStream& stream)
 {
 }
 

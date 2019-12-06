@@ -69,21 +69,21 @@ private:
 
     struct TransmissionInfo
     {
-        bool m_IsDonePackingGhost = false;
-        bool m_IsDonePackingEvent = false;
-        bool m_IsDonePackingMove = false;
+        //bool m_IsDonePackingGhost = false;
+        //bool m_IsDonePackingEvent = false;
+        //bool m_IsDonePackingMove = false;
 
         std::list<TransmissionRecord> m_TransmissionRecords;
     };
 
 #ifdef CLIENT
     bool PackPacket(Packet& packet);
-    void UnpackPacket(Packet& packet);
+    void UnpackStream(BitStream& stream);
 
     TransmissionInfo m_TransmissionInfo;
 #else
     bool PackPacket(PeerID peerID, Packet& packet);
-    void UnpackPacket(PeerID peerID, Packet& packet);
+    void UnpackStream(PeerID peerID, BitStream& stream);
 
     std::map<PeerID, TransmissionInfo> m_PeerTransmissionInfos;
 #endif

@@ -2,11 +2,11 @@
 #include <stdint.h>
 #include "ghostproperty.h"
 #include "ghostobjectids.h"
+#include "netdefs.h"
 #include <vector>
 #include <type_traits>
-#include "netdefs.h"
 
-using GhostID = unsigned int;
+using GhostID = unsigned short;
 
 struct GhostTransmissionRecord;
 
@@ -14,24 +14,26 @@ class GhostObject
 {
 public:
 
-    GhostObject(GhostID ghostNetID, PeerID owner);
+    GhostObject();
     virtual ~GhostObject();
     
     GhostStateMask GetFullStateMask() const;
+    void SetGhostID(GhostID ghostID) { m_GhostID = ghostID; }
     GhostID GetGhostID() const { return m_GhostID; }
+    void SetPeerID(PeerID peerID) { m_PeerID = peerID; }
     size_t GetPropertyCount() const { return m_GhostProperties.size(); }
 
 #ifdef CLIENT
     GhostStateMask GetStateMaskAndCheckNeedUpdate(bool& outNeedUpdate);
     void SetRetransmissionMask(const GhostStateMask& stateMask);
-    TransmissionRecord* GetLatestTransmissionRecord() { return m_LatestTransmissionRecord; }
-    void SetLatestTransmissionRecord(TransmissionRecord* transmissionRecord) { m_LatestTransmissionRecord = transmissionRecord; }
+    GhostTransmissionRecord* GetLatestTransmissionRecord() { return m_LatestTransmissionRecord; }
+    void SetLatestTransmissionRecord(GhostTransmissionRecord* transmissionRecord) { m_LatestTransmissionRecord = transmissionRecord; }
     void WriteStream(BitStream& stream, const GhostStateMask& stateMask);
 #else
     GhostStateMask GetStateMaskAndCheckNeedUpdate(const PeerID targetPeerID, bool& outNeedUpdate);
     void SetRetransmissionMask(const PeerID targetPeerID, const GhostStateMask& stateMask);
-    TransmissionRecord* GetLatestTransmissionRecord(const PeerID targetPeerID) { return m_LatestTransmissionRecord[targetPeerID]; }
-    void SetLatestTransmissionRecord(const PeerID targetPeerID, TransmissionRecord* transmissionRecord) { m_LatestTransmissionRecord[targetPeerID] = transmissionRecord; }
+    GhostTransmissionRecord* GetLatestTransmissionRecord(const PeerID targetPeerID) { return m_LatestTransmissionRecord[targetPeerID]; }
+    void SetLatestTransmissionRecord(const PeerID targetPeerID, GhostTransmissionRecord* transmissionRecord) { m_LatestTransmissionRecord[targetPeerID] = transmissionRecord; }
     void WriteStream(const PeerID targetPeerID, BitStream& stream, const GhostStateMask& stateMask);
 #endif
 
@@ -47,16 +49,16 @@ public:
 
 private:
 
-    PeerID m_Owner;
+    PeerID m_PeerID;
     GhostID m_GhostID;
     std::vector<GhostProperty*> m_GhostProperties;
     
 #ifdef CLIENT
     GhostStateMask m_StatesToRetransmit;
-    TransmissionRecord* m_LatestTransmissionRecord;
+    GhostTransmissionRecord* m_LatestTransmissionRecord;
 #else
     GhostStateMask m_StatesToBroadcast;
     std::map<PeerID, GhostStateMask> m_StatesToRetransmit;
-    std::map<PeerID, TransmissionRecord*> m_LatestTransmissionRecord;
+    std::map<PeerID, GhostTransmissionRecord*> m_LatestTransmissionRecord;
 #endif
 };
