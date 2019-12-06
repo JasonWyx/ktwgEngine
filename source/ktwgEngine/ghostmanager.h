@@ -13,11 +13,13 @@ public:
     GhostManager();
     ~GhostManager();
 
-    bool ReadPacket(Packet& packet);
-    bool WritePacket(Packet& packet, TransmissionRecord& tr);
+    bool ReadStream(BitStream& stream);
+    bool WriteStream(BitStream& stream, TransmissionRecord& tr, const size_t packetSizeInBits);
     void NotifyTransmissionSuccess(TransmissionRecord& tr);
     void NotifyTransmissionFailure(TransmissionRecord& tr);
+    void SyncObjectPropertyValues();
     void DropPendingData();
+    void ClearStatusChanges();
 
     void RegisterGhostObject(GhostObject* ghostObject);
     void UnregisterGhostObject(GhostObject* ghostObject);
@@ -30,10 +32,18 @@ private:
     std::set<GhostID> m_GhostsToCreate;
     std::set<GhostID> m_GhostsToDelete; 
 
-    // Cached for packing
-    std::vector<std::pair<GhostObject*, GhostStateMask>> m_ObjectsToPack;
-    unsigned m_LastPackedIndex;
-    BitStream m_CachedObjectStream;
-    bool m_IsDonePacking;
+    struct PackingInfo
+    {
+        std::vector<std::pair<GhostObject*, GhostStateMask>> m_ObjectsToPack;
+        unsigned m_LastPackedIndex;
+        BitStream m_CachedObjectStream;
+        bool m_IsDonePacking;
+    };
+
+#ifdef CLIENT
+    PackingInfo m_PackingInfo;
+#else
+    std::map<PeerID, PackingInfo> m_PackingInfo;
+#endif
 
 };

@@ -6,7 +6,7 @@
 GhostObject::GhostObject(GhostID ghostID, PeerID owner)
     : m_GhostID(ghostID)
     , m_Owner(owner)
-    , m_LatestGhostTransmissionRecord(nullptr)
+    //, m_LatestGhostTransmissionRecord(nullptr)
     , m_GhostProperties()
 {
     StreamManager::GetInstance().GetGhostManager().RegisterGhostObject(this);
@@ -22,51 +22,49 @@ GhostObject::~GhostObject()
     }
 }
 
-GhostStateMask GhostObject::GetStateMask() const
+GhostStateMask GhostObject::GetFullStateMask() const
 {
-    GhostStateMask result = m_RetransmissionMask;
+    GhostStateMask result = m_StatesToRetransmit;
 
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
-        NetAuthority authority = m_GhostProperties[i]->GetAuthority();
-
-        if (result[i] == true)
-        {
-            continue;
-        }
+        const NetAuthority authority = m_GhostProperties[i]->GetAuthority();
 
 #ifdef CLIENT
-        if (m_GhostProperties[i]->IsPropertyChanged() && m_Owner == StreamManager::GetInstance().GetPeerID())
-#else
-        if (m_GhostProperties[i]->IsPropertyChanged())
-#endif
+        if (authority == NetAuthority::Client && m_Owner == StreamManager::GetInstance().GetPeerID())
         {
             result[i] = true;
         }
+#else
+        if (authority == NetAuthority::Server)
+        {
+            result[i] = true;
+        }
+#endif
     }
 
     return result;
 }
 
-GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& needUpdate)
+#ifdef CLIENT
+
+GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& outNeedUpdate)
 {
-    GhostStateMask result = m_RetransmissionMask;
+    assert(m_StatesToRetransmit.size() == m_GhostProperties.size());
+
+    GhostStateMask result = m_StatesToRetransmit;
 
     for (size_t i = 0; i < m_GhostProperties.size(); ++i)
     {
-        NetAuthority authority = m_GhostProperties[i]->GetAuthority();
+        const NetAuthority authority = m_GhostProperties[i]->GetAuthority();
 
         if (result[i] == true)
         {
-            needUpdate = true;
+            outNeedUpdate = true;
             continue;
         }
 
-#ifdef CLIENT
-        if (m_GhostProperties[i]->IsPropertyChanged() && m_Owner == StreamManager::GetInstance().GetPeerID())
-#else
-        if (m_GhostProperties[i]->IsPropertyChanged())
-#endif
+        if (authority == NetAuthority::Client && m_GhostProperties[i]->IsPropertyChanged() && m_Owner == StreamManager::GetInstance().GetPeerID())
         {
             result[i] = true;
         }
@@ -79,26 +77,18 @@ void GhostObject::SetRetransmissionMask(const GhostStateMask& stateMask)
 {
     // The size of the state mask should the same as the number of ghost properties!
     assert(m_GhostProperties.size() == stateMask.size());
-    m_RetransmissionMask = stateMask;
-}
 
-bool GhostObject::NeedUpdate() const
-{
-    for (GhostProperty* property : m_GhostProperties)
-    {
-        if (property->IsPropertyChanged())
-        {
-            return true;
-        }
-    }
-    return false;
+    m_StatesToRetransmit = stateMask;
 }
 
 void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask)
 {
-    if (m_RetransmissionMask.size() != stateMask.size())
+    assert(m_GhostProperties.size() == stateMask.size());
+    assert(m_GhostProperties.size() == m_StatesToRetransmit.size());
+
+    if (m_StatesToRetransmit.size() != stateMask.size())
     {
-        m_RetransmissionMask.resize(stateMask.size());
+        m_StatesToRetransmit.resize(stateMask.size());
     }
 
     for (size_t i = 0; i < stateMask.size(); ++i)
@@ -106,12 +96,71 @@ void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask
         if (stateMask[i])
         {
             m_GhostProperties[i]->WriteStream(stream);
-
-            // Reset retransmission mask to false
-            m_RetransmissionMask[i] = false;
+            m_GhostProperties[i]->SyncValues(); // We sync right after in client mode because we do not need to care about other peers
+            m_StatesToRetransmit[i] = false;
         }
     }
 }
+
+#else //Server
+
+GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPeerID, bool & outNeedUpdate)
+{
+    assert(m_GhostProperties.size() == m_StatesToBroadcast.size());
+    assert(m_GhostProperties.size() == m_StatesToRetransmit[targetPeerID].size());
+
+    GhostStateMask result(m_GhostProperties.size());
+    
+    for (size_t i = 0; i < result.size(); ++i)
+    {
+        result = m_StatesToRetransmit[targetPeerID][i] && m_StatesToBroadcast[i];
+    }
+
+    for (size_t i = 0; i < m_GhostProperties.size(); ++i)
+    {
+        NetAuthority authority = m_GhostProperties[i]->GetAuthority();
+
+        // Already true from broadcast or retransmission, continue
+        if (result[i] == true)
+        {
+            needUpdate = true;
+            continue;
+        }
+
+        if (authority == NetAuthority::Client && m_GhostProperties[i]->IsPropertyChanged())
+        {
+            result[i] = true;
+        }
+    }
+
+    return result;
+}
+
+void GhostObject::SetRetransmissionMask(const PeerID targetPeerID, const GhostStateMask & stateMask)
+{
+    // The size of the state mask should the same as the number of ghost properties!
+    assert(m_GhostProperties.size() == stateMask.size());
+    assert(m_GhostProperties.size() == m_StatesToRetransmit[i].size());
+
+    m_StatesToRetransmit[targetPeerID] = stateMask;
+}
+
+void GhostObject::WriteStream(const PeerID targetPeerID, BitStream & stream, const GhostStateMask & stateMask)
+{
+    assert(m_GhostProperties.size() == stateMask.size());
+    assert(m_GhostProperties.size() == m_StatesToRetransmit[targetPeerID].size());
+
+    for (size_t i = 0; i < stateMask.size(); ++i)
+    {
+        if (stateMask[i])
+        {
+            m_GhostProperties[i]->WriteStream(stream);
+            m_StatesToRetransmit[targetPeerID][i] = false;
+        }
+    }
+}
+
+#endif
 
 void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)
 {
@@ -123,11 +172,19 @@ void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)
         }
     }
 
-    if (StreamManager::GetInstance().IsServer())
+#ifndef CLIENT
+    m_StatesToBroadcast = stateMask;
+#endif
+}
+
+void GhostObject::SyncPropertyValues()
+{
+    for (GhostProperty* ghostProperty : m_GhostProperties)
     {
-        m_ServerTransmissionMask = stateMask;
+        ghostProperty->SyncValues();
     }
 }
+
 
 inline bool GhostObject::IsOwner()
 {

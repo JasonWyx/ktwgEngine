@@ -1,6 +1,7 @@
 #include "ghostmanager.h"
 #include "streammanager.h"
 #include <algorithm>
+#include <cassert>
 
 GhostManager::GhostManager()
     : m_GhostObjects()
@@ -13,29 +14,29 @@ GhostManager::~GhostManager()
 {
 }
 
-bool GhostManager::ReadPacket(Packet& packet)
+bool GhostManager::ReadStream(BitStream& stream)
 {
     uint16_t countObjectsInPacket = 0;
-    packet.m_BitStream >> countObjectsInPacket;
+    stream >> countObjectsInPacket;
 
     while (countObjectsInPacket > 0)
     {
         GhostID ghostID = 0xFFFFFFFF;
-        packet.m_BitStream >> ghostID;
+        stream >> ghostID;
 
         // Check for status change
         bool isStatusChanged = false;
         bool isCreateNew = false;
 
-        packet.m_BitStream >> isStatusChanged;
+        stream >> isStatusChanged;
         if (isStatusChanged)
         {
-            packet.m_BitStream >> isCreateNew;
+            stream >> isCreateNew;
             if (isCreateNew)
             {
                 // Create new object with class id, with server as the authority
                 uint32_t ghostClassID = 0;
-                packet.m_BitStream.Read(ghostClassID, 0u);
+                stream.Read(ghostClassID, 0u);
                 // jason todo: create object here with m_IsLocalOwner set to false in ghost object so
                 // that local client does not send updates to server for broadcast
 				
@@ -55,13 +56,13 @@ bool GhostManager::ReadPacket(Packet& packet)
         {
             ghostObject = iter->second;
             GhostStateMask stateMask(ghostObject->GetPropertyCount());
-            packet.m_BitStream >> stateMask;
-            ghostObject->ReadStream(packet.m_BitStream, stateMask);
+            stream >> stateMask;
+            ghostObject->ReadStream(stream, stateMask);
         }
         else
         {
             // Object not found. Perhaps not created yet?
-            _ASSERT(false);
+            assert(false);
         }
 
         countObjectsInPacket--;
@@ -69,11 +70,10 @@ bool GhostManager::ReadPacket(Packet& packet)
     return true;
 }
 
-bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
+bool GhostManager::WriteStream(BitStream& stream, TransmissionRecord& tr, const size_t packetSizeInBits)
 {
     uint16_t countObjectsInPacket = 0;
     const size_t headerSizeInBits = sizeof(countObjectsInPacket) * 8;
-    const size_t packetSizeInBits = packet.m_BitStream.GetBitLength();
 
     BitStream ghostObjectStream; // This one only has the actual objects in the stream
 
@@ -84,8 +84,22 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         m_ObjectsToPack.reserve(m_GhostObjects.size());
         m_LastPackedIndex = 0;
 
+        for (GhostID ghostID : m_GhostsToCreate)
+        {
+            if (GhostObject* ghostObject = m_GhostObjectsIDMap[ghostID])
+            {
+                m_ObjectsToPack.emplace_back(ghostObject, ghostObject->GetFullStateMask());
+            }
+        }
+
         for (GhostObject* ghostObject : m_GhostObjects)
         {
+            // Object has status change, disregard as it is already packed above
+            if (m_GhostsToCreate.find(ghostObject->GetGhostID()) != m_GhostsToCreate.end() ||
+                m_GhostsToDelete.find(ghostObject->GetGhostID()) != m_GhostsToDelete.end())
+            {
+                continue;
+            }
             bool needUpdate = false;
             GhostStateMask stateMask = ghostObject->GetStateMaskAndCheckNeedUpdate(needUpdate);
             if (needUpdate)
@@ -165,15 +179,15 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         else
         { 
             // Packet what ever we have and notify that we still have more ghost objects to pack
-            packet.m_BitStream << countObjectsInPacket;
-            packet.m_BitStream += ghostObjectStream;
+            stream << countObjectsInPacket;
+            stream += ghostObjectStream;
             return false;
         }
     }
 
     // Successfully packed everthing into the current packet
-    packet.m_BitStream << countObjectsInPacket;
-    packet.m_BitStream += ghostObjectStream;
+    stream << countObjectsInPacket;
+    stream += ghostObjectStream;
     return true;
 }
 
@@ -211,6 +225,18 @@ void GhostManager::NotifyTransmissionFailure(TransmissionRecord& tr)
             continue;
         }
 
+        // Append to corresponding status change list and let the packing method handle the rest
+        if (gtr.m_Status == GhostStatusType::Create)
+        {
+            m_GhostsToCreate.insert(gtr.m_GhostID);
+            continue;
+        }
+        else if (gtr.m_Status == GhostStatusType::Delete)
+        {
+            m_GhostsToDelete.insert(gtr.m_GhostID);
+            continue;
+        }
+
         // Check against next transmission records for already transmitted states
         if (GhostTransmissionRecord* nextRecord = gtr.m_NextTransmissionRecord)
         {
@@ -240,21 +266,49 @@ void GhostManager::NotifyTransmissionFailure(TransmissionRecord& tr)
             next->m_PreviousTransmissionRecord = gtr.m_PreviousTransmissionRecord;
         }
 
+#ifdef CLIENT
         ghostObject->SetRetransmissionMask(gtr.m_StateMask);
+#else
+        ghostObject->SetRetransmissionMask(tr.m_PeerID, gtr.m_StateMask);
+#endif
+    }
+}
+
+void GhostManager::SyncObjectPropertyValues()
+{
+    for (GhostObject* ghostObject : m_GhostObjects)
+    {
+        ghostObject->SyncPropertyValues();
     }
 }
 
 void GhostManager::DropPendingData()
 {
-    m_IsDonePacking = true;
-    m_LastPackedIndex = 0;
-    m_CachedObjectStream.Clear();
+#ifdef CLIENT
+    m_PackingInfo.m_CachedObjectStream.Clear();
+    m_PackingInfo.m_IsDonePacking = true;
+    m_PackingInfo.m_LastPackedIndex = 0;
+    m_PackingInfo.m_ObjectsToPack.clear();
+#else
+    for (PackingInfo& packingInfo : m_PackingInfo)
+    {
+        packingInfo.m_CachedObjectStream.Clear();
+        packingInfo.m_IsDonePacking = true;
+        packingInfo.m_LastPackedIndex = 0;
+        packingInfo.m_ObjectsToPack.clear();
+    }
+#endif
+}
+
+void GhostManager::ClearStatusChanges()
+{
+    m_GhostsToCreate.clear();
+    m_GhostsToDelete.clear();
 }
 
 void GhostManager::RegisterGhostObject(GhostObject* ghostObject)
 {
     m_GhostObjects.push_back(ghostObject);
-    // Jason Todo: Assign net id and register in transmission map
     m_GhostObjectsIDMap.try_emplace(ghostObject->GetGhostID(), ghostObject);
 }
 

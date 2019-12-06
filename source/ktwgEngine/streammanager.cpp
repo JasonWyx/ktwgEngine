@@ -63,8 +63,9 @@ void StreamManager::UpdateClient()
 
 bool StreamManager::PackPacket(Packet& packet)
 {
-    m_TransmissionInfo.m_TransmissionRecords.push_back(TransmissionRecord{ packet.m_ID });
-    m_TransmissionInfo.m_TransmissionRecords.back().m_PacketID = packet.m_ID;
+    TransmissionRecord& tr = m_TransmissionInfo.m_TransmissionRecords.emplace_back(packet.m_ID);
+    tr.m_PacketID = packet.m_ID;
+    m_TransmissionRecordMap[packet.m_ID] = &tr;
 
     bool hasMoveStuff = false;
     bool hasEventStuff = false;
@@ -107,7 +108,7 @@ bool StreamManager::PackPacket(Packet& packet)
     // GhostManager
     bitStreamSize = packet.m_BitStream.GetBitLength();
 
-    if (!m_GhostManager.WritePacket(packet, m_TransmissionInfo.m_TransmissionRecords.back()))
+    if (!m_GhostManager.WriteStream(packet, m_TransmissionInfo.m_TransmissionRecords.back()))
     {
         if (packet.m_BitStream.GetBitLength() > bitStreamSize)
         {
@@ -126,8 +127,8 @@ bool StreamManager::PackPacket(Packet& packet)
 
 void StreamManager::UnpackPacket(Packet& packet)
 {
-}
 
+}
 
 #else
 
