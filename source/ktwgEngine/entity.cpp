@@ -10,6 +10,7 @@
 
 // Network
 #include "ghostobject.h"
+#include "streammanager.h"
 
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
@@ -132,6 +133,8 @@ void Entity::Set(Entity* ent)
 
 void Entity::MarkEntityForGhost()
 {
-  m_GhostObject = new GhostObject{m_Id, m_Id};
+  m_GhostObject = new GhostObject{};
+  m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
+  m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
   m_IsGhost = true;
 }
