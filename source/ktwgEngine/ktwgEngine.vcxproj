@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{BAC30C26-110A-4AFF-B0B5-E8400EE5E6B2}</ProjectGuid>
     <RootNamespace>ktwgEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -238,8 +238,6 @@
     <ClCompile Include="socketaddressfactory.cpp" />
     <ClCompile Include="socketutility.cpp" />
     <ClCompile Include="streammanager.cpp" />
-    <ClCompile Include="streammanagerclient.cpp" />
-    <ClCompile Include="streammanagerserver.cpp" />
     <ClCompile Include="tcpsocket.cpp" />
     <ClCompile Include="camerabehaviourscript.cpp" />
     <ClCompile Include="time.cpp" />
@@ -357,8 +355,6 @@
     <ClInclude Include="sockets.h" />
     <ClInclude Include="socketutility.h" />
     <ClInclude Include="streammanager.h" />
-    <ClInclude Include="streammanagerclient.h" />
-    <ClInclude Include="streammanagerserver.h" />
     <ClInclude Include="sweep.h" />
     <ClInclude Include="tcpsocket.h" />
     <ClInclude Include="time.h" />

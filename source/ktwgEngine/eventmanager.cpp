@@ -8,8 +8,9 @@ EventManager::~EventManager()
 {
 }
 
-void EventManager::ReadPacket(Packet& packet)
+void EventManager::ReadStream(BitStream& stream)
 {
+
 }
 
 bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
@@ -19,12 +20,12 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 
 void EventManager::NotifyTransmissionSuccess(TransmissionRecord& tr)
 {
-    
+    // remove transmission list
 }
 
 void EventManager::NotifyTransmissionFailure(TransmissionRecord& tr)
 {
-    
+    // append events again to broadcast list
 }
 
 void EventManager::BroadcastEvent(const Event& event, bool guaranteed)

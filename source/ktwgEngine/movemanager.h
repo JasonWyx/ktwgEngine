@@ -8,7 +8,7 @@ public:
     MoveManager();
     ~MoveManager();
 
-    bool ReadPacket(Packet& packet);
+    void ReadStream(BitStream& stream);
     bool WritePacket(Packet& packet);
     void ResetTransmission();
 

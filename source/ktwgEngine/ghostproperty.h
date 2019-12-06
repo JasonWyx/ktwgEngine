@@ -18,6 +18,7 @@ public:
     virtual void WriteStream(BitStream& stream) = 0;
     virtual void ReadStream(BitStream& stream) = 0;
     virtual bool IsPropertyChanged() const = 0;
+    virtual void SyncValues() = 0;
     NetAuthority GetAuthority() const { return m_Authority; }
 
 private:
@@ -33,11 +34,11 @@ public:
     GhostPropertyVirtual(T& property, NetAuthority authority, size_t bitSize = sizeof(T) * 8) 
         : GhostProperty(authority)
         , m_ValueRef(property)
-        , m_PreviousValue()
+        , m_OldValue()
         , m_BitCount(bitSize)
     { }
 
-    void WriteStream(BitStream& stream) override
+    virtual void WriteStream(BitStream& stream) override
     {
         if (m_BitCount != sizeof(T) * 8)
         {
@@ -47,10 +48,9 @@ public:
         {
             stream << m_ValueRef;
         }
-        m_PreviousValue = m_ValueRef;
     }
 
-    void ReadStream(BitStream& stream) override
+    virtual void ReadStream(BitStream& stream) override
     {
         if (m_BitCount != sizeof(T) * 8)
         {
@@ -60,20 +60,25 @@ public:
         {
             stream >> m_ValueRef;
         }
-        m_PreviousValue = m_ValueRef;
     }
 
-    bool IsPropertyChanged() const override
+    virtual bool IsPropertyChanged() const override
     {
-        return m_ValueRef != m_PreviousValue;
+        return m_ValueRef != m_OldValue;
+    }
+
+    virtual void SyncValues() override
+    {
+        m_OldValue = m_ValueRef;
     }
 
     constexpr size_t GetPropertyBitSize() const { return m_BitCount; }
 
+
 private:
 
     T& m_ValueRef;
-    T m_PreviousValue;
+    T m_OldValue;
     const size_t m_BitCount;
 };
 

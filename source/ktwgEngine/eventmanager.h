@@ -13,7 +13,7 @@ public:
     EventManager();
     ~EventManager();
 
-    void ReadPacket(Packet& packet);
+    void ReadStream(BitStream& stream);
     bool WritePacket(Packet& packet, TransmissionRecord& tr);
     void NotifyTransmissionSuccess(TransmissionRecord& tr);
     void NotifyTransmissionFailure(TransmissionRecord& tr);

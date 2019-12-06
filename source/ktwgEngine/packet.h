@@ -16,12 +16,39 @@ enum class PacketStatus
 struct Packet
 {
     PacketID m_ID = 0;
-    BitStream m_BitStream;
 
-    Packet()                            = default;
-    Packet(const Packet&)               = default;
-    Packet(Packet&&)                    = default;
-    Packet& operator=(const Packet&)    = default;
-    Packet& operator=(Packet&&)         = default;
-    ~Packet()                           = default;
+    bool m_HasMove = false;
+    bool m_HasEvent = false;
+    bool m_HasGhost = false;
+
+    BitStream m_MoveStream;
+    BitStream m_EventStream;
+    BitStream m_GhostStream;
+
+    BitStream BuildStream() const
+    {
+        BitStream result;
+
+        result << m_HasMove << m_HasEvent << m_HasGhost;
+
+        if (m_MoveStream.GetBitLength() > 0)
+        {
+            result += m_MoveStream;
+        }
+        if (m_EventStream.GetBitLength() > 0)
+        {
+            result += m_EventStream;
+        }
+        if (m_GhostStream.GetBitLength() > 0)
+        {
+            result += m_GhostStream;
+        }
+
+        return result;
+    }
+
+    size_t GetStreamSize() const
+    {
+        return 3 + m_MoveStream.GetBitLength() + m_EventStream.GetBitLength() + m_GhostStream.GetBitLength();
+    }
 };
