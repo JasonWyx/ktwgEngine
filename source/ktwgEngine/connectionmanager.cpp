@@ -120,7 +120,7 @@ void ConnectionManager::ConnectToServer()
     mySocket.SetPort(port);
     mySocket.SetPlayer(std::stoi(playerID.c_str()));
     std::cout << "I am Player " << mySocket.GetPlayer() << std::endl;
-    StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
+    // StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
   }
 }
 #else
@@ -189,7 +189,7 @@ void ConnectionManager::Update()
       playerActive[connectedPlayerID] = true;
       serverSockets.push_back(tmp);
       // inform upper level here
-      StreamManager::GetInstance().CreatePeer(connectedPlayerID);
+      // StreamManager::GetInstance().CreatePeer(connectedPlayerID);
     }
   }
 
@@ -211,7 +211,7 @@ void ConnectionManager::Update()
       // remove player here
       // inform upper level here
       playerActive[player] = false;
-      StreamManager::GetInstance().RemovePeer(player);
+      // StreamManager::GetInstance().RemovePeer(player);
     }
   }
 }
@@ -219,7 +219,8 @@ void ConnectionManager::Update()
 void ConnectionManager::InitializeInternal()
 {
   // setup address structure
-  SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  // SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  SocketAddress server{ AF_INET, INADDR_ANY, htons(PORT) };
 
   hostSocket = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
   hostSocket->SetBlockingMode(1);
@@ -651,7 +652,11 @@ void SocketWindowData::Update()
   {
     auto current = std::chrono::CLOCK_TYPE::now();
     float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(current - timeOutTimer)).count();
-    if (elapsedTime > 10.f) shutdown = true;
+    if (elapsedTime > 10.f)
+    {
+      std::cout << "Player " << player << " has Disconnected" << std::endl;
+      shutdown = true;
+    }
   }
 }
 

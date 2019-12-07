@@ -76,7 +76,7 @@ public:
   bool GetShutdown();
   void ShutdownMessage();
   void SetPlayer(int p);
-  int GetPlayer();
+  int  GetPlayer();
 };
 
 #ifdef CLIENT
