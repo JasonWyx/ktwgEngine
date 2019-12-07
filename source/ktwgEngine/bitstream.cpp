@@ -11,18 +11,18 @@ BitStream::BitStream(size_t bytes)
     
 }
 
-BitStream::BitStream(const uint8_t* data, size_t length) : BitStream(length)
+BitStream::BitStream(const char* data, size_t length) : BitStream(length)
 {
     std::memcpy(m_Buffer.data(), data, length);
 }
 
-BitStream::BitStream(const std::vector<uint8_t>& data)
+BitStream::BitStream(const std::vector<char>& data)
     : m_Buffer(data)
     , m_BitPosition(0)
 {
 }
 
-BitStream::BitStream(std::vector<uint8_t>&& data)
+BitStream::BitStream(std::vector<char>&& data)
     : m_Buffer(std::move(data))
     , m_BitPosition(0)
 {
@@ -41,12 +41,12 @@ BitStream BitStream::operator+(const BitStream& rhs) const
 
 BitStream& BitStream::operator+=(const BitStream& rhs)
 {
-    const size_t shiftRight = m_BitPosition % ByteInBits;
-    const size_t shiftLeft = ByteInBits - shiftRight;
+    const size_t shiftRight = m_BitPosition % ByteToBits;
+    const size_t shiftLeft = ByteToBits - shiftRight;
 
     if (!rhs.m_Buffer.empty())
     {
-        std::vector<uint8_t> tmp = rhs.m_Buffer;
+        std::vector<char> tmp = rhs.m_Buffer;
 
         m_Buffer.back() |= tmp.front() >> shiftLeft;
 

@@ -44,6 +44,7 @@ void GhostManager::ReadStream(BitStream& stream)
     {
         GhostID ghostID = 0xFFFF;
         stream >> ghostID;
+        PeerID peerID = ghostID >> 13;
 
         // Check for status change
         bool isStatusChanged = false;
@@ -56,8 +57,7 @@ void GhostManager::ReadStream(BitStream& stream)
             if (isCreateNew)
             {
                 // Create new object with class id, with server as the authority
-                uint32_t ghostClassID = 0;
-                stream.Read(ghostClassID, 0u);
+
                 // jason todo: create object here with m_IsLocalOwner set to false in ghost object so
                 // that local client does not send updates to server for broadcast
 				
@@ -103,7 +103,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #ifdef CLIENT
     PackingInfo& packingInfo = m_PackingInfo;
 #else
-    PackingInfo& packingInfo = m_PackingInfo[tr.m_PeerID];
+    PackingInfo& packingInfo = m_PackingInfo[tr.m_TargetPeerID];
 #endif
 
     if (packingInfo.m_IsDonePacking)
@@ -116,8 +116,13 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         {
             if (GhostObject* ghostObject = m_GhostObjectsIDMap[ghostID])
             {
-                packingInfo.m_ObjectsToPack.emplace_back(ghostObject, ghostObject->GetFullStateMask());
+                packingInfo.m_ObjectsToPack.emplace_back(ghostID, ghostObject->GetFullStateMask());
             }
+        }
+
+        for (GhostID ghostID : packingInfo.m_GhostsToDelete)
+        {
+            packingInfo.m_ObjectsToPack.emplace_back(ghostID, GhostStateMask());
         }
 
         for (GhostObject* ghostObject : m_GhostObjects)
@@ -133,11 +138,11 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #ifdef CLIENT
             GhostStateMask stateMask = ghostObject->GetStateMaskAndCheckNeedUpdate(needUpdate);
 #else
-            GhostStateMask stateMask = ghostObject->GetStateMaskAndCheckNeedUpdate(tr.m_PeerID, needUpdate);
+            GhostStateMask stateMask = ghostObject->GetStateMaskAndCheckNeedUpdate(tr.m_TargetPeerID, needUpdate);
 #endif
             if (needUpdate)
             {
-                packingInfo.m_ObjectsToPack.push_back(std::make_pair(ghostObject, stateMask));
+                packingInfo.m_ObjectsToPack.emplace_back(ghostObject->GetGhostID(), stateMask);
             }
         }
     }
@@ -145,30 +150,29 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
     {
         // jason todo: check if the current cached object can go into the packet
         // if not, return false again
-        ghostObjectStream += packingInfo.m_CachedObjectStream;
-
         countObjectsInPacket++;
-        packingInfo.m_LastPackedIndex++;
         ghostObjectStream += packingInfo.m_CachedObjectStream;
 
         GhostTransmissionRecord& gtr = tr.m_GhostTransmissionRecords.emplace_back(packingInfo.m_CachedTransmissionRecord);
-        GhostObject* ghostObject = packingInfo.m_ObjectsToPack[packingInfo.m_LastPackedIndex].first;
-
-#ifdef CLIENT
-        if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord())
-#else
-        if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord(tr.m_PeerID))
-#endif
+        
+        if (GhostObject* ghostObject = m_GhostObjectsIDMap[packingInfo.m_ObjectsToPack[packingInfo.m_LastPackedIndex].first])
         {
-            gtr.m_PreviousTransmissionRecord = latestGhostTransmissionRecord;
-            latestGhostTransmissionRecord->m_NextTransmissionRecord = &tr.m_GhostTransmissionRecords.back();
-        }
+#ifdef CLIENT
+            if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord())
+#else
+            if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord(tr.m_TargetPeerID))
+#endif
+            {
+                gtr.m_PreviousTransmissionRecord = latestGhostTransmissionRecord;
+                latestGhostTransmissionRecord->m_NextTransmissionRecord = &tr.m_GhostTransmissionRecords.back();
+            }
 
 #ifdef CLIENT
-        ghostObject->SetLatestTransmissionRecord(&gtr);
+            ghostObject->SetLatestTransmissionRecord(&gtr);
 #else
-        ghostObject->SetLatestTransmissionRecord(tr.m_PeerID, &gtr);
+            ghostObject->SetLatestTransmissionRecord(tr.m_TargetPeerID, &gtr);
 #endif
+        }
     }
     else // No space even for 1 object (with header included)
     {
@@ -185,13 +189,17 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         // Packet structure [GhostID][StatusChange][StateMask][StateData]
         packingInfo.m_CachedObjectStream.Clear();
 
-        auto& [ghostObject, stateMask] = packingInfo.m_ObjectsToPack[i];
+        auto& [ghostID, stateMask] = packingInfo.m_ObjectsToPack[i];
 
-        packingInfo.m_CachedObjectStream << ghostObject->GetGhostID();
+        GhostObject* ghostObject = m_GhostObjectsIDMap[ghostID];
+
+        // Reminder here that the ghost id here has the peer id packed as the first 3 bits
+        // so in the receiving end, we can >> 13 to get the peer id
+        packingInfo.m_CachedObjectStream << ghostID;
 
         // Check if there is a status change; need to send create/destroy status change
         GhostStatusType status = GhostStatusType::None;
-        if (packingInfo.m_GhostsToCreate.find(ghostObject->GetGhostID()) != packingInfo.m_GhostsToCreate.end())
+        if (packingInfo.m_GhostsToCreate.find(ghostID) != packingInfo.m_GhostsToCreate.end())
         {
             // Object is flagged for creation
             packingInfo.m_CachedObjectStream << true << true;
@@ -200,10 +208,10 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #ifdef CLIENT
             ghostObject->WriteStream(packingInfo.m_CachedObjectStream, stateMask);
 #else
-            ghostObject->WriteStream(tr.m_PeerID, packingInfo.m_CachedObjectStream, stateMask);
+            ghostObject->WriteStream(tr.m_TargetPeerID, packingInfo.m_CachedObjectStream, stateMask);
 #endif
         }
-        else if (packingInfo.m_GhostsToDelete.find(ghostObject->GetGhostID()) != packingInfo.m_GhostsToDelete.end())
+        else if (packingInfo.m_GhostsToDelete.find(ghostID) != packingInfo.m_GhostsToDelete.end())
         {
             // Object is flagged for removal, do not need to pack state data
             packingInfo.m_CachedObjectStream << true << false;
@@ -213,10 +221,11 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         {
             // No status change, send states as per normal
             packingInfo.m_CachedObjectStream << false;
+            packingInfo.m_CachedObjectStream << stateMask;
 #ifdef CLIENT
             ghostObject->WriteStream(packingInfo.m_CachedObjectStream, stateMask);
 #else
-            ghostObject->WriteStream(tr.m_PeerID, packingInfo.m_CachedObjectStream, stateMask);
+            ghostObject->WriteStream(tr.m_TargetPeerID, packingInfo.m_CachedObjectStream, stateMask);
 #endif
         }
 
@@ -238,7 +247,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #ifdef CLIENT
             if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord())
 #else
-            if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord(tr.m_PeerID))
+            if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord(tr.m_TargetPeerID))
 #endif
             {
                 gtr.m_PreviousTransmissionRecord = latestGhostTransmissionRecord;
@@ -248,7 +257,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #ifdef CLIENT
             ghostObject->SetLatestTransmissionRecord(&gtr);
 #else
-            ghostObject->SetLatestTransmissionRecord(tr.m_PeerID, &gtr);
+            ghostObject->SetLatestTransmissionRecord(tr.m_TargetPeerID, &gtr);
 #endif
         } 
         else
@@ -288,7 +297,7 @@ void GhostManager::NotifyTransmissionFailure(TransmissionRecord& tr)
 #ifdef CLIENT
     PackingInfo& packingInfo = m_PackingInfo;
 #else
-    PackingInfo& packingInfo = m_PackingInfo[tr.m_PeerID];
+    PackingInfo& packingInfo = m_PackingInfo[tr.m_TargetPeerID];
 #endif
 
     for (GhostTransmissionRecord& gtr : tr.m_GhostTransmissionRecords)
@@ -350,16 +359,16 @@ void GhostManager::NotifyTransmissionFailure(TransmissionRecord& tr)
 #ifdef CLIENT
         ghostObject->SetRetransmissionMask(gtr.m_StateMask);
 #else
-        ghostObject->SetRetransmissionMask(tr.m_PeerID, gtr.m_StateMask);
+        ghostObject->SetRetransmissionMask(tr.m_TargetPeerID, gtr.m_StateMask);
 #endif
     }
 }
 
-void GhostManager::SyncObjectPropertyValues()
+void GhostManager::SyncAllObjectProperties()
 {
     for (GhostObject* ghostObject : m_GhostObjects)
     {
-        ghostObject->SyncPropertyValues();
+        ghostObject->SyncProperties();
     }
 }
 

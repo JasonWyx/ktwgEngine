@@ -21,7 +21,7 @@ public:
     bool WritePacket(Packet& packet, TransmissionRecord& tr);
     void NotifyTransmissionSuccess(TransmissionRecord& tr);
     void NotifyTransmissionFailure(TransmissionRecord& tr);
-    void SyncObjectPropertyValues();
+    void SyncAllObjectProperties();
     void DropPendingData();
     void ClearStatusChanges();
 
@@ -37,7 +37,7 @@ private:
 
     struct PackingInfo
     {
-        std::vector<std::pair<GhostObject*, GhostStateMask>> m_ObjectsToPack;
+        std::vector<std::pair<GhostID, GhostStateMask>> m_ObjectsToPack;
         unsigned m_LastPackedIndex;
         BitStream m_CachedObjectStream;
         GhostTransmissionRecord m_CachedTransmissionRecord;

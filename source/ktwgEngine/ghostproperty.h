@@ -18,7 +18,7 @@ public:
     virtual void WriteStream(BitStream& stream) = 0;
     virtual void ReadStream(BitStream& stream) = 0;
     virtual bool IsPropertyChanged() const = 0;
-    virtual void SyncValues() = 0;
+    virtual void Sync() = 0; // Sync just copies new into old so that IsPropertyChanged will be correct
     NetAuthority GetAuthority() const { return m_Authority; }
 
 private:
@@ -27,14 +27,14 @@ private:
 };
 
 template<typename T>
-class GhostPropertyVirtual : public GhostProperty
+class GhostPropertyPOD : public GhostProperty
 {
 public:
 
-    GhostPropertyVirtual(T& property, NetAuthority authority, size_t bitSize = sizeof(T) * 8) 
+    GhostPropertyPOD(T& property, NetAuthority authority, size_t bitSize = sizeof(T) * 8) 
         : GhostProperty(authority)
-        , m_ValueRef(property)
-        , m_OldValue()
+        , m_CurrentValue(property)
+        , m_PreviousValue()
         , m_BitCount(bitSize)
     { }
 
@@ -42,11 +42,11 @@ public:
     {
         if (m_BitCount != sizeof(T) * 8)
         {
-            stream.Write(m_ValueRef, m_BitCount);
+            stream.Write(m_CurrentValue, m_BitCount);
         }
         else
         {
-            stream << m_ValueRef;
+            stream << m_CurrentValue;
         }
     }
 
@@ -54,22 +54,22 @@ public:
     {
         if (m_BitCount != sizeof(T) * 8)
         {
-            stream.Read(m_ValueRef, m_BitCount);
+            stream.Read(m_CurrentValue, m_BitCount);
         }
         else
         {
-            stream >> m_ValueRef;
+            stream >> m_CurrentValue;
         }
     }
 
     virtual bool IsPropertyChanged() const override
     {
-        return m_ValueRef != m_OldValue;
+        return m_CurrentValue != m_PreviousValue;
     }
 
-    virtual void SyncValues() override
+    virtual void Sync() override
     {
-        m_OldValue = m_ValueRef;
+        m_PreviousValue = m_CurrentValue;
     }
 
     constexpr size_t GetPropertyBitSize() const { return m_BitCount; }
@@ -77,8 +77,8 @@ public:
 
 private:
 
-    T& m_ValueRef;
-    T m_OldValue;
+    T& m_CurrentValue;
+    T m_PreviousValue;
     const size_t m_BitCount;
 };
 

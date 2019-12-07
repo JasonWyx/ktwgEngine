@@ -120,7 +120,7 @@ void ConnectionManager::ConnectToServer()
     mySocket.SetPort(port);
     mySocket.SetPlayer(std::stoi(playerID.c_str()));
     std::cout << "I am Player " << mySocket.GetPlayer() << std::endl;
-    // StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
+    StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
   }
 }
 #else
@@ -189,7 +189,7 @@ void ConnectionManager::Update()
       playerActive[connectedPlayerID] = true;
       serverSockets.push_back(tmp);
       // inform upper level here
-      // StreamManager::GetInstance().CreatePeer(connectedPlayerID);
+      StreamManager::GetInstance().CreatePeer(connectedPlayerID);
     }
   }
 
@@ -211,7 +211,7 @@ void ConnectionManager::Update()
       // remove player here
       // inform upper level here
       playerActive[player] = false;
-      // StreamManager::GetInstance().RemovePeer(player);
+      StreamManager::GetInstance().RemovePeer(player);
     }
   }
 }

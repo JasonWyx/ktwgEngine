@@ -97,7 +97,7 @@ void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask
         if (stateMask[i])
         {
             m_GhostProperties[i]->WriteStream(stream);
-            m_GhostProperties[i]->SyncValues(); // We sync right after in client mode because we do not need to care about other peers
+            m_GhostProperties[i]->Sync(); // We sync right after in client mode because we do not need to care about other peers
             m_StatesToRetransmit[i] = false;
         }
     }
@@ -178,11 +178,20 @@ void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)
 #endif
 }
 
-void GhostObject::SyncPropertyValues()
+void GhostObject::SyncProperties()
 {
     for (GhostProperty* ghostProperty : m_GhostProperties)
     {
-        ghostProperty->SyncValues();
+        NetAuthority authority = ghostProperty->GetAuthority();
+
+#ifdef CLIENT
+        if (authority == NetAuthority::Client && m_PeerID == StreamManager::GetInstance().GetPeerID())
+#else
+        if (authority == NetAuthority::Server)
+#endif
+        {
+            ghostProperty->Sync();
+        }
     }
 }
 

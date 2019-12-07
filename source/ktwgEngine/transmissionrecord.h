@@ -6,7 +6,7 @@
 struct TransmissionRecord
 {
     PacketID m_PacketID;
-    PeerID m_PeerID;
+    PeerID m_TargetPeerID;
 
     std::vector<GhostTransmissionRecord> m_GhostTransmissionRecords;
     std::vector<EventTransmissionRecord> m_EventTransmissionRecords;

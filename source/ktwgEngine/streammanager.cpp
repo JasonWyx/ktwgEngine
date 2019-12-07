@@ -48,6 +48,14 @@ void StreamManager::UpdateClient()
     // Get Packet notifications
 
     // Process incoming packets
+    std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
+    
+    for (std::string& message : incomingMessages)
+    {
+        BitStream stream(message.size());
+        std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
+        UnpackStream(stream);
+    }
 
     // Process outgoing packets
     bool isDonePacking = false;
@@ -58,6 +66,11 @@ void StreamManager::UpdateClient()
         isDonePacking = PackPacket(newPacket);
 
         // Send using connection manager
+        BitStream finalPacketStream = newPacket.BuildStream();
+        std::string message;
+        message.resize(finalPacketStream.GetByteLength());
+        std::memcpy(message.data(), finalPacketStream.GetData(), finalPacketStream.GetByteLength());
+        ConnectionManager::GetInstance().AddPacket(message, newPacket.m_ID);
     }
 }
 
@@ -75,8 +88,6 @@ bool StreamManager::PackPacket(Packet& packet)
         if (packet.GetStreamSize() > packetStreamSize)
         {
             packet.m_HasMove = true;
-
-            // We have packed stream with 
             return false;
         }
     }
@@ -120,30 +131,6 @@ bool StreamManager::PackPacket(Packet& packet)
     return true;
 }
 
-void StreamManager::UnpackStream(BitStream& stream)
-{
-    bool hasMove = false;
-    bool hasEvent = false;
-    bool hasGhost = false;
-
-    stream >> hasMove >> hasEvent >> hasGhost;
-
-    if (hasMove)
-    {
-        m_MoveManager.ReadStream(stream);
-    }
-
-    if (hasEvent)
-    {
-        m_EventManager.ReadStream(stream);
-    }
-
-    if (hasGhost)
-    {
-        m_GhostManager.ReadStream(stream);
-    }
-}
-
 #else
 
 void StreamManager::InitializeServer()
@@ -161,10 +148,19 @@ void StreamManager::UpdateServer()
     // Get packet notification
     
     // Process incoming packets
+    std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
+
+    for (std::string& message : incomingMessages)
+    {
+        BitStream stream(message.size());
+        std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
+        UnpackStream(stream);
+    }
     
     // Process outgoing packets
     std::map<PeerID, bool> isDonePacking;
 
+    // Set all transmission done to false
     for (auto& [peerID, transmissionInfo] : m_PeerTransmissionInfos)
     {
         isDonePacking[peerID] = false;
@@ -174,15 +170,20 @@ void StreamManager::UpdateServer()
 
     while (!isAllDonePacking)
     {
-        // We do packing in round robins
+        // We do packing in round robins so we don't starve anyone
         for (auto& [peerID, transmissionInfo] : m_PeerTransmissionInfos)
         {
             if (!isDonePacking[peerID])
             {
                 Packet newPacket = { m_LastPacketID++ };
                 isDonePacking[peerID] = PackPacket(peerID, newPacket);
+                
                 // Add message to connection manager
-
+                BitStream finalPacketStream = newPacket.BuildStream();
+                std::string message;
+                message.resize(finalPacketStream.GetByteLength());
+                std::memcpy(message.data(), finalPacketStream.GetData(), finalPacketStream.GetByteLength());
+                ConnectionManager::GetInstance().AddPacket(message, newPacket.m_ID, peerID);
             }
         }
 
@@ -227,7 +228,7 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
 {
     TransmissionRecord& tr = m_PeerTransmissionInfos[peerID].m_TransmissionRecords.emplace_back(TransmissionRecord{ packet.m_ID, peerID });
     tr.m_PacketID = packet.m_ID;
-    tr.m_PeerID = peerID;
+    tr.m_TargetPeerID = peerID;
     m_TransmissionRecordMap[packet.m_ID] = &tr;
 
     // MoveManager
@@ -238,8 +239,6 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
         if (packet.GetStreamSize() > packetStreamSize)
         {
             packet.m_HasMove = true;
-
-            // We have packed stream with 
             return false;
         }
     }
@@ -283,11 +282,31 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
     return true;
 }
 
-void StreamManager::UnpackStream(PeerID peerID, BitStream& stream)
-{
-}
-
 #endif
+
+void StreamManager::UnpackStream(BitStream& stream)
+{
+    bool hasMove = false;
+    bool hasEvent = false;
+    bool hasGhost = false;
+
+    stream >> hasMove >> hasEvent >> hasGhost;
+
+    if (hasMove)
+    {
+        m_MoveManager.ReadStream(stream);
+    }
+
+    if (hasEvent)
+    {
+        m_EventManager.ReadStream(stream);
+    }
+
+    if (hasGhost)
+    {
+        m_GhostManager.ReadStream(stream);
+    }
+}
 
 void StreamManager::InitializeInternal()
 {

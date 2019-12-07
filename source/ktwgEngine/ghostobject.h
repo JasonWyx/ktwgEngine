@@ -38,14 +38,21 @@ public:
 #endif
 
     void ReadStream(BitStream& stream, const GhostStateMask& stateMask);
-    void SyncPropertyValues();
-    inline bool IsOwner();
+    void SyncProperties();
+    bool IsOwner();
 
     template<typename T>
-    void RegisterGhostProperty(T& property, NetAuthority authority, size_t bitCount = sizeof(T) * 8)
+    void RegisterPropertyPOD(T& property, NetAuthority authority, size_t bitCount = sizeof(T) * 8)
     {
-        m_GhostProperties.push_back(new GhostPropertyVirtual<T>(property, authority, bitCount));
+        m_GhostProperties.push_back(new GhostPropertyPOD<T>(property, authority, bitCount));
     }
+
+    void RegisterPropertyCustom(GhostProperty* ghostProperty)
+    {
+        m_GhostProperties.push_back(ghostProperty);
+    }
+
+
 
 private:
 

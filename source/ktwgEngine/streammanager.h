@@ -78,13 +78,11 @@ private:
 
 #ifdef CLIENT
     bool PackPacket(Packet& packet);
-    void UnpackStream(BitStream& stream);
-
     TransmissionInfo m_TransmissionInfo;
 #else
     bool PackPacket(PeerID peerID, Packet& packet);
-    void UnpackStream(PeerID peerID, BitStream& stream);
-
     std::map<PeerID, TransmissionInfo> m_PeerTransmissionInfos;
 #endif
+
+    void UnpackStream(BitStream& stream);
 };
