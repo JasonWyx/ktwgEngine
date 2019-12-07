@@ -29,6 +29,11 @@ void ConnectionManager::RecieveMessage(std::string msg)
   recievedMessages.push_back(msg);
 }
 
+void ConnectionManager::StoreLostPacketsIDs(int pktid)
+{
+  lostPacketIDs.push_back(pktid);
+}
+
 int ConnectionManager::GetPlayerID()
 {
   return mySocket.GetPlayer();
@@ -54,6 +59,8 @@ void ConnectionManager::InitializeInternal()
 
 void ConnectionManager::ShutdownInternal()
 {
+  // debug cout
+  std::cout << "Current Lost Packets Count : " << lostPacketIDs.size() << std::endl;
   mySocket.ShutdownMessage();
   SocketUtility::CleanUp();
 }
@@ -122,6 +129,11 @@ void ConnectionManager::ConnectToServer()
     std::cout << "I am Player " << mySocket.GetPlayer() << std::endl;
     // StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
   }
+}
+
+std::vector<int>& ConnectionManager::GetLostPacketIDs()
+{
+  return lostPacketIDs;
 }
 #else
 ConnectionManager::ConnectionManager()
@@ -230,6 +242,7 @@ void ConnectionManager::InitializeInternal()
 
 void ConnectionManager::ShutdownInternal()
 {
+  std::cout << "Current Lost Packets Count : " << lostPacketIDs.size() << std::endl;
   std::cout << "Server is shutting down" << std::endl;
   SocketUtility::CleanUp();
 }
@@ -256,6 +269,17 @@ void ConnectionManager::AddPacket(std::string msg, int pktid, int player)
     }
   }
 }
+
+std::vector<int>& ConnectionManager::GetLostPacketIDs()
+{
+  return lostPacketIDs;
+}
+
+void ConnectionManager::StoreLostPacketsIDs(int pktid)
+{
+  lostPacketIDs.push_back(pktid);
+}
+
 #endif
 
 void SocketWindowData::ReadACKS(const int& acks)
@@ -268,22 +292,15 @@ void SocketWindowData::ReadACKS(const int& acks)
   unsigned char tmpAckPkt = sentPkt - 1;
   ackPkt = tmpAckPkt;
   bool ss = true;
-  std::vector<int> nackSlip;
+  // std::vector<int> nackSlip;
   std::cout << ackVal << std::endl;
   recvPkt += windowSize;
   while (tmpWindowSize)
   {
     int currAck = ackVal & bit;
-    int streamPktID = -1;
-    if (!sentStreamIDStack.empty())
-    {
-      streamPktID = sentStreamIDStack.top();
-      sentStreamIDStack.pop();
-    }
     if (!currAck)
     {
       // nackSlip.push_back(tmpAckPkt);
-      nackSlip.push_back(streamPktID);
       windowSize /= 2;
       if (windowSize <= 0) windowSize = 1;
       ss = false;
@@ -321,7 +338,7 @@ void SocketWindowData::DeliverMessage()
   {
     timeTracker.clear();
     timeTracker.resize(windowSize);
-    PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
+    PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f, -1);
     std::fill(timeTracker.begin(), timeTracker.end(), tmp);
   }
 
@@ -335,18 +352,18 @@ void SocketWindowData::DeliverMessage()
     // std::cout << (int)startPkt << std::endl;
     std::string message = msgQueue.front();
     msgQueue.pop();
+    int streamPktID = -1;
     if (!streamIDQueue.empty())
     {
-      int streamPktID = streamIDQueue.front();
+      streamPktID = streamIDQueue.front();
       streamIDQueue.pop();
-      sentStreamIDStack.push(streamPktID);
     }
     message = PacketMessage(message, startPkt);
     socket->SendTo(message.c_str(), message.size(), reciever);
     --currWindowSize;
     float timeOut = rtt + 4 * devRTT;
     timeOut = timeOut < 1.f ? 1.f : timeOut;
-    PktTimer timer = std::make_tuple(false, std::chrono::CLOCK_TYPE::now(), timeOut);
+    PktTimer timer = std::make_tuple(false, std::chrono::CLOCK_TYPE::now(), timeOut, streamPktID);
     timeTracker[cumulativePktsSent] = timer;
     ++cumulativePktsSent;
     ++sentPkt;
@@ -505,7 +522,6 @@ void SocketWindowData::ReceiveMessage()
 
 void SocketWindowData::UpdateTimer()
 {
-  auto now = std::chrono::CLOCK_TYPE::now();
   for (int i = 0; i < timeTracker.size(); ++i)
   {
     if (i < cumulativePktsSent)
@@ -513,12 +529,16 @@ void SocketWindowData::UpdateTimer()
       bool recv = std::get<0>(timeTracker[i]);
       if (!recv)
       {
+        auto now = std::chrono::CLOCK_TYPE::now();
         const auto& then = std::get<1>(timeTracker[i]);
         float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(now - then)).count();
         float timeOut = std::get<2>(timeTracker[i]);
+        int streamPktID = std::get<3>(timeTracker[i]);
         if (elapsedTime > timeOut)
         {
-          PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
+          PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f, streamPktID);
+          ConnectionManager::GetInstance().StoreLostPacketsIDs(streamPktID);
+          // store streamPktID for lost packet
           timeTracker[i] = tmp;
           ++timeOutPkt;
           std::cout << "TimeOut : " << timeOut << " elapsedTime : " << elapsedTime << std::endl;
@@ -566,7 +586,7 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
 {
   int recvPkts = 0;
   int bit = 0x1;
-  PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
+  // PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
   for (int i = size - 1; i >= 0; --i)
   {
     int result = val & bit;
@@ -578,11 +598,12 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
       {
         auto now = std::chrono::CLOCK_TYPE::now();
         auto then = std::get<1>(timeTracker[i]);
+        int streamPktID = std::get<3>(timeTracker[i]);
         float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(now - then)).count();
         //std::cout << "RTT' :" << elapsedTime << std::endl;
         devRTT = (1.f - BETA) * devRTT + BETA * std::fabs((float)elapsedTime - rtt);
         rtt = (1.f - ALPHA) * (float)elapsedTime + ALPHA * rtt;
-        PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
+        PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f, streamPktID);
         //std::cout << "DevRtt : " << devRTT << std::endl;
         //std::cout << "RTT : " << rtt << std::endl;
         timeTracker[i] = tmp;

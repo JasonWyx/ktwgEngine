@@ -26,7 +26,7 @@ using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
 class SocketWindowData
 {
-  typedef std::tuple<bool, TIME, float> PktTimer;
+  typedef std::tuple<bool, TIME, float, int> PktTimer;
   float                   rtt = 1.0f;
   int                     windowSize = 1;
   unsigned char           cumulativePktsSent = 0;
@@ -45,7 +45,6 @@ class SocketWindowData
   std::vector<bool>       ackSlip;
   std::queue<std::string> msgQueue;
   std::queue<int>         streamIDQueue;
-  std::stack<int>         sentStreamIDStack;
   std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
   int                     timeOutPkt = 0;
@@ -90,6 +89,8 @@ public:
   void RecieveMessage(std::string msg);
   int GetPlayerID();
   std::vector<std::string>& GetRecievedMessages();
+  std::vector<int>& GetLostPacketIDs();
+  void StoreLostPacketsIDs(int pktid);
 private:
   virtual void InitializeInternal() override;
   virtual void ShutdownInternal() override;
@@ -101,6 +102,7 @@ private:
   // temporary buffer for testing
   char buf[BUFLEN];
   std::vector<std::string> recievedMessages;
+  std::vector<int> lostPacketIDs;
 };
 #else
 
@@ -121,13 +123,16 @@ class ConnectionManager : public Singleton<ConnectionManager>
   UDPSocketPtr hostSocket;
 
   std::vector<std::string> recievedMessages;
+  std::vector<int> lostPacketIDs;
 public:
   ConnectionManager();
   ~ConnectionManager();
   void Update();
   void RecieveMessage(std::string msg);
+  void StoreLostPacketsIDs(int pktid);
   std::vector<std::string>& GetRecievedMessages();
   void AddPacket(std::string msg, int pktid, int player);
+  std::vector<int>& GetLostPacketIDs();
 };
 
 #endif
