@@ -35,4 +35,19 @@ using ADDRESS_FAMILY = uint16_t;
 
 #endif
 
+#if _WIN32
+
+static constexpr int WOULDBLOCK = -WSAEWOULDBLOCK;
+static constexpr int ISCONN = -WSAEISCONN;
+static constexpr int SEND = SD_SEND;
+
+#else
+
+static constexpr int WOULDBLOCK = -EINPROGRESS;
+static constexpr int ISCONN = -EISCONN;
+static constexpr int SEND = SHUT_WR;
+#define TRUE 1
+
+#endif
+
 #endif

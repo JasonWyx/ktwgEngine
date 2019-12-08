@@ -8,9 +8,10 @@
 #include "componentmanager.h"
 #include "transform.h"
 #include "cbehaviour.h"
+#include "bitstream.h"
+#include "ghostobject.h"
 
 class Component;
-class GhostObject;
 
 class Entity
 {
@@ -72,6 +73,12 @@ public:
 
   void MarkEntityForGhost();
 
+  void MarkEntityAsGhost(GhostID ghostId);
+
+  // These functions are only for creation of ghost objects, following which 
+  void CreateGhostObjectFromBitstream(BitStream& bitstream);
+  void SendGhostObjectInBitstream(BitStream& bitstream);
+  
 private:
   template<typename T> 
   Component& CreateComponent();

@@ -36,6 +36,14 @@ Entity* Scene::FindEntityByName(const std::string& name)
   return FindEntityByNameInternal(m_GameScene, name);
 }
 
+void Scene::CreateGhostEntity(BitStream & stream)
+{
+  // We need to create an entity from the bitstream
+  // At this point we know an entity must be created
+  Entity* entity = CreateEntity();
+  entity->CreateGhostObjectFromBitstream(stream);
+}
+
 void Scene::InitializeInternal()
 {
   m_GameScene = Entity::CreateEntity("Scene");

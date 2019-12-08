@@ -136,5 +136,51 @@ void Entity::MarkEntityForGhost()
   m_GhostObject = new GhostObject{};
   m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
   m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
+  m_IsGhost = false;
+}
+
+void Entity::MarkEntityAsGhost(GhostID ghostId)
+{
+  // The difference is that this ghost is not owned by this peer
+  m_GhostObject = new GhostObject{};
+  m_GhostObject->SetGhostID(ghostId);
   m_IsGhost = true;
+}
+
+void Entity::CreateGhostObjectFromBitstream(BitStream & bitstream)
+{
+  GhostID ghostId;
+  bitstream >> ghostId;
+
+  MarkEntityAsGhost(ghostId);
+
+  // Basically reconstructs this entity from the bitstream
+  uint8_t nameLen;
+  bitstream >> nameLen;
+
+  char buf[256]{};
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    bitstream >> buf[i];
+  }
+
+  std::string name{buf};
+  SetName(name);
+
+}
+
+void Entity::SendGhostObjectInBitstream(BitStream & bitstream)
+{
+  // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
+  bitstream << m_GhostObject->GetGhostID();
+ 
+  uint8_t nameLen = (uint8_t)m_Name.length();
+  bitstream << nameLen;
+
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    bitstream << m_Name[i];
+  }
+
+  
 }

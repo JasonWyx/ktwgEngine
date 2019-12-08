@@ -44,7 +44,8 @@ Component::Component(const ::TypeInfo& info, Entity& entity, uint32_t id)
     m_Type{ CT_NONE },
     m_Info{ info },
     m_State{ ACTIVE }, 
-    m_Id{ id }
+    m_Id{ id },
+    m_IsDirty{ false }
 {
 }
 
@@ -55,6 +56,7 @@ Component::~Component()
 void Component::Set(Component* comp)
 {
   m_State = comp->GetState();
+  m_IsDirty = false;
 }
 
 void Component::FreeComponent(Component* comp)

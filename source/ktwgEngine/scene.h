@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include "singleton.h"
+#include "bitstream.h"
 
 class Entity;
 
@@ -14,6 +15,8 @@ public:
 
   Entity* CreateEntity(const std::string& name = "GameObject");
   Entity* FindEntityByName(const std::string& name);
+
+  void CreateGhostEntity(BitStream& stream);
 
 private:
 	virtual void InitializeInternal() override;

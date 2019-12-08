@@ -18,7 +18,7 @@ void HypeMaterial::SetColor(float r, float g, float b, float a)
   m_Color[3] = a;
 }
 
-void HypeMaterial::GetColor(float & r, float & g, float & b, float & a)
+void HypeMaterial::GetColor(float & r, float & g, float & b, float & a) const
 {
   r = m_Color[0];
   g = m_Color[1];
