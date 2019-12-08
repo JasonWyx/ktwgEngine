@@ -427,7 +427,7 @@ void GhostManager::UnregisterGhostObject(GhostObject* ghostObject)
 
 void GhostManager::ReplicateToServer(GhostID ghostID)
 {
-    m_PackingInfo.m_GhostToCreate.emplace(ghostID);
+    m_PackingInfo.m_GhostsToCreate.emplace(ghostID);
 }
 
 #else
