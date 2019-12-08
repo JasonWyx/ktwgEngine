@@ -200,6 +200,9 @@ void StreamManager::UpdateServer()
         if (isDone)
         {
             isAllDonePacking = true;
+
+            // Synchronization of object properties is deferred until here because we want it to be the same for all peers
+            m_GhostManager.SyncAllObjectProperties();
         }
     }
 }
