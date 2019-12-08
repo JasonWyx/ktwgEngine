@@ -9,12 +9,12 @@ class Entity;
 class Component
 {
   friend class Entity;
-  
+
   enum State : char
   {
-    ACTIVE   = 0,
+    ACTIVE = 0,
     INACTIVE = 1,
-    DEAD     = 2,
+    DEAD = 2,
     MODIFIED = 1 << 3
   };
 
@@ -27,7 +27,7 @@ public:
   virtual ~Component();
 
   virtual void Initialize() {};
-  virtual void Destroy()    {};
+  virtual void Destroy() {};
   virtual void Set(Component* comp);
 
   template<typename T>
@@ -42,12 +42,12 @@ public:
   inline bool                 GetIsDirty()  const { return m_IsDirty; }
 
 
-  inline void SetOwner(Entity* owner)             { m_Owner = owner; }
-  inline void SetType(ComponentType type)         { m_Type = type; }
+  inline void SetOwner(Entity* owner) { m_Owner = owner; }
+  inline void SetType(ComponentType type) { m_Type = type; }
   inline void SetTypeInfo(const ::TypeInfo& info) { m_Info = info; }
-  inline void SetId(uint32_t id)                  { m_Id = id; }
-  inline virtual void SetActive(bool active)      { m_State = active ? ACTIVE : INACTIVE; }
-  inline void SetIsDirty(bool isDirty)            { m_IsDirty = isDirty; }
+  inline void SetId(uint32_t id) { m_Id = id; }
+  inline virtual void SetActive(bool active) { m_State = active ? ACTIVE : INACTIVE; }
+  inline void SetIsDirty(bool isDirty) { m_IsDirty = isDirty; }
 
   // Override these functions for compatability with ghosting, default behaviour does nothing
   virtual void GhostPropertyReadStream(BitStream& stream) { }
@@ -71,8 +71,8 @@ class GhostPropertyComponent : public GhostProperty
 {
 public:
   GhostPropertyComponent(T* component, NetAuthority authority)
-  : GhostProperty{authority}
-  , m_Component{component}
+    : GhostProperty{ authority }
+    , m_Component{ component }
   {
 
   }
@@ -96,7 +96,7 @@ public:
   {
     // LEAVE BLANK
   }
-  
+
 private:
   T* m_Component;
 };

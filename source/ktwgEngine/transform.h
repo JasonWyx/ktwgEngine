@@ -2,6 +2,7 @@
 
 #include "vector3.h"
 #include "quaternion.h"
+#include "bitstream.h"
 
 class Transform
 {
@@ -25,12 +26,13 @@ public:
   Matrix3 GetRotationMatrix33() const;
 
   bool operator==(const Transform& rhs) const { return pos_ == rhs.pos_ && rot_ == rhs.rot_ && scale_ == rhs.scale_; }
+  bool operator!=(const Transform& rhs) const { return !(*this == rhs); }
 
   friend Vec3      Multiply(const Transform& t, const Vec3& v);
   friend Vec3      MultiplyNS(const Transform& t, const Vec3& v);
   friend Transform Multiply(const Transform& t0, const Transform& t1);
   friend Transform MultiplyNS(const Transform& t0, const Transform& t1);
-
+  
   // ---- WORLD POSITION ----------------------------
   void SetPosition(const Vec3& pos)
   {
@@ -124,4 +126,28 @@ inline Vec3 MultiplyT(const Transform& lhs, const Vec3& rhs)
 {
   Matrix3 inverse = Inverse(lhs.GetRotationMatrix33());
   return Multiply(inverse, rhs - lhs.GetPosition());
+}
+
+inline BitStream& operator<<(BitStream& stream, const Transform& tfm)
+{
+  const Vec3& pos = tfm.GetPosition();
+  stream << pos.x_ << pos.y_ << pos.z_;
+  const Quaternion& rot = tfm.GetRotation();
+  stream << rot.x_ << rot.y_ << rot.z_ << rot.w_;
+  const Vec3& scale = tfm.GetScale();
+  stream << scale.x_ << scale.y_ << scale.z_;
+}
+
+inline BitStream& operator>>(BitStream& stream, Transform& tfm)
+{
+  Vec3 pos;
+  stream >> pos.x_ >> pos.y_ >> pos.z_;
+  Quaternion rot;
+  stream >> rot.x_ >> rot.y_ >> rot.z_ >> rot.w_;
+  Vec3 scale;
+  stream >> scale.x_ >> scale.y_ >> scale.z_;
+
+  tfm.SetPosition(pos);
+  tfm.SetRotation(rot);
+  tfm.SetScale(scale);
 }

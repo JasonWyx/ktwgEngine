@@ -10,6 +10,7 @@
 
 // Network
 #include "ghostobject.h"
+#include "ghostobjectids.h"
 #include "streammanager.h"
 
 Entity::Entity(uint32_t id, const std::string& name)
@@ -149,6 +150,11 @@ void Entity::MarkEntityAsGhost(GhostID ghostId)
 
 void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
 {
+#if CLIENT
+  NetAuthority netAuthority = NetAuthority::Server;
+#else
+  NetAuthority netAuthority = NetAuthority::Client;
+#endif
   GhostID ghostId;
   bitstream >> ghostId;
 
@@ -167,6 +173,42 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
   std::string name{buf};
   SetName(name);
 
+  uint8_t numEntries;
+  bitstream >> numEntries;
+
+  // Sadly we can't do readstream here since the properties don't exist
+  // We will have to manually unpack the packet here then
+  for (uint8_t i = 0; i < numEntries; ++i)
+  {
+    ClassID classID;
+    bitstream >> classID;
+    switch (classID)
+    {
+    case CI_Transform:
+      m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty(m_Transform, netAuthority));
+      break;
+    case CI_Component:
+      {
+        ComponentType cType;
+        bitstream >> cType;
+        Component* comp = AddComponent(cType);
+        switch (cType)
+        {
+        case CT_BOXCOLLIDER:
+          m_GhostObject->RegisterPropertyCustom(new GhostPropertyComponent<CBoxCollider>{ (CBoxCollider*)comp, netAuthority });
+          break;
+        case CT_RENDERABLE:
+          m_GhostObject->RegisterPropertyCustom(new GhostPropertyComponent<CRenderable>{ (CRenderable*)comp, netAuthority });
+          break;
+        case CT_RIGIDBODY:
+          m_GhostObject->RegisterPropertyCustom(new GhostPropertyComponent<CRigidBody>{ (CRigidBody*)comp, netAuthority });
+          break;
+        }
+        comp->GhostPropertyReadStream(bitstream);
+      }
+      break;
+    }
+  }
 }
 
 #if CLIENT
@@ -182,6 +224,8 @@ void Entity::ReplicateGhostObjectToBitstream(BitStream & bitstream)
   {
     bitstream << m_Name[i];
   }
+
+  bitstream << (uint8_t)m_GhostObject->GetPropertyCount();
 
   // Write every property into the stream since it's a fresh replicate
   m_GhostObject->WriteStream(bitstream, m_GhostObject->GetFullStateMask());
@@ -199,6 +243,8 @@ void Entity::ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStrea
   {
     bitstream << m_Name[i];
   }
+
+  bitstream << (uint8_t)m_GhostObject->GetPropertyCount();
 
   // Write every property into the stream since it's a fresh replicate
   m_GhostObject->WriteStream(targetPeerID, bitstream, m_GhostObject->GetFullStateMask());

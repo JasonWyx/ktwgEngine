@@ -21,9 +21,6 @@ public:
   void GhostPropertyReadStream(BitStream& stream) override;
   void GhostPropertyWriteStream(BitStream& stream) override;
 
-  static void GhostPropertyReadStream(Entity& entity, BitStream& stream);
-  static void GhostPropertyWriteStream(CRenderable* renderable, BitStream& stream);
-
 private:
   HypeGraphicObject* m_GraphicObject;
   HypeGraphicObjectInstance* m_Instance;

@@ -3,6 +3,7 @@
 #include "hypegraphicsworld.h"
 #include "hypematerial.h"
 #include "entity.h"
+#include "ghostobjectids.h"
 
 CRenderable::CRenderable(Entity & entity, uint32_t id)
 :Component{typeid(CRenderable), entity, id}, m_GraphicObject{nullptr}, m_Instance{nullptr}
@@ -82,7 +83,8 @@ void CRenderable::GhostPropertyReadStream(BitStream & stream)
 
 void CRenderable::GhostPropertyWriteStream(BitStream & stream)
 {
-  // ALWAYS PREFIX WITH COMPONENTTYPE
+  // ALWAYS PREFIX WITH CLASSID FOR COMPONENT AND COMPONENTTYPE DON'T NEED TO READ THIS BACK
+  stream << CI_Component;
   stream << (int)GetType();
 
   bool hasOverrideMaterial = m_Instance->HasOverrideMaterial();
@@ -108,16 +110,4 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
       << (uint8_t)(b * 255.0f)
       << (uint8_t)(a * 255.0f);
   }
-}
-
-void CRenderable::GhostPropertyReadStream(Entity& entity, BitStream & stream)
-{
-  // In the static variant, we require the entity because the component does not exist at this point
-  CRenderable* renderable = (CRenderable*)entity.AddComponent(CT_RENDERABLE);
-  renderable->GhostPropertyReadStream(stream);
-}
-
-void CRenderable::GhostPropertyWriteStream(CRenderable * renderable, BitStream & stream)
-{
-  renderable->GhostPropertyWriteStream(stream);
 }

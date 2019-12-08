@@ -4,8 +4,8 @@
 // Jason: I wanted to use GhostObjectID but VS was complaining about invalid tag enum
 enum ClassID
 {
-    SomeClass,
-    SomeClass1,
+    CI_Transform,
+    CI_Component,
     SomeClass2,
     SomeClass3,
     SomeClass4,

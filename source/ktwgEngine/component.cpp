@@ -56,7 +56,6 @@ Component::~Component()
 void Component::Set(Component* comp)
 {
   m_State = comp->GetState();
-  m_IsDirty = false;
 }
 
 void Component::FreeComponent(Component* comp)

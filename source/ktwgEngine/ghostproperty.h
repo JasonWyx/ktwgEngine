@@ -82,5 +82,42 @@ private:
     const size_t m_BitCount;
 };
 
+template<typename T>
+class CustomGhostProperty : public GhostProperty
+{
+public:
+
+  CustomGhostProperty(T& property, NetAuthority authority)
+    : GhostProperty(authority)
+    , m_CurrentValue(property)
+    , m_PreviousValue()
+  { }
+
+  virtual void WriteStream(BitStream& stream) override
+  {
+    stream << m_CurrentValue;
+  }
+
+  virtual void ReadStream(BitStream& stream) override
+  {
+    stream >> m_CurrentValue;
+  }
+
+  virtual bool IsPropertyChanged() const override
+  {
+    return m_CurrentValue != m_PreviousValue;
+  }
+
+  virtual void Sync() override
+  {
+    m_PreviousValue = m_CurrentValue;
+  }
+
+private:
+
+  T& m_CurrentValue;
+  T m_PreviousValue;
+};
+
 BitStream& operator<<(BitStream& stream, const GhostStateMask& stateMask);
 BitStream& operator>>(BitStream& stream, GhostStateMask& stateMask);
