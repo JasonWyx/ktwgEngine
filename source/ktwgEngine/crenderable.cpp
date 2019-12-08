@@ -111,3 +111,9 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
       << (uint8_t)(a * 255.0f);
   }
 }
+
+void CRenderable::RegisterAsGhostProperty(GhostObject * ghostObject, NetAuthority netAuthority)
+{
+  GhostPropertyComponent<CRenderable>* prop = new GhostPropertyComponent<CRenderable>{this, netAuthority};
+  ghostObject->RegisterPropertyCustom(prop);
+}

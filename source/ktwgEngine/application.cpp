@@ -9,6 +9,7 @@
 #include "d3d11renderwindowmanager.h"
 
 #include "hyperenderer.h"
+#include "hypegraphicsworld.h"
 
 #include "gameplaymanager.h"
 #include "time.h"
@@ -20,6 +21,7 @@
 #include "scene.h"
 
 #include "connectionmanager.h"
+#include "streammanager.h"
 
 void Application::InitializeInternal()
 {
@@ -44,6 +46,8 @@ void Application::ShutdownInternal()
 #endif
 
   Time::Shutdown();
+
+  StreamManager::Shutdown();
 
   ConnectionManager::Shutdown();
 }
@@ -131,6 +135,8 @@ void Application::InitializeCoreSystems()
 
   ConnectionManager::Initialize();
 
+  StreamManager::Initialize();
+
 #ifdef CLIENT
   D3D11RenderAPI::Initialize();
   D3D11RenderWindowManager::Initialize();
@@ -157,6 +163,8 @@ void Application::LateInitialize()
 {
 #ifdef CLIENT
   HypeRenderer::Initialize();
+#else
+  HypeGraphicsWorld::Initialize();
 #endif
   Scene::Initialize();
 }

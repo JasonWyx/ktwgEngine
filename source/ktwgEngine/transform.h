@@ -136,6 +136,8 @@ inline BitStream& operator<<(BitStream& stream, const Transform& tfm)
   stream << rot.x_ << rot.y_ << rot.z_ << rot.w_;
   const Vec3& scale = tfm.GetScale();
   stream << scale.x_ << scale.y_ << scale.z_;
+
+  return stream;
 }
 
 inline BitStream& operator>>(BitStream& stream, Transform& tfm)
@@ -150,4 +152,6 @@ inline BitStream& operator>>(BitStream& stream, Transform& tfm)
   tfm.SetPosition(pos);
   tfm.SetRotation(rot);
   tfm.SetScale(scale);
+
+  return stream;
 }

@@ -138,6 +138,9 @@ void Entity::MarkEntityForGhost()
   m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
   m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
   m_IsGhost = false;
+
+  // When we mark an entity for ghost we also need to set all its properties
+  
 }
 
 void Entity::MarkEntityAsGhost(GhostID ghostId)
@@ -192,18 +195,7 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
         ComponentType cType;
         bitstream >> cType;
         Component* comp = AddComponent(cType);
-        switch (cType)
-        {
-        case CT_BOXCOLLIDER:
-          m_GhostObject->RegisterPropertyCustom(new GhostPropertyComponent<CBoxCollider>{ (CBoxCollider*)comp, netAuthority });
-          break;
-        case CT_RENDERABLE:
-          m_GhostObject->RegisterPropertyCustom(new GhostPropertyComponent<CRenderable>{ (CRenderable*)comp, netAuthority });
-          break;
-        case CT_RIGIDBODY:
-          m_GhostObject->RegisterPropertyCustom(new GhostPropertyComponent<CRigidBody>{ (CRigidBody*)comp, netAuthority });
-          break;
-        }
+        comp->RegisterAsGhostProperty(m_GhostObject, netAuthority);
         comp->GhostPropertyReadStream(bitstream);
       }
       break;

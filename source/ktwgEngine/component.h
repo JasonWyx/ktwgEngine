@@ -3,6 +3,7 @@
 #include "componenttype.h"
 #include "typeinfo.h"
 #include "ghostproperty.h"
+#include "ghostobject.h"
 
 class Entity;
 
@@ -55,6 +56,8 @@ public:
 
   static void FreeComponent(Component* comp);
   static void RefreshFreeList();
+
+  virtual void RegisterAsGhostProperty(GhostObject* ghostObject, NetAuthority netAuthority) { }
 
 private:
   Entity*       m_Owner;
