@@ -203,8 +203,9 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         {
             // Object is flagged for creation
             packingInfo.m_CachedObjectStream << true << true;
-            packingInfo.m_CachedObjectStream.Write(0u, 4); // jason todo: replace 0u with ghost class id
             status = GhostStatusType::Create;
+
+            // jason todo: here we should call the custom function from scene to pack object creation stuff into the packet
 #ifdef CLIENT
             ghostObject->WriteStream(packingInfo.m_CachedObjectStream, stateMask);
 #else
@@ -215,7 +216,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         {
             // Object is flagged for removal, do not need to pack state data
             packingInfo.m_CachedObjectStream << true << false;
-            status = GhostStatusType::Delete;            
+            status = GhostStatusType::Delete;
         }
         else
         {
@@ -408,15 +409,6 @@ void GhostManager::RegisterGhostObject(GhostObject* ghostObject)
 {   
     m_GhostObjects.push_back(ghostObject);
     m_GhostObjectsIDMap.try_emplace(ghostObject->GetGhostID(), ghostObject);
-
-#ifdef CLIENT
-    m_PackingInfo.m_GhostsToCreate.emplace(ghostObject->GetGhostID());
-#else
-    for (auto& [peerID, packingInfo] : m_PackingInfo)
-    {
-        packingInfo.m_GhostsToCreate.emplace(ghostObject->GetGhostID());
-    }
-#endif
 }
 
 void GhostManager::UnregisterGhostObject(GhostObject* ghostObject)
@@ -429,13 +421,41 @@ void GhostManager::UnregisterGhostObject(GhostObject* ghostObject)
 
     m_GhostObjects.erase(std::remove(m_GhostObjects.begin(), m_GhostObjects.end(), ghostObject));
     m_GhostObjectsIDMap.erase(ghostObject->GetGhostID());
+}
 
 #ifdef CLIENT
-    m_PackingInfo.m_GhostsToDelete.emplace(ghostObject->GetGhostID());
+
+void GhostManager::ReplicateToServer(GhostID ghostID)
+{
+    m_PackingInfo.m_GhostsToCreate.emplace(ghostID);
+}
+
 #else
+
+void GhostManager::ReplicateForAllPeer(GhostID ghostID)
+{
     for (auto& [peerID, packingInfo] : m_PackingInfo)
     {
-        packingInfo.m_GhostsToDelete.emplace(ghostObject->GetGhostID());
+        packingInfo.m_GhostsToCreate.emplace(ghostID);
     }
-#endif
 }
+
+void GhostManager::UnreplicateForAllPeer(GhostID ghostID)
+{
+    for (auto& [peerID, packingInfo] : m_PackingInfo)
+    {
+        packingInfo.m_GhostsToDelete.emplace(ghostID);
+    }
+}
+
+void GhostManager::ReplicateForPeer(PeerID targetPeerID, GhostID ghostID)
+{
+    m_PackingInfo[targetPeerID].m_GhostsToCreate.emplace(ghostID);
+}
+
+void GhostManager::UnreplicateForPeer(PeerID targetPeerID, GhostID ghostID)
+{
+    m_PackingInfo[targetPeerID].m_GhostsToDelete.emplace(ghostID);
+}
+
+#endif

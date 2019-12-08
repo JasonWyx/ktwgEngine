@@ -28,6 +28,15 @@ public:
     void RegisterGhostObject(GhostObject* ghostObject);
     void UnregisterGhostObject(GhostObject* ghostObject);
 
+#ifdef CLIENT
+    void ReplicateToServer(GhostID ghostID);
+#else
+    void ReplicateForAllPeer(GhostID ghostID);
+    void UnreplicateForAllPeer(GhostID ghostID);
+    void ReplicateForPeer(PeerID targetPeerID, GhostID ghostID);
+    void UnreplicateForPeer(PeerID targetPeerID, GhostID ghostID);
+#endif
+
 private:
 
     std::vector<GhostObject*> m_GhostObjects;

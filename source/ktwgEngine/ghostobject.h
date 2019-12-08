@@ -45,14 +45,22 @@ public:
     void RegisterPropertyPOD(T& property, NetAuthority authority, size_t bitCount = sizeof(T) * 8)
     {
         m_GhostProperties.push_back(new GhostPropertyPOD<T>(property, authority, bitCount));
+
+#ifdef CLIENT
+        m_StatesToRetransmit.push_back(false);
+#else
+        m_StatesToBroadcast.push_back(false);
+        for (auto& [peerID, stateMask] : m_StatesToRetransmit)
+        {
+            stateMask.push_back(false);
+        }
+#endif
     }
 
     void RegisterPropertyCustom(GhostProperty* ghostProperty)
     {
         m_GhostProperties.push_back(ghostProperty);
     }
-
-
 
 private:
 

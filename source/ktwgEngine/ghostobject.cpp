@@ -51,7 +51,7 @@ GhostStateMask GhostObject::GetFullStateMask() const
 
 GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& outNeedUpdate)
 {
-    assert(m_StatesToRetransmit.size() == m_GhostProperties.size());
+    m_StatesToRetransmit.resize(m_GhostProperties.size());
 
     GhostStateMask result = m_StatesToRetransmit;
 
@@ -79,18 +79,15 @@ void GhostObject::SetRetransmissionMask(const GhostStateMask& stateMask)
     // The size of the state mask should the same as the number of ghost properties!
     assert(m_GhostProperties.size() == stateMask.size());
 
+    m_StatesToRetransmit.resize(m_GhostProperties.size());
     m_StatesToRetransmit = stateMask;
 }
 
 void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask)
 {
     assert(m_GhostProperties.size() == stateMask.size());
-    assert(m_GhostProperties.size() == m_StatesToRetransmit.size());
 
-    if (m_StatesToRetransmit.size() != stateMask.size())
-    {
-        m_StatesToRetransmit.resize(stateMask.size());
-    }
+    m_StatesToRetransmit.resize(m_GhostProperties.size());
 
     for (size_t i = 0; i < stateMask.size(); ++i)
     {
@@ -102,13 +99,12 @@ void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask
         }
     }
 }
-
 #else //Server
 
 GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPeerID, bool & outNeedUpdate)
 {
-    assert(m_GhostProperties.size() == m_StatesToBroadcast.size());
-    assert(m_GhostProperties.size() == m_StatesToRetransmit[targetPeerID].size());
+    m_StatesToBroadcast.resize(m_GhostProperties.size());
+    m_StatesToRetransmit[targetPeerID].resize(m_GhostProperties.size());
 
     GhostStateMask result(m_GhostProperties.size());
     
@@ -128,7 +124,7 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPe
             continue;
         }
 
-        if (authority == NetAuthority::Client && m_GhostProperties[i]->IsPropertyChanged())
+        if (authority == NetAuthority::Server && m_GhostProperties[i]->IsPropertyChanged())
         {
             result[i] = true;
         }
@@ -141,15 +137,16 @@ void GhostObject::SetRetransmissionMask(const PeerID targetPeerID, const GhostSt
 {
     // The size of the state mask should the same as the number of ghost properties!
     assert(m_GhostProperties.size() == stateMask.size());
-    assert(m_GhostProperties.size() == m_StatesToRetransmit[targetPeerID].size());
 
+    m_StatesToRetransmit[targetPeerID].resize(m_GhostProperties.size());
     m_StatesToRetransmit[targetPeerID] = stateMask;
 }
 
 void GhostObject::WriteStream(const PeerID targetPeerID, BitStream & stream, const GhostStateMask & stateMask)
 {
     assert(m_GhostProperties.size() == stateMask.size());
-    assert(m_GhostProperties.size() == m_StatesToRetransmit[targetPeerID].size());
+
+    m_StatesToRetransmit[targetPeerID].resize(m_GhostProperties.size());
 
     for (size_t i = 0; i < stateMask.size(); ++i)
     {
@@ -160,7 +157,6 @@ void GhostObject::WriteStream(const PeerID targetPeerID, BitStream & stream, con
         }
     }
 }
-
 #endif
 
 void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)

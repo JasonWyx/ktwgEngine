@@ -41,7 +41,7 @@ void Scene::CreateGhostEntity(BitStream & stream)
   // We need to create an entity from the bitstream
   // At this point we know an entity must be created
   Entity* entity = CreateEntity();
-  entity->CreateGhostObjectFromBitstream(stream);
+  entity->ReplicateGhostObjectFromBitstream(stream);
 }
 
 void Scene::InitializeInternal()

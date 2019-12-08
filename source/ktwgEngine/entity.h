@@ -76,9 +76,14 @@ public:
   void MarkEntityAsGhost(GhostID ghostId);
 
   // These functions are only for creation of ghost objects, following which 
-  void CreateGhostObjectFromBitstream(BitStream& bitstream);
-  void SendGhostObjectInBitstream(BitStream& bitstream);
-  
+  void ReplicateGhostObjectFromBitstream(BitStream& bitstream);
+
+#if CLIENT
+  void ReplicateGhostObjectToBitstream(BitStream& bitstream);
+#else
+  void ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStream & bitstream);
+#endif
+
 private:
   template<typename T> 
   Component& CreateComponent();

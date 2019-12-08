@@ -147,7 +147,7 @@ void Entity::MarkEntityAsGhost(GhostID ghostId)
   m_IsGhost = true;
 }
 
-void Entity::CreateGhostObjectFromBitstream(BitStream & bitstream)
+void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
 {
   GhostID ghostId;
   bitstream >> ghostId;
@@ -169,7 +169,8 @@ void Entity::CreateGhostObjectFromBitstream(BitStream & bitstream)
 
 }
 
-void Entity::SendGhostObjectInBitstream(BitStream & bitstream)
+#if CLIENT
+void Entity::ReplicateGhostObjectToBitstream(BitStream & bitstream)
 {
   // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
   bitstream << m_GhostObject->GetGhostID();
@@ -182,5 +183,24 @@ void Entity::SendGhostObjectInBitstream(BitStream & bitstream)
     bitstream << m_Name[i];
   }
 
-  
+  // Write every property into the stream since it's a fresh replicate
+  m_GhostObject->WriteStream(bitstream, m_GhostObject->GetFullStateMask());
 }
+#else
+void Entity::ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStream & bitstream)
+{
+  // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
+  bitstream << m_GhostObject->GetGhostID();
+
+  uint8_t nameLen = (uint8_t)m_Name.length();
+  bitstream << nameLen;
+
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    bitstream << m_Name[i];
+  }
+
+  // Write every property into the stream since it's a fresh replicate
+  m_GhostObject->WriteStream(targetPeerID, bitstream, m_GhostObject->GetFullStateMask());
+}
+#endif
