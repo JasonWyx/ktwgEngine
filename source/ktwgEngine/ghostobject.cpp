@@ -99,7 +99,6 @@ void GhostObject::WriteStream(BitStream& stream, const GhostStateMask& stateMask
         }
     }
 }
-
 #else //Server
 
 GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPeerID, bool & outNeedUpdate)
@@ -158,7 +157,6 @@ void GhostObject::WriteStream(const PeerID targetPeerID, BitStream & stream, con
         }
     }
 }
-
 #endif
 
 void GhostObject::ReadStream(BitStream& stream, const GhostStateMask& stateMask)

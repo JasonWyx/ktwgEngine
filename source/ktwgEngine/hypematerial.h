@@ -8,7 +8,7 @@ public:
   HypeMaterial(float r, float g, float b, float a);
 
   void SetColor(float r, float g, float b, float a);
-  void GetColor(float& r, float& g, float& b, float& a);
+  void GetColor(float& r, float& g, float& b, float& a) const;
 
 private:
   float   m_Color[4];

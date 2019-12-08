@@ -10,6 +10,7 @@
 
 // Network
 #include "ghostobject.h"
+#include "ghostobjectids.h"
 #include "streammanager.h"
 
 Entity::Entity(uint32_t id, const std::string& name)
@@ -136,5 +137,108 @@ void Entity::MarkEntityForGhost()
   m_GhostObject = new GhostObject{};
   m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
   m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
+  m_IsGhost = false;
+
+  // When we mark an entity for ghost we also need to set all its properties
+  
+}
+
+void Entity::MarkEntityAsGhost(GhostID ghostId)
+{
+  // The difference is that this ghost is not owned by this peer
+  m_GhostObject = new GhostObject{};
+  m_GhostObject->SetGhostID(ghostId);
   m_IsGhost = true;
 }
+
+void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
+{
+#if CLIENT
+  NetAuthority netAuthority = NetAuthority::Server;
+#else
+  NetAuthority netAuthority = NetAuthority::Client;
+#endif
+  GhostID ghostId;
+  bitstream >> ghostId;
+
+  MarkEntityAsGhost(ghostId);
+
+  // Basically reconstructs this entity from the bitstream
+  uint8_t nameLen;
+  bitstream >> nameLen;
+
+  char buf[256]{};
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    bitstream >> buf[i];
+  }
+
+  std::string name{buf};
+  SetName(name);
+
+  uint8_t numEntries;
+  bitstream >> numEntries;
+
+  // Sadly we can't do readstream here since the properties don't exist
+  // We will have to manually unpack the packet here then
+  for (uint8_t i = 0; i < numEntries; ++i)
+  {
+    ClassID classID;
+    bitstream >> classID;
+    switch (classID)
+    {
+    case CI_Transform:
+      m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty(m_Transform, netAuthority));
+      break;
+    case CI_Component:
+      {
+        ComponentType cType;
+        bitstream >> cType;
+        Component* comp = AddComponent(cType);
+        comp->RegisterAsGhostProperty(m_GhostObject, netAuthority);
+        comp->GhostPropertyReadStream(bitstream);
+      }
+      break;
+    }
+  }
+}
+
+#if CLIENT
+void Entity::ReplicateGhostObjectToBitstream(BitStream & bitstream)
+{
+  // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
+  bitstream << m_GhostObject->GetGhostID();
+ 
+  uint8_t nameLen = (uint8_t)m_Name.length();
+  bitstream << nameLen;
+
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    bitstream << m_Name[i];
+  }
+
+  bitstream << (uint8_t)m_GhostObject->GetPropertyCount();
+
+  // Write every property into the stream since it's a fresh replicate
+  m_GhostObject->WriteStream(bitstream, m_GhostObject->GetFullStateMask());
+}
+#else
+void Entity::ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStream & bitstream)
+{
+  // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
+  bitstream << m_GhostObject->GetGhostID();
+
+  uint8_t nameLen = (uint8_t)m_Name.length();
+  bitstream << nameLen;
+
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    bitstream << m_Name[i];
+  }
+
+  bitstream << (uint8_t)m_GhostObject->GetPropertyCount();
+
+  // Write every property into the stream since it's a fresh replicate
+  m_GhostObject->WriteStream(targetPeerID, bitstream, m_GhostObject->GetFullStateMask());
+}
+#endif

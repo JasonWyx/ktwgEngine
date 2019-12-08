@@ -44,7 +44,8 @@ Component::Component(const ::TypeInfo& info, Entity& entity, uint32_t id)
     m_Type{ CT_NONE },
     m_Info{ info },
     m_State{ ACTIVE }, 
-    m_Id{ id }
+    m_Id{ id },
+    m_IsDirty{ false }
 {
 }
 

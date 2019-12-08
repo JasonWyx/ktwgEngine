@@ -18,6 +18,11 @@ public:
   void                SetGraphicObject(HypeGraphicObject* graphicObject);
   void                SetGraphicObject(const std::string& name);
 
+  void GhostPropertyReadStream(BitStream& stream) override;
+  void GhostPropertyWriteStream(BitStream& stream) override;
+
+  void RegisterAsGhostProperty(GhostObject* ghostObject, NetAuthority netAuthority) override;
+
 private:
   HypeGraphicObject* m_GraphicObject;
   HypeGraphicObjectInstance* m_Instance;

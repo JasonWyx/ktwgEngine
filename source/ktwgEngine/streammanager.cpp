@@ -313,6 +313,7 @@ void StreamManager::UnpackStream(BitStream& stream)
 
 void StreamManager::InitializeInternal()
 {
+ 
 }
 
 void StreamManager::ShutdownInternal()
