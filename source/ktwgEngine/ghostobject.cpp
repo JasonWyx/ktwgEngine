@@ -51,7 +51,7 @@ GhostStateMask GhostObject::GetFullStateMask() const
 
 GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(bool& outNeedUpdate)
 {
-    m_StatesToRetransmit[targetPeerID].resize(m_GhostProperties.size());
+    m_StatesToRetransmit.resize(m_GhostProperties.size());
 
     GhostStateMask result = m_StatesToRetransmit;
 

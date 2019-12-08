@@ -47,7 +47,7 @@ public:
         m_GhostProperties.push_back(new GhostPropertyPOD<T>(property, authority, bitCount));
 
 #ifdef CLIENT
-        m_StatesToRetransmist.push_back(false);
+        m_StatesToRetransmit.push_back(false);
 #else
         m_StatesToBroadcast.push_back(false);
         for (auto& [peerID, stateMask] : m_StatesToRetransmit)
