@@ -212,5 +212,7 @@
     <ClInclude Include="win32platform.h" />
     <ClInclude Include="win32window.h" />
     <ClInclude Include="windowmanager.h" />
+    <ClInclude Include="movecontrolobject.h" />
+    <ClInclude Include="movestate.h" />
   </ItemGroup>
 </Project>

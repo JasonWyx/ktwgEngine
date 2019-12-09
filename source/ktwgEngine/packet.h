@@ -16,6 +16,7 @@ enum class PacketStatus
 struct Packet
 {
     PacketID m_ID = 0;
+    PeerID m_TargetPeerID = 0;
 
     bool m_HasMove = false;
     bool m_HasEvent = false;

@@ -323,6 +323,8 @@
     <ClInclude Include="math.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="matrix4.h" />
+    <ClInclude Include="movestate.h" />
+    <ClInclude Include="movecontrolobject.h" />
     <ClInclude Include="movemanager.h" />
     <ClInclude Include="netdefs.h" />
     <ClInclude Include="object.h" />
