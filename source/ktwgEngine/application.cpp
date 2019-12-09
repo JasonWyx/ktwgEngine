@@ -133,9 +133,9 @@ void Application::InitializeCoreSystems()
   // Initialize the instance of time
   Time::Initialize();
 
-  ConnectionManager::Initialize();
-
   StreamManager::Initialize();
+
+  ConnectionManager::Initialize();
 
 #ifdef CLIENT
   D3D11RenderAPI::Initialize();

@@ -6,9 +6,6 @@
 GhostManager::GhostManager()
     : m_GhostObjects()
 {
-#ifndef CLIENT
-    GenerateGhostIDs();
-#endif
 }
 
 GhostManager::~GhostManager()

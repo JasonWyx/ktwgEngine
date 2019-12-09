@@ -135,7 +135,9 @@ bool StreamManager::PackPacket(Packet& packet)
 
 void StreamManager::InitializeServer()
 {
-
+#ifndef CLIENT
+  m_GhostManager.GenerateGhostIDs();
+#endif
 }
 
 void StreamManager::ShutdownServer()

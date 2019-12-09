@@ -127,13 +127,23 @@ void ConnectionManager::ConnectToServer()
     mySocket.SetPort(port);
     mySocket.SetPlayer(std::stoi(playerID.c_str()));
     std::cout << "I am Player " << mySocket.GetPlayer() << std::endl;
-    // StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
+    StreamManager::GetInstance().SetPeerID(mySocket.GetPlayer());
   }
 }
 
 std::vector<int>& ConnectionManager::GetLostPacketIDs()
 {
   return lostPacketIDs;
+}
+
+void ConnectionManager::StoreAckPacketsIDs(int pktid, int p)
+{
+  ackPacketIDs[p].push_back(pktid);
+}
+
+std::map<int, std::vector<int>>& ConnectionManager::GetAckPacketIDs()
+{
+  return ackPacketIDs;
 }
 #else
 ConnectionManager::ConnectionManager()
@@ -201,7 +211,7 @@ void ConnectionManager::Update()
       playerActive[connectedPlayerID] = true;
       serverSockets.push_back(tmp);
       // inform upper level here
-      // StreamManager::GetInstance().CreatePeer(connectedPlayerID);
+      StreamManager::GetInstance().CreatePeer(connectedPlayerID);
     }
   }
 
@@ -211,7 +221,8 @@ void ConnectionManager::Update()
     ss.Update();
   }
 
-  for (auto it = serverSockets.begin(); it != serverSockets.end(); ++it)
+  auto ackIT = ackPacketIDs.begin();
+  for (auto it = serverSockets.begin(); it != serverSockets.end();)
   {
     int player = it->GetPlayer();
     if (it->GetShutdown())
@@ -223,7 +234,16 @@ void ConnectionManager::Update()
       // remove player here
       // inform upper level here
       playerActive[player] = false;
-      // StreamManager::GetInstance().RemovePeer(player);
+      ackIT = ackPacketIDs.erase(ackIT);
+      std::cout << "ackPacketIDs Size : " << ackPacketIDs.size() << ", Player IDs : ";
+      for (auto p : ackPacketIDs) std::cout << p.first << ", ";
+      std::cout << std::endl;
+      StreamManager::GetInstance().RemovePeer(player);
+    }
+    else
+    {
+      ++ackIT;
+      ++it;
     }
   }
 }
@@ -280,6 +300,15 @@ void ConnectionManager::StoreLostPacketsIDs(int pktid)
   lostPacketIDs.push_back(pktid);
 }
 
+void ConnectionManager::StoreAckPacketsIDs(int pktid, int p)
+{
+  ackPacketIDs[p].push_back(pktid);
+}
+
+std::map<int, std::vector<int>>& ConnectionManager::GetAckPacketIDs()
+{
+  return ackPacketIDs;
+}
 #endif
 
 void SocketWindowData::ReadACKS(const int& acks)
@@ -607,6 +636,7 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
         //std::cout << "DevRtt : " << devRTT << std::endl;
         //std::cout << "RTT : " << rtt << std::endl;
         timeTracker[i] = tmp;
+        ConnectionManager::GetInstance().StoreAckPacketsIDs(streamPktID, player);
       }
     }
     bit = bit << 1;
