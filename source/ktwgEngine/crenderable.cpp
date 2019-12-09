@@ -3,7 +3,7 @@
 #include "hypegraphicsworld.h"
 #include "hypematerial.h"
 #include "entity.h"
-#include "ghostobjectids.h"
+#include "componentids.h"
 
 CRenderable::CRenderable(Entity & entity, uint32_t id)
 :Component{typeid(CRenderable), entity, id}, m_GraphicObject{nullptr}, m_Instance{nullptr}

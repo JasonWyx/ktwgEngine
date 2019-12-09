@@ -10,7 +10,7 @@
 
 // Network
 #include "ghostobject.h"
-#include "ghostobjectids.h"
+#include "componentids.h"
 #include "streammanager.h"
 
 Entity::Entity(uint32_t id, const std::string& name)
@@ -183,7 +183,7 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
   // We will have to manually unpack the packet here then
   for (uint8_t i = 0; i < numEntries; ++i)
   {
-    ClassID classID;
+    ComponentID classID;
     bitstream >> classID;
     switch (classID)
     {

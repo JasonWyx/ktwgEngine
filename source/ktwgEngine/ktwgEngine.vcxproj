@@ -305,7 +305,7 @@
     <ClInclude Include="gameplaymanager.h" />
     <ClInclude Include="ghostmanager.h" />
     <ClInclude Include="ghostobject.h" />
-    <ClInclude Include="ghostobjectids.h" />
+    <ClInclude Include="componentids.h" />
     <ClInclude Include="ghostproperty.h" />
     <ClInclude Include="ghosttransmissionrecord.h" />
     <ClInclude Include="gjk.h" />

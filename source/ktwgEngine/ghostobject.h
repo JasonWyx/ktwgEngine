@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 #include "ghostproperty.h"
-#include "ghostobjectids.h"
 #include "netdefs.h"
 #include <vector>
 #include <type_traits>

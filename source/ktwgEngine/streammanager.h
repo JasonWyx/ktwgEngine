@@ -83,6 +83,6 @@ private:
     bool PackPacket(PeerID peerID, Packet& packet);
     std::map<PeerID, TransmissionInfo> m_PeerTransmissionInfos;
 #endif
+    void UnpackStream(const PeerID sourcePeerID, BitStream& stream);
 
-    void UnpackStream(BitStream& stream);
 };

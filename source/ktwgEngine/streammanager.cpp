@@ -54,7 +54,7 @@ void StreamManager::UpdateClient()
     {
         BitStream stream(message.size());
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
-        UnpackStream(stream);
+        UnpackStream(0, stream);
     }
 
     // Process outgoing packets
@@ -154,7 +154,7 @@ void StreamManager::UpdateServer()
     {
         BitStream stream(message.size());
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
-        UnpackStream(stream);
+        UnpackStream(0, stream); // todo: peerid here is stub for now until can get peerid from incoming messages
     }
     
     // Process outgoing packets
@@ -287,7 +287,7 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
 
 #endif
 
-void StreamManager::UnpackStream(BitStream& stream)
+void StreamManager::UnpackStream(const PeerID sourcePeerID, BitStream& stream)
 {
     bool hasMove = false;
     bool hasEvent = false;
@@ -297,7 +297,7 @@ void StreamManager::UnpackStream(BitStream& stream)
 
     if (hasMove)
     {
-        m_MoveManager.ReadStream(stream);
+        m_MoveManager.ReadStream(sourcePeerID, stream);
     }
 
     if (hasEvent)
