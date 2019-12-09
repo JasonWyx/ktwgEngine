@@ -7,7 +7,7 @@ enum MoveStateFlags
     Down,
     Left,
     Right,
-    Count
+    NbMoveStateFlags
 };
 
-using MoveState = std::array<bool, MoveStateFlags::Count>;
+using MoveState = std::array<bool, MoveStateFlags::NbMoveStateFlags>;

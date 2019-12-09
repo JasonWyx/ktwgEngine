@@ -1,5 +1,5 @@
 #pragma once
-#include <Windows.h>
+#include "win32_includes.h"
 #include <string>
 #include <cinttypes>
 

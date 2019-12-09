@@ -297,7 +297,7 @@ void StreamManager::UnpackStream(BitStream& stream)
 
     if (hasMove)
     {
-        m_MoveManager.ReadStream(stream);
+        //m_MoveManager.ReadStream(stream);
     }
 
     if (hasEvent)

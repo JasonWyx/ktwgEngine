@@ -35,7 +35,7 @@ private:
     std::queue<MoveState> m_MoveStateBuffer;
     MoveStateObject m_MoveStateObject;
 #else
-    std::map<PeerID, MoveStateObject> m_MoveStateObject
+    std::map<PeerID, MoveStateObject> m_MoveStateObject;
 #endif
 
 };

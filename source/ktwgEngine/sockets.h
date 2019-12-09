@@ -3,15 +3,9 @@
 
 #if _WIN32
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
+#include "win32_includes.h"
 
 #pragma comment(lib, "ws2_32.lib")
-
-#include <WinSock2.h>
-#include <Windows.h>
-#include <WS2tcpip.h>
 
 #else
 

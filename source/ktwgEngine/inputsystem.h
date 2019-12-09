@@ -2,7 +2,7 @@
 
 #include "singleton.h"
 #include "win32input.h"
-#include <windows.h>
+#include "win32platform.h"
 
 #define KEY_BUFFER_SIZE 256
 #define MOUSE_BUFFER_SIZE 3

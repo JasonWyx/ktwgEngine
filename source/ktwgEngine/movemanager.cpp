@@ -14,7 +14,7 @@ void MoveManager::ReadStream(const PeerID sourcePeerID, BitStream& stream)
 #ifdef CLIENT
     MoveState ackMoveState;
 
-    for (size_t i = 0; i < MoveStateFlags::Count; i++)
+    for (size_t i = 0; i < MoveStateFlags::NbMoveStateFlags; i++)
     {
         stream >> ackMoveState[i];
     }
@@ -25,7 +25,7 @@ void MoveManager::ReadStream(const PeerID sourcePeerID, BitStream& stream)
     }
 #else
     // Something about reading client input and moving control objects
-    for (size_t i = 0; i < MoveStateFlags::Count; i++)
+    for (size_t i = 0; i < MoveStateFlags::NbMoveStateFlags; i++)
     {
         stream >> m_MoveStateObject[sourcePeerID].m_MoveControlObject->m_MoveState[i];
     }
@@ -51,7 +51,7 @@ bool MoveManager::WritePacket(Packet& packet)
     }
 
     // Pack state into stream
-    for (size_t i = 0; i < MoveStateFlags::Count; i++)
+    for (size_t i = 0; i < MoveStateFlags::NbMoveStateFlags; i++)
     {
         packet.m_MoveStream << m_MoveStateObject.m_MoveStateCache[i];
     }
@@ -85,7 +85,7 @@ bool MoveManager::WritePacket(Packet& packet)
         }
 
         // Pack state into stream
-        for (size_t i = 0; i < MoveStateFlags::Count; i++)
+        for (size_t i = 0; i < MoveStateFlags::NbMoveStateFlags; i++)
         {
             packet.m_MoveStream << moveStateObject.m_MoveStateCache[i];
         }

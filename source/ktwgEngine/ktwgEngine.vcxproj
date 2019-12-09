@@ -169,6 +169,9 @@
     <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
     <ClCompile Include="ccamera.cpp" />
+    <ClCompile Include="clientmovecontroller.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="collisionevent.cpp" />
     <ClCompile Include="collisionfunctions.cpp" />
     <ClCompile Include="component.cpp" />
@@ -214,10 +217,18 @@
     <ClCompile Include="hypesimpleforwardrendernode.cpp" />
     <ClCompile Include="hypesimplemesh.cpp" />
     <ClCompile Include="imguimanager.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\imgui.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="island.cpp" />
     <ClCompile Include="ktwgbehaviour.cpp" />
@@ -261,6 +272,7 @@
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="ccamera.h" />
+    <ClInclude Include="clientmovecontroller.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="collisionevent.h" />
     <ClInclude Include="collisioneventtype.h" />
@@ -331,12 +343,24 @@
     <ClInclude Include="gamerenderable.h" />
     <ClInclude Include="gamerenderer.h" />
     <ClInclude Include="imguimanager.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="imgui\imconfig.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="packet.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="physicsconstants.h" />
@@ -370,6 +394,7 @@
     <ClInclude Include="win32input.h" />
     <ClInclude Include="win32platform.h" />
     <ClInclude Include="win32window.h" />
+    <ClInclude Include="win32_includes.h" />
     <ClInclude Include="windowmanager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
