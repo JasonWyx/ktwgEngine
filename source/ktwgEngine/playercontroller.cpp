@@ -1,8 +1,13 @@
 #include "playercontroller.h"
 #include "time.h"
-#include "inputsystem.h"
 #include "bulletpool.h"
 #include "bulletbehaviourscript.h"
+
+#if SERVER
+#include "streammanager.h"
+#else
+#include "inputsystem.h"
+#endif
 
 PlayerController::PlayerController(Entity& entity)
   : Behaviour{ typeid(PlayerController), entity }
@@ -15,6 +20,9 @@ PlayerController::PlayerController(Entity& entity)
 
 PlayerController::~PlayerController()
 {
+#if SERVER
+  StreamManager::GetInstance().GetMoveManager().UnregisterMoveObject(m_PeerID);
+#endif
 }
 
 
@@ -34,10 +42,19 @@ void PlayerController::Update()
   UpdateMovement();
 }
 
+#if SERVER
+void PlayerController::CreateMoveControlObject()
+{
+  StreamManager::GetInstance().GetMoveManager().RegisterMoveObject(m_PeerID, &m_ControlObject);
+}
+#endif
+
 void PlayerController::UpdateAction()
 {
+#if CLIENT
   if (Input().OnKeyPress(KTWG_SPACE))
     Fire();
+#endif
 }
 
 void PlayerController::UpdateMovement()
@@ -48,6 +65,7 @@ void PlayerController::UpdateMovement()
   Quaternion rotation;
   m_DirectionFlag = 0;
 
+#if CLIENT
   if (Input().OnKeyDown(KTWG_UP))
     m_DirectionFlag |= DIR_UP;
   if (Input().OnKeyDown(KTWG_DOWN))
@@ -56,6 +74,16 @@ void PlayerController::UpdateMovement()
     m_DirectionFlag |= DIR_LEFT;
   if (Input().OnKeyDown(KTWG_RIGHT))
     m_DirectionFlag |= DIR_RIGHT;
+#else
+  if(m_ControlObject.m_MoveState[MoveStateFlags::Up])
+    m_DirectionFlag |= DIR_UP;
+  if (m_ControlObject.m_MoveState[MoveStateFlags::Down])
+    m_DirectionFlag |= DIR_DOWN;
+  if (m_ControlObject.m_MoveState[MoveStateFlags::Left])
+    m_DirectionFlag |= DIR_LEFT;
+  if (m_ControlObject.m_MoveState[MoveStateFlags::Right])
+    m_DirectionFlag |= DIR_RIGHT;
+#endif
 
   if (m_DirectionFlag == 0)
     rotation = GetTransform().GetRotation();

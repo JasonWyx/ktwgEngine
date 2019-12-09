@@ -1,6 +1,9 @@
 #pragma once
 
 #include "behaviour.h"
+#if SERVER
+#include "movecontrolobject.h"
+#endif
 
 class PlayerController : public Behaviour
 {
@@ -27,6 +30,13 @@ public:
   void Start() override;
   void Update() override;
 
+#if SERVER
+  // Set PeerID should only be called once! and should precede the call to CreateMoveControlObject on the server
+  void CreateMoveControlObject();
+  void SetPeerID(PeerID peerID) { m_PeerID = peerID; }
+  PeerID GetPeerID() const { return m_PeerID; }
+#endif
+
 private:
   void UpdateAction();
   void UpdateMovement();
@@ -39,4 +49,9 @@ private:
 
   Vec3 m_Directions[PD_MAX];
   uint8_t m_DirectionFlag;
+
+#if SERVER
+  PeerID m_PeerID;
+  MoveControlObject m_ControlObject;
+#endif
 };
