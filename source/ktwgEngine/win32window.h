@@ -1,4 +1,5 @@
 #pragma once
+#define _WINSOCKAPI_
 #include <Windows.h>
 #include <string>
 #include <cinttypes>

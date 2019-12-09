@@ -169,6 +169,7 @@
     <ClCompile Include="cbehaviour.cpp" />
     <ClCompile Include="cboxcollider.cpp" />
     <ClCompile Include="ccamera.cpp" />
+    <ClCompile Include="clientmovecontroller.cpp" />
     <ClCompile Include="collisionevent.cpp" />
     <ClCompile Include="collisionfunctions.cpp" />
     <ClCompile Include="component.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="cbehaviour.h" />
     <ClInclude Include="cboxcollider.h" />
     <ClInclude Include="ccamera.h" />
+    <ClInclude Include="clientmovecontroller.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="collisionevent.h" />
     <ClInclude Include="collisioneventtype.h" />
@@ -370,6 +372,7 @@
     <ClInclude Include="win32input.h" />
     <ClInclude Include="win32platform.h" />
     <ClInclude Include="win32window.h" />
+    <ClInclude Include="win32_includes.h" />
     <ClInclude Include="windowmanager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
