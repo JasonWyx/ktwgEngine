@@ -433,6 +433,11 @@ void GhostManager::ReplicateToServer(GhostID ghostID)
 
 #else
 
+void GhostManager::CreatePeer(PeerID peerID)
+{
+    m_PackingInfo.try_emplace(peerID, PackingInfo{});
+}
+
 void GhostManager::ReplicateForAllPeer(GhostID ghostID)
 {
     for (auto& [peerID, packingInfo] : m_PackingInfo)
