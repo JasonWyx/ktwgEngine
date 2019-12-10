@@ -313,7 +313,9 @@ void StreamManager::UnpackStream(const PeerID sourcePeerID, BitStream& stream)
 
 void StreamManager::InitializeInternal()
 {
- 
+#ifndef CLIENT
+  m_GhostManager.GenerateGhostIDs();
+#endif
 }
 
 void StreamManager::ShutdownInternal()

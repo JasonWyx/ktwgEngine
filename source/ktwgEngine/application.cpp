@@ -30,6 +30,47 @@ void Application::InitializeInternal()
   LateInitialize();
 }
 
+void Application::InitializeCoreSystems()
+{
+  // Initialize the instance of time
+  Time::Initialize();
+
+  ConnectionManager::Initialize();
+
+  StreamManager::Initialize();
+
+#ifdef CLIENT
+  D3D11RenderAPI::Initialize();
+  D3D11RenderWindowManager::Initialize();
+#endif
+
+  InputSystem::Initialize(::GetCapture());
+
+  Physics::Initialize();
+
+  KTWGBehaviour::Initialize();
+
+  GameplayManager::Initialize();
+}
+
+void Application::InitializeResources()
+{
+#ifdef CLIENT
+  HypeRenderer::LoadSystemShaders();
+  HypeRenderer::CreateCommonResources();
+#endif
+}
+
+void Application::LateInitialize()
+{
+#ifdef CLIENT
+  HypeRenderer::Initialize();
+#else
+  HypeGraphicsWorld::Initialize();
+#endif
+  Scene::Initialize();
+}
+
 void Application::ShutdownInternal()
 {
   Scene::Shutdown();
@@ -126,45 +167,4 @@ void Application::Run()
 #endif
     inputSys.PostUpdate();
   }
-}
-
-void Application::InitializeCoreSystems()
-{
-  // Initialize the instance of time
-  Time::Initialize();
-
-  ConnectionManager::Initialize();
-
-  StreamManager::Initialize();
-
-#ifdef CLIENT
-  D3D11RenderAPI::Initialize();
-  D3D11RenderWindowManager::Initialize();
-#endif
-
-  InputSystem::Initialize(::GetCapture());
-
-  Physics::Initialize();
-
-  KTWGBehaviour::Initialize();
-
-  GameplayManager::Initialize();
-}
-
-void Application::InitializeResources()
-{
-#ifdef CLIENT
-  HypeRenderer::LoadSystemShaders();
-  HypeRenderer::CreateCommonResources();
-#endif
-}
-
-void Application::LateInitialize()
-{
-#ifdef CLIENT
-  HypeRenderer::Initialize();
-#else
-  HypeGraphicsWorld::Initialize();
-#endif
-  Scene::Initialize();
 }
