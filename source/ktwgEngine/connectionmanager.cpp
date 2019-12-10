@@ -3,6 +3,7 @@
 #include <vector>
 #include "windowmanager.h"
 #include "streammanager.h"
+#include "SocketAddressFactory.h"
 
 #define SERVERIP "127.0.0.1" // localhost
 #define PORT 6666 // Port for listen to get new port
@@ -20,7 +21,8 @@ ConnectionManager::~ConnectionManager()
 
 void ConnectionManager::Update()
 {
-  SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  SocketAddressFactory::CreateIPv4FromString("127.0.0.1", "6666");
+  SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
   mySocket.Update();
 }
 
@@ -66,7 +68,7 @@ void ConnectionManager::ShutdownInternal()
 
 void ConnectionManager::ConnectToServer()
 {
-  SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
 
   // create udp socket
   UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
@@ -85,7 +87,7 @@ void ConnectionManager::ConnectToServer()
   ZeroMemory(buf, BUFLEN);
 
   // setup out address structure
-  SocketAddress outserver{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  SocketAddress outserver{ AF_INET, inet_addr(SERVERIP), PORT };
 
   // receive message of new port
   int msgSize = 0;
@@ -159,7 +161,7 @@ ConnectionManager::~ConnectionManager()
 
 void ConnectionManager::Update()
 {
-  SocketAddress client{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  SocketAddress client{ AF_INET, inet_addr(SERVERIP), PORT };
   ZeroMemory(buffer, BUFLEN);
   if (hostSocket->ReceiveFrom(buffer, BUFLEN, client) > 0)
   {
@@ -199,7 +201,7 @@ void ConnectionManager::Update()
     {
       UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
       s->SetBlockingMode(1);
-      SocketAddress newServer{ AF_INET, inet_addr(SERVERIP), htons(newPort) };
+      SocketAddress newServer{ AF_INET, inet_addr(SERVERIP), newPort };
       s->Bind(newServer);
       SocketWindowData tmp;
       tmp.Init();
@@ -250,8 +252,8 @@ void ConnectionManager::Update()
 void ConnectionManager::InitializeInternal()
 {
   // setup address structure
-  // SocketAddress server{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
-  SocketAddress server{ AF_INET, INADDR_ANY, htons(PORT) };
+  // SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
+  SocketAddress server{ AF_INET, INADDR_ANY, PORT };
 
   hostSocket = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
   hostSocket->SetBlockingMode(1);
@@ -372,7 +374,7 @@ void SocketWindowData::DeliverMessage()
 
   unsigned char startPkt = sentPkt - cumulativePktsSent;
   int currWindowSize = windowSize - cumulativePktsSent;
-  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), htons(sPort) };
+  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), sPort };
 
   while (currWindowSize != 0)
   {
@@ -407,7 +409,7 @@ void SocketWindowData::ReceiveMessage()
 {
   char buffer[BUFLEN];
   ZeroMemory(buffer, BUFLEN);
-  SocketAddress sender{ AF_INET, inet_addr(SERVERIP), htons(PORT) };
+  SocketAddress sender{ AF_INET, inet_addr(SERVERIP), PORT };
   int res = 0;
   while ((res = socket->ReceiveFrom(buffer, BUFLEN, sender)) > 0)
   {
@@ -726,7 +728,7 @@ void SocketWindowData::ShutdownMessage()
   while(!msgQueue.empty())
     msgQueue.pop();
   std::string s = "shutdown";
-  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), htons(sPort) };
+  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), sPort };
   socket->SendTo(s.c_str(), s.size(), reciever);
 }
 
