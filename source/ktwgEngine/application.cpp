@@ -68,6 +68,7 @@ void Application::LateInitialize()
   StreamManager::GetInstance().GetGhostManager().GenerateGhostIDs();
   HypeRenderer::Initialize();
 #else
+  StreamManager::GetInstance().GetGhostManager().GenerateGhostIDs();
   HypeGraphicsWorld::Initialize();
 #endif
   Scene::Initialize();
