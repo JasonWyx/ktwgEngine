@@ -127,6 +127,7 @@ GhostStateMask GhostObject::GetStateMaskAndCheckNeedUpdate(const PeerID targetPe
 
         if (authority == NetAuthority::Server && m_GhostProperties[i]->IsPropertyChanged())
         {
+            outNeedUpdate = true;
             result[i] = true;
         }
     }

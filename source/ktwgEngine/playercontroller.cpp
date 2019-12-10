@@ -12,10 +12,10 @@
 PlayerController::PlayerController(Entity& entity)
   : Behaviour{ typeid(PlayerController), entity }
 {
-  m_Directions[PD_FORWARD] = Vec3{ 0.0f, 0.0f, 1.0f };
-  m_Directions[PD_BACKWARD] = Vec3{ 0.0f, 0.0f, -1.0f };
-  m_Directions[PD_LEFT] = Vec3{ -1.0f, 0.0f, 0.0f };
-  m_Directions[PD_RIGHT] = Vec3{ 1.0f, 0.0f, 0.0f };
+  m_Directions[PD_FORWARD] = Vec3{ 0.0f, 0.0f, 10.0f };
+  m_Directions[PD_BACKWARD] = Vec3{ 0.0f, 0.0f, -10.0f };
+  m_Directions[PD_LEFT] = Vec3{ -10.0f, 0.0f, 0.0f };
+  m_Directions[PD_RIGHT] = Vec3{ 10.0f, 0.0f, 0.0f };
 }
 
 PlayerController::~PlayerController()

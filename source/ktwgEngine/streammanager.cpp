@@ -58,6 +58,8 @@ void StreamManager::UpdateClient()
         UnpackStream(0, stream);
     }
 
+    incomingMessages.clear();
+
     // Process outgoing packets
     bool isDonePacking = false;
 
@@ -156,6 +158,8 @@ void StreamManager::UpdateServer()
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
         UnpackStream(0, stream); // todo: peerid here is stub for now until can get peerid from incoming messages
     }
+
+    incomingMessages.clear();
     
     // Process outgoing packets
     std::map<PeerID, bool> isDonePacking;
