@@ -5,7 +5,7 @@
 #include "streammanager.h"
 #include "SocketAddressFactory.h"
 
-#define SERVERIP "10.83.33.82" // localhost
+#define SERVERIP "localhost" // localhost
 #define PORT 8888 // Port for listen to get new port
 #define PORTSTR "8888"
 
@@ -100,8 +100,9 @@ void ConnectionManager::ConnectToServer()
   }
   else
   {
-    // std::string message = "Hello Server";
+    std::string message = "Hello Server";
 
+	// ConnectionManager::GetInstance().AddPacket(message, -1);
     // mySocket.AddMessage(message);
 
     std::string portMsg;
@@ -284,7 +285,7 @@ void ConnectionManager::AddPacket(std::string msg, int pktid, int player)
 {
   for (auto start = serverSockets.begin(); start != serverSockets.end(); ++start)
   {
-    if (player = start->GetPlayer())
+    if (player == start->GetPlayer())
     {
       start->AddMessage(msg);
       start->AddStreamPktID(pktid);
@@ -376,7 +377,9 @@ void SocketWindowData::DeliverMessage()
 
   unsigned char startPkt = sentPkt - cumulativePktsSent;
   int currWindowSize = windowSize - cumulativePktsSent;
-  SocketAddress reciever{ AF_INET, ntohl(inet_addr(SERVERIP)), sPort };
+  SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
+
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
 
   while (currWindowSize != 0)
   {
@@ -391,7 +394,7 @@ void SocketWindowData::DeliverMessage()
       streamIDQueue.pop();
     }
     message = PacketMessage(message, startPkt);
-    socket->SendTo(message.c_str(), message.size(), reciever);
+    socket->SendTo(message.c_str(), message.size(), *sockAddr);
     --currWindowSize;
     float timeOut = rtt + 4 * devRTT;
     timeOut = timeOut < 1.f ? 1.f : timeOut;
@@ -451,9 +454,13 @@ void SocketWindowData::ReceiveMessage()
       ", Acks : " << Acks << " Message : " << msg << std::endl;
 
 
-    // if (msg == "Hello Server")
-    //   AddMessage(std::string("Hello Client"));
-    // else AddMessage("Hello Server");
+#ifdef CLIENT
+	// ConnectionManager::GetInstance().AddPacket("Hello Server", -1);
+	// AddMessage("Hello Server");
+#else
+	// ConnectionManager::GetInstance().AddPacket("Hello Client", -1, player);
+	// AddMessage("Hello Client");
+#endif
 
     // End of Debugging
 
