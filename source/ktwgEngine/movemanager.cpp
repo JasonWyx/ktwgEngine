@@ -36,19 +36,24 @@ bool MoveManager::WritePacket(Packet& packet)
 {
 #ifdef CLIENT
     // Packet has been sent 3 times and move buffer not empty
-    if ((m_MoveStateObject.m_PacketCount % 3 == 0) && !m_MoveStateBuffer.empty())
+    if (m_MoveStateObject.m_PacketCount >= 3)
     {
+      if (!m_MoveStateBuffer.empty())
+      {
         if (m_MoveStateObject.m_MoveStateCache != m_MoveStateBuffer.front())
         {
-            m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
+          m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
             m_MoveStateObject.m_PacketCount = 0;
         }
-    }
-    else
-    {
+        m_MoveStateBuffer.pop();
+      }
+      else
+      {
         // No pending moves, successfully packed nothing
         return true;
+      }
     }
+
 
     // Pack state into stream
     for (size_t i = 0; i < MoveStateFlags::Count; i++)
@@ -59,10 +64,6 @@ bool MoveManager::WritePacket(Packet& packet)
     if (m_MoveStateObject.m_PacketCount++ < 3)
     {
         return false;
-    }
-    else if(!m_MoveStateBuffer.empty())
-    {
-        m_MoveStateBuffer.pop();
     }
 #else
     // For each peer, check for state change and send acknowledgement when move state changes

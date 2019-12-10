@@ -84,7 +84,7 @@ void GhostManager::ReadStream(BitStream& stream)
         else
         {
             // Object not found. Perhaps not created yet?
-            assert(false);
+            // assert(false);
         }
 
         countObjectsInPacket--;

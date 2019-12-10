@@ -28,7 +28,7 @@ private:
     {
         MoveControlObject* m_MoveControlObject;
         MoveState m_MoveStateCache;
-        unsigned m_PacketCount;
+        unsigned m_PacketCount = 3;
     };
 
 #ifdef CLIENT
