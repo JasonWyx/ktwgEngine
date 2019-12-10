@@ -142,6 +142,7 @@ void Entity::MarkEntityForGhost()
   m_GhostObject = new GhostObject{};
   m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
   m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
+  m_GhostObject->SetOwner(this);
   m_IsGhost = false;
 
   // When we mark an entity for ghost we also need to set all its properties
@@ -160,6 +161,7 @@ void Entity::MarkEntityAsGhost(GhostID ghostId)
   // The difference is that this ghost is not owned by this peer
   m_GhostObject = new GhostObject{};
   m_GhostObject->SetGhostID(ghostId);
+  m_GhostObject->SetOwner(this);
   m_IsGhost = true;
 }
 
@@ -258,8 +260,11 @@ void Entity::ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStrea
     bitstream << m_Name[i];
   }
 
+  uint32_t propertyCount = m_GhostObject->GetPropertyCount();
+
   bitstream << (uint8_t)m_GhostObject->GetPropertyCount();
 
+  
   // Write every property into the stream since it's a fresh replicate
   m_GhostObject->WriteStream(targetPeerID, bitstream, m_GhostObject->GetFullStateMask());
 }

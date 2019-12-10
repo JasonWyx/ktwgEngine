@@ -2,6 +2,7 @@
 #include "ghostmanager.h"
 #include "ghosttransmissionrecord.h"
 #include "streammanager.h"
+#include "entity.h"
 #include <cassert>
 
 GhostObject::GhostObject()
@@ -156,6 +157,18 @@ void GhostObject::WriteStream(const PeerID targetPeerID, BitStream & stream, con
             m_StatesToRetransmit[targetPeerID][i] = false;
         }
     }
+}
+#endif
+
+#if CLIENT
+void GhostObject::ReplicateGhostObjectToBitstream(BitStream & bitstream)
+{
+  m_Owner->ReplicateGhostObjectToBitstream(bitstream);
+}
+#else
+void GhostObject::ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStream & bitstream)
+{
+  m_Owner->ReplicateGhostObjectToBitstream(targetPeerID, bitstream);
 }
 #endif
 

@@ -208,9 +208,9 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 
             // jason todo: here we should call the custom function from scene to pack object creation stuff into the packet
 #ifdef CLIENT
-            ghostObject->WriteStream(packingInfo.m_CachedObjectStream, stateMask);
+            ghostObject->ReplicateGhostObjectToBitstream(packingInfo.m_CachedObjectStream);
 #else
-            ghostObject->WriteStream(tr.m_TargetPeerID, packingInfo.m_CachedObjectStream, stateMask);
+            ghostObject->ReplicateGhostObjectToBitstream(tr.m_TargetPeerID, packingInfo.m_CachedObjectStream);
 #endif
         }
         else if (packingInfo.m_GhostsToDelete.find(ghostID) != packingInfo.m_GhostsToDelete.end())

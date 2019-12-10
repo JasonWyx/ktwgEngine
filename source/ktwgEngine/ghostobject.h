@@ -6,6 +6,7 @@
 #include <type_traits>
 
 using GhostID = unsigned short;
+class Entity;
 
 struct GhostTransmissionRecord;
 
@@ -36,9 +37,18 @@ public:
     void WriteStream(const PeerID targetPeerID, BitStream& stream, const GhostStateMask& stateMask);
 #endif
 
+#if CLIENT
+    void ReplicateGhostObjectToBitstream(BitStream& bitstream);
+#else
+    void ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStream & bitstream);
+#endif
+
     void ReadStream(BitStream& stream, const GhostStateMask& stateMask);
     void SyncProperties();
     bool IsOwner();
+
+    void SetOwner(Entity* owner) { m_Owner = owner; }
+    Entity* GetOwner() const { return m_Owner; }
 
     template<typename T>
     void RegisterPropertyPOD(T& property, NetAuthority authority, size_t bitCount = sizeof(T) * 8)
@@ -62,7 +72,7 @@ public:
     }
 
 private:
-
+    Entity* m_Owner;
     PeerID m_PeerID;
     GhostID m_GhostID;
     std::vector<GhostProperty*> m_GhostProperties;
