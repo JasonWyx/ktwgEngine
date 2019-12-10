@@ -6,7 +6,7 @@
 #include "SocketAddressFactory.h"
 
 #define SERVERIP "127.0.0.1" // localhost
-#define PORT 6666 // Port for listen to get new port
+#define PORT 8888 // Port for listen to get new port
 
 #ifdef CLIENT
 
@@ -70,6 +70,8 @@ void ConnectionManager::ConnectToServer()
 {
   SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
 
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString("127.0.0.1", "8888");
+
   // create udp socket
   UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
 
@@ -78,7 +80,7 @@ void ConnectionManager::ConnectToServer()
   
 
   // send the message
-  if (s->SendTo(message.c_str(), message.size(), server) < 0)
+  if (s->SendTo(message.c_str(), message.size(), *sockAddr) < 0)
   {
     std::cout << "Fail Send To" << std::endl;
   }
@@ -201,7 +203,7 @@ void ConnectionManager::Update()
     {
       UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
       s->SetBlockingMode(1);
-      SocketAddress newServer{ AF_INET, inet_addr(SERVERIP), newPort };
+      SocketAddress newServer{ AF_INET, INADDR_ANY, newPort };
       s->Bind(newServer);
       SocketWindowData tmp;
       tmp.Init();
