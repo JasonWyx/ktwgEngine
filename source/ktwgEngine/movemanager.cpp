@@ -115,7 +115,7 @@ void MoveManager::DropData()
 void MoveManager::PushMoveState(const MoveState& moveState)
 {
     // Don't need to dupliate moves
-    if (m_MoveStateBuffer.back() != moveState)
+    if (m_MoveStateBuffer.empty() || m_MoveStateBuffer.back() != moveState)
     {
         m_MoveStateBuffer.push(moveState);
     }
