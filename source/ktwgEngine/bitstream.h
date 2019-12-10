@@ -19,9 +19,9 @@ public:
 
     BitStream();
     BitStream(size_t bytes);
-    BitStream(const char* data, size_t length);
-    BitStream(const std::vector<char>& data);
-    BitStream(std::vector<char>&& data);
+    BitStream(const uint8_t* data, size_t length);
+    BitStream(const std::vector<uint8_t>& data);
+    BitStream(std::vector<uint8_t>&& data);
     ~BitStream() = default;
 
     // Declare default copy/move constructors/assignments
@@ -30,8 +30,8 @@ public:
     BitStream& operator=(const BitStream&) = default;
     BitStream& operator=(BitStream&&) = default;
 
-    char* GetData()                 { return m_Buffer.data(); }
-    const char* GetData() const     { return m_Buffer.data(); }
+    uint8_t* GetData()                 { return m_Buffer.data(); }
+    const uint8_t* GetData() const     { return m_Buffer.data(); }
     size_t GetBitLength() const     { return m_Buffer.size() * ByteToBits; }
     size_t GetByteLength() const    { return m_Buffer.size(); }
     size_t GetBitPosition() const   { return m_BitPosition; }
@@ -57,7 +57,7 @@ private:
 
     static constexpr size_t ByteToBits = 8;
 
-    std::vector<char> m_Buffer;
+    std::vector<uint8_t> m_Buffer;
     size_t m_BitPosition;
 
 };
@@ -90,7 +90,7 @@ BitStream& BitStream::operator<<(const T& value)
     const size_t shiftLeft = ByteToBits - shiftRight;
 
     // +1 to allow for bit overlap
-    char data[sizeof(T) + 1] = { };
+    uint8_t data[sizeof(T) + 1] = { };
 
     std::memcpy(static_cast<void*>(&data[1]), static_cast<const void*>(&value), sizeof(T));
 
@@ -183,7 +183,7 @@ BitStream& BitStream::operator>>(T& output)
     }
     else
     {
-        char data[sizeof(T) + 1] = { };
+        uint8_t data[sizeof(T) + 1] = { };
 
         std::memcpy(static_cast<void*>(data), static_cast<void*>(&m_Buffer[offset]), sizeof(data));
 
