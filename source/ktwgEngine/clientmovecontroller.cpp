@@ -24,7 +24,7 @@ void ClientMoveController::Update()
 {
 #if CLIENT
   MoveState moveState;
-  bool setThisFrame = false;
+  moveState.fill(false);
 
   if (Input().OnKeyDown(KTWG_UP))
   {
