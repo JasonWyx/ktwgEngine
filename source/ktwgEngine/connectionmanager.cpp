@@ -7,6 +7,7 @@
 
 #define SERVERIP "127.0.0.1" // localhost
 #define PORT 8888 // Port for listen to get new port
+#define PORTSTR "8888"
 
 #ifdef CLIENT
 
@@ -21,7 +22,6 @@ ConnectionManager::~ConnectionManager()
 
 void ConnectionManager::Update()
 {
-  SocketAddressFactory::CreateIPv4FromString("127.0.0.1", "6666");
   SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
   mySocket.Update();
 }
@@ -70,7 +70,7 @@ void ConnectionManager::ConnectToServer()
 {
   SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
 
-  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString("127.0.0.1", "8888");
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, PORTSTR);
 
   // create udp socket
   UDPSocketPtr s = SocketUtility::CreateUDPSocket(SocketAddressFamily::IPv4);
@@ -225,7 +225,7 @@ void ConnectionManager::Update()
   }
 
   auto ackIT = ackPacketIDs.begin();
-  for (auto it = serverSockets.begin(); it != serverSockets.end();)
+  for (auto it = serverSockets.begin(); ackIT != ackPacketIDs.end() && it != serverSockets.end();)
   {
     int player = it->GetPlayer();
     if (it->GetShutdown())
