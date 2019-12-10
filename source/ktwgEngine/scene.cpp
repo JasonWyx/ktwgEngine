@@ -47,6 +47,39 @@ void Scene::CreateGhostEntity(BitStream & stream)
   entity->ReplicateGhostObjectFromBitstream(stream);
 }
 
+void Scene::CreateNewPlayer()
+{
+#if SERVER
+  {
+    // Player
+    Entity* player = m_GameScene->AddChild();
+    player->SetName("Player");
+
+    Transform& groundTF = player->GetTransform();
+    groundTF.SetPosition(Vec3{ 0.f, 2.0f, 0.0f });
+    groundTF.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });
+
+    CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
+    playerRB.SetBodyType(RBT_DYNAMIC);
+    playerRB.SetFreezeRotationX(true);
+    playerRB.SetFreezeRotationZ(true);
+
+    CBoxCollider& boxABC = player->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
+
+    CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable.SetGraphicObject("Cube");
+    renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
+
+    // CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    // playerBeh.Bind<PlayerController>();
+
+    player->MarkEntityForGhost();
+    StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(player->GetGhostObject()->GetGhostID());
+  }
+#endif
+}
+
 void Scene::InitializeInternal()
 {
   m_GameScene = Entity::CreateEntity("Scene");
@@ -65,34 +98,6 @@ void Scene::InitializeInternal()
     CCamera& cameraCam = camera->AddComponent(CT_CAMERA)->Get<CCamera>();
     CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     camBeh.Bind<CameraBehaviour>();
-  }
-
-  {
-    // Player
-    Entity* player = m_GameScene->AddChild();
-    player->SetName("Player");
-
-    Transform& groundTF = player->GetTransform();
-    groundTF.SetPosition(Vec3{0.f, 2.0f, 0.0f});
-    groundTF.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });
-
-    CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
-    playerRB.SetBodyType(RBT_DYNAMIC);
-    playerRB.SetFreezeRotationX(true);
-    playerRB.SetFreezeRotationZ(true);
-
-    CBoxCollider& boxABC = player->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
-
-    CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
-    renderable.SetGraphicObject("Cube");
-    renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
-
-    CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
-    playerBeh.Bind<PlayerController>();
-
-    // player->MarkEntityForGhost();
-    // StreamManager::GetInstance().GetGhostManager().ReplicateToServer(player->GetGhostObject()->GetGhostID());
   }
 #endif
 }

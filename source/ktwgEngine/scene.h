@@ -17,6 +17,9 @@ public:
   Entity* FindEntityByName(const std::string& name);
 
   void CreateGhostEntity(BitStream& stream);
+#if SERVER
+  void CreateNewPlayer();
+#endif
 
 private:
 	virtual void InitializeInternal() override;

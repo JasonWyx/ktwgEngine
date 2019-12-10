@@ -1,4 +1,5 @@
 #include "streammanager.h"
+#include "scene.h"
 #include <cassert>
 
 StreamManager::StreamManager()
@@ -215,6 +216,8 @@ void StreamManager::CreatePeer(PeerID peerID)
     }
 
     m_PeerTransmissionInfos.try_emplace(peerID);
+    // Add a player into the scene
+    Scene::GetInstance().CreateNewPlayer();
 }
 
 void StreamManager::RemovePeer(PeerID peerID)
