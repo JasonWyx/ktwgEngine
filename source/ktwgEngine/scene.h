@@ -4,6 +4,7 @@
 #include <string>
 #include "singleton.h"
 #include "bitstream.h"
+#include "netdefs.h"
 
 class Entity;
 

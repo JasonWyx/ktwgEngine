@@ -76,8 +76,9 @@ void Scene::CreateNewPlayer(PeerID peerID)
 
     CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     playerBeh.Bind<PlayerController>();
-    playerBeh.Get<PlayerController>().SetPeerID(peerID);
-    playerBeh.Get<PlayerController>().CreateMoveControlObject();
+    PlayerController* playerController = (PlayerController*)playerBeh.GetInternal();
+    playerController->SetPeerID(peerID);
+    playerController->CreateMoveControlObject();
 
     player->MarkEntityForGhost();
     StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(player->GetGhostObject()->GetGhostID());
