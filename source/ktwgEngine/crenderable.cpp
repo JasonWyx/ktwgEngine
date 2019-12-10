@@ -85,7 +85,7 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
 {
   // ALWAYS PREFIX WITH CLASSID FOR COMPONENT AND COMPONENTTYPE DON'T NEED TO READ THIS BACK
   stream << CI_Component;
-  stream << (int)GetType();
+  stream << GetType();
 
   bool hasOverrideMaterial = m_Instance->HasOverrideMaterial();
   stream << hasOverrideMaterial;

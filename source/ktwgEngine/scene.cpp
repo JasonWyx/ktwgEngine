@@ -70,7 +70,7 @@ void Scene::CreateNewPlayer()
     CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.5f, 0.25f, 0.25f, 1.0f);
+    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
 
     // CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     // playerBeh.Bind<PlayerController>();
