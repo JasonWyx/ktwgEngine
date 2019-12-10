@@ -58,7 +58,7 @@ void Scene::CreateNewPlayer()
 
     Transform& groundTF = player->GetTransform();
     groundTF.SetPosition(Vec3{ 0.f, 2.0f, 0.0f });
-    groundTF.SetScale(Vec3{ 1.0f, 1.0f, 1.0f });
+    groundTF.SetScale(Vec3{ 10.0f, 10.0f, 10.0f });
 
     CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
     playerRB.SetBodyType(RBT_DYNAMIC);
