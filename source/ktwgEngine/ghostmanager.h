@@ -31,6 +31,7 @@ public:
 #ifdef CLIENT
     void ReplicateToServer(GhostID ghostID);
 #else
+    void CreatePeer(PeerID peerID);
     void ReplicateForAllPeer(GhostID ghostID);
     void UnreplicateForAllPeer(GhostID ghostID);
     void ReplicateForPeer(PeerID targetPeerID, GhostID ghostID);
@@ -50,7 +51,7 @@ private:
         unsigned m_LastPackedIndex;
         BitStream m_CachedObjectStream;
         GhostTransmissionRecord m_CachedTransmissionRecord;
-        bool m_IsDonePacking;
+        bool m_IsDonePacking = true;
 
         std::set<GhostID> m_GhostsToCreate;
         std::set<GhostID> m_GhostsToDelete; 

@@ -48,7 +48,10 @@ BitStream& BitStream::operator+=(const BitStream& rhs)
     {
         std::vector<uint8_t> tmp = rhs.m_Buffer;
 
-        m_Buffer.back() |= tmp.front() >> shiftLeft;
+        if (!m_Buffer.empty())
+        {
+            m_Buffer.back() |= tmp.front() >> shiftLeft;
+        }
 
         for (size_t i = 0; i < tmp.size(); i++)
         {

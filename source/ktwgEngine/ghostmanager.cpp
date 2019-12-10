@@ -1,5 +1,6 @@
 #include "ghostmanager.h"
 #include "streammanager.h"
+#include "scene.h"
 #include <algorithm>
 #include <cassert>
 
@@ -58,7 +59,10 @@ void GhostManager::ReadStream(BitStream& stream)
                 // jason todo: create object here with m_IsLocalOwner set to false in ghost object so
                 // that local client does not send updates to server for broadcast
 				
-				// read data here and send to scene to create
+				        // read data here and send to scene to create
+#if CLIENT
+              Scene::GetInstance().CreateGhostEntity(stream);
+#endif
             }
             else
             {
@@ -428,6 +432,11 @@ void GhostManager::ReplicateToServer(GhostID ghostID)
 }
 
 #else
+
+void GhostManager::CreatePeer(PeerID peerID)
+{
+    m_PackingInfo.try_emplace(peerID, PackingInfo{});
+}
 
 void GhostManager::ReplicateForAllPeer(GhostID ghostID)
 {
