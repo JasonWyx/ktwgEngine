@@ -222,7 +222,7 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
       break;
     case CI_Transform:
       m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty(m_Transform, netAuthority));
-      bitstream >> m_Transform;
+      ReplicateFromStream(bitstream, m_Transform);
       break;
     }
   }
