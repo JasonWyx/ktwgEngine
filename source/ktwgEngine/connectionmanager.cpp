@@ -163,7 +163,7 @@ ConnectionManager::~ConnectionManager()
 
 void ConnectionManager::Update()
 {
-  SocketAddress client{ AF_INET, inet_addr(SERVERIP), PORT };
+  SocketAddress client{ AF_INET, ntohl(inet_addr(SERVERIP)), PORT };
   ZeroMemory(buffer, BUFLEN);
   if (hostSocket->ReceiveFrom(buffer, BUFLEN, client) > 0)
   {
@@ -376,7 +376,7 @@ void SocketWindowData::DeliverMessage()
 
   unsigned char startPkt = sentPkt - cumulativePktsSent;
   int currWindowSize = windowSize - cumulativePktsSent;
-  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), sPort };
+  SocketAddress reciever{ AF_INET, ntohl(inet_addr(SERVERIP)), sPort };
 
   while (currWindowSize != 0)
   {
@@ -411,7 +411,7 @@ void SocketWindowData::ReceiveMessage()
 {
   char buffer[BUFLEN];
   ZeroMemory(buffer, BUFLEN);
-  SocketAddress sender{ AF_INET, inet_addr(SERVERIP), PORT };
+  SocketAddress sender{ AF_INET, ntohl(inet_addr(SERVERIP)), PORT };
   int res = 0;
   while ((res = socket->ReceiveFrom(buffer, BUFLEN, sender)) > 0)
   {
@@ -730,7 +730,7 @@ void SocketWindowData::ShutdownMessage()
   while(!msgQueue.empty())
     msgQueue.pop();
   std::string s = "shutdown";
-  SocketAddress reciever{ AF_INET, inet_addr(SERVERIP), sPort };
+  SocketAddress reciever{ AF_INET, ntohl(inet_addr(SERVERIP)), sPort };
   socket->SendTo(s.c_str(), s.size(), reciever);
 }
 
