@@ -49,6 +49,12 @@ void CRenderable::SetGraphicObject(const std::string & name)
 
 void CRenderable::GhostPropertyReadStream(BitStream & stream)
 {
+  ComponentID dummyCi;
+  stream >> dummyCi;
+
+  ComponentType dummyType;
+  stream >> dummyType;
+
   bool hasOverrideMaterial;
   stream >> hasOverrideMaterial;
 
@@ -109,6 +115,40 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
       << (uint8_t)(g * 255.0f)
       << (uint8_t)(b * 255.0f)
       << (uint8_t)(a * 255.0f);
+  }
+}
+
+void CRenderable::GhostPropertyReplicateFromStream(BitStream & stream)
+{
+  bool hasOverrideMaterial;
+  stream >> hasOverrideMaterial;
+
+  uint8_t nameLen;
+  // Assume the name length is less than 256
+  stream >> nameLen;
+  // Can't write strings into stream so just write each character instead
+  char buf[256]{};
+  for (uint8_t i = 0; i < nameLen; ++i)
+  {
+    stream >> buf[i];
+  }
+  std::string name{ buf };
+  SetGraphicObject(name);
+
+  if (hasOverrideMaterial)
+  {
+    if (!m_Instance->HasOverrideMaterial())
+    {
+      m_Instance->CreateOverrideMaterial();
+    }
+    float r, g, b, a;
+    uint8_t tmpR, tmpG, tmpB, tmpA;
+    stream >> tmpR >> tmpG >> tmpB >> tmpA;
+    r = tmpR / 255.0f;
+    g = tmpG / 255.0f;
+    b = tmpB / 255.0f;
+    a = tmpA / 255.0f;
+    m_Instance->GetMaterial()->SetColor(r, g, b, a);
   }
 }
 

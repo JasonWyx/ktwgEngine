@@ -20,6 +20,7 @@ public:
 
   void GhostPropertyReadStream(BitStream& stream) override;
   void GhostPropertyWriteStream(BitStream& stream) override;
+  void GhostPropertyReplicateFromStream(BitStream& stream) override;
 
   void RegisterAsGhostProperty(GhostObject* ghostObject, NetAuthority netAuthority) override;
 

@@ -217,10 +217,10 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
         bitstream >> cType;
         Component* comp = AddComponent(cType);
         comp->RegisterAsGhostProperty(m_GhostObject, netAuthority);
-        comp->GhostPropertyReadStream(bitstream);
+        comp->GhostPropertyReplicateFromStream(bitstream);
       }
       break;
-    default:
+    case CI_Transform:
       m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty(m_Transform, netAuthority));
       bitstream >> m_Transform;
       break;

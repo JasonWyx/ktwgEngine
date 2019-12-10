@@ -131,6 +131,7 @@ inline Vec3 MultiplyT(const Transform& lhs, const Vec3& rhs)
 
 inline BitStream& operator<<(BitStream& stream, const Transform& tfm)
 {
+  stream << CI_Transform;
   const Vec3& pos = tfm.GetPosition();
   stream << pos.x_ << pos.y_ << pos.z_;
   const Quaternion& rot = tfm.GetRotation();
@@ -142,6 +143,24 @@ inline BitStream& operator<<(BitStream& stream, const Transform& tfm)
 }
 
 inline BitStream& operator>>(BitStream& stream, Transform& tfm)
+{
+  ComponentID dummy;
+  stream >> dummy;
+  Vec3 pos;
+  stream >> pos.x_ >> pos.y_ >> pos.z_;
+  Quaternion rot;
+  stream >> rot.x_ >> rot.y_ >> rot.z_ >> rot.w_;
+  Vec3 scale;
+  stream >> scale.x_ >> scale.y_ >> scale.z_;
+
+  tfm.SetPosition(pos);
+  tfm.SetRotation(rot);
+  tfm.SetScale(scale);
+
+  return stream;
+}
+
+inline BitStream& ReplicateFromStream(BitStream& stream, Transform& tfm)
 {
   Vec3 pos;
   stream >> pos.x_ >> pos.y_ >> pos.z_;
@@ -155,4 +174,5 @@ inline BitStream& operator>>(BitStream& stream, Transform& tfm)
   tfm.SetScale(scale);
 
   return stream;
+
 }

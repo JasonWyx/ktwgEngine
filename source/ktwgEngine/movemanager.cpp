@@ -19,7 +19,7 @@ void MoveManager::ReadStream(const PeerID sourcePeerID, BitStream& stream)
         stream >> ackMoveState[i];
     }
     
-    if (ackMoveState == m_MoveStateBuffer.front())
+    if (m_MoveStateBuffer.size() && ackMoveState == m_MoveStateBuffer.front())
     {
         m_MoveStateBuffer.pop();
     }

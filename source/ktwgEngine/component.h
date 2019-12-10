@@ -53,6 +53,7 @@ public:
   // Override these functions for compatability with ghosting, default behaviour does nothing
   virtual void GhostPropertyReadStream(BitStream& stream) { }
   virtual void GhostPropertyWriteStream(BitStream& stream) { }
+  virtual void GhostPropertyReplicateFromStream(BitStream& stream) { }
 
   static void FreeComponent(Component* comp);
   static void RefreshFreeList();
