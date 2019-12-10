@@ -122,6 +122,8 @@ void Application::Run()
 
   ConnectionManager& conSys = ConnectionManager::GetInstance();
 
+  StreamManager& streamSys = StreamManager::GetInstance();
+
   behSys.Init();
   behSys.Start();
 
@@ -163,6 +165,8 @@ void Application::Run()
     }
 
     conSys.Update();
+
+    streamSys.Update();
 
     behSys.Update();
 #ifdef CLIENT
