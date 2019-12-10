@@ -14,6 +14,7 @@
 #include "camerabehaviourscript.h"
 #include "playercontroller.h"
 #include "enemymanagerscript.h"
+#include "clientmovecontroller.h"
 
 // Network
 #include "streammanager.h"
@@ -47,9 +48,9 @@ void Scene::CreateGhostEntity(BitStream & stream)
   entity->ReplicateGhostObjectFromBitstream(stream);
 }
 
+#if SERVER
 void Scene::CreateNewPlayer()
 {
-#if SERVER
   {
     // Player
     Entity* player = m_GameScene->AddChild();
@@ -77,8 +78,8 @@ void Scene::CreateNewPlayer()
     player->MarkEntityForGhost();
     StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(player->GetGhostObject()->GetGhostID());
   }
-#endif
 }
+#endif
 
 void Scene::InitializeInternal()
 {
@@ -98,6 +99,12 @@ void Scene::InitializeInternal()
     CCamera& cameraCam = camera->AddComponent(CT_CAMERA)->Get<CCamera>();
     CBehaviour& camBeh = camera->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     camBeh.Bind<CameraBehaviour>();
+  }
+
+  {
+    Entity* clientmovecontroller = m_GameScene->AddChild();
+    CBehaviour& moveBeh = clientmovecontroller->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    moveBeh.Bind<ClientMoveController>();
   }
 #endif
 }
