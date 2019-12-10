@@ -91,8 +91,8 @@ void Scene::InitializeInternal()
     CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     playerBeh.Bind<PlayerController>();
 
-    player->MarkEntityForGhost();
-    StreamManager::GetInstance().GetGhostManager().ReplicateToServer(player->GetGhostObject()->GetGhostID());
+    // player->MarkEntityForGhost();
+    // StreamManager::GetInstance().GetGhostManager().ReplicateToServer(player->GetGhostObject()->GetGhostID());
   }
 #endif
 }

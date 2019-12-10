@@ -14,6 +14,7 @@
 #include <tuple>
 #include <list>
 #include <stack>
+#include <map>
 
 #define CLOCK_TYPE steady_clock
 
@@ -91,6 +92,8 @@ public:
   std::vector<std::string>& GetRecievedMessages();
   std::vector<int>& GetLostPacketIDs();
   void StoreLostPacketsIDs(int pktid);
+  void StoreAckPacketsIDs(int pktid, int p);
+  std::map<int, std::vector<int>>& GetAckPacketIDs();
 private:
   virtual void InitializeInternal() override;
   virtual void ShutdownInternal() override;
@@ -103,6 +106,7 @@ private:
   char buf[BUFLEN];
   std::vector<std::string> recievedMessages;
   std::vector<int> lostPacketIDs;
+  std::map<int, std::vector<int>> ackPacketIDs;
 };
 #else
 
@@ -124,6 +128,7 @@ class ConnectionManager : public Singleton<ConnectionManager>
 
   std::vector<std::string> recievedMessages;
   std::vector<int> lostPacketIDs;
+  std::map<int, std::vector<int>> ackPacketIDs;
 public:
   ConnectionManager();
   ~ConnectionManager();
@@ -133,6 +138,8 @@ public:
   std::vector<std::string>& GetRecievedMessages();
   void AddPacket(std::string msg, int pktid, int player);
   std::vector<int>& GetLostPacketIDs();
+  void StoreAckPacketsIDs(int pktid, int p);
+  std::map<int, std::vector<int>>& GetAckPacketIDs();
 };
 
 #endif
