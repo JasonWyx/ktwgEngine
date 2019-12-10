@@ -152,7 +152,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 
         GhostTransmissionRecord& gtr = tr.m_GhostTransmissionRecords.emplace_back(packingInfo.m_CachedTransmissionRecord);
         
-        if (GhostObject* ghostObject = m_GhostObjectsIDMap[packingInfo.m_ObjectsToPack[packingInfo.m_LastPackedIndex].first])
+        if (GhostObject* ghostObject = packingInfo.m_ObjectsToPack.size() ? m_GhostObjectsIDMap[packingInfo.m_ObjectsToPack[packingInfo.m_LastPackedIndex].first] : nullptr)
         {
 #ifdef CLIENT
             if (GhostTransmissionRecord* latestGhostTransmissionRecord = ghostObject->GetLatestTransmissionRecord())
