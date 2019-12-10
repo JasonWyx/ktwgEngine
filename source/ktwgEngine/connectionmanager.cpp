@@ -100,9 +100,9 @@ void ConnectionManager::ConnectToServer()
   }
   else
   {
-    std::string message = "Hello Server";
+    // std::string message = "Hello Server";
 
-    mySocket.AddMessage(message);
+    // mySocket.AddMessage(message);
 
     std::string portMsg;
     std::string playerID;
@@ -443,15 +443,17 @@ void SocketWindowData::ReceiveMessage()
     int pwindowSize = std::get<2>(message);
     int startAckPkt = (int)(std::get<3>(message));
     int Acks = std::get<4>(message);
-    std::string msg = std::get<5>(message);
+    std::string msg;
+    for (int i = 8; i < res; ++i)
+      msg.push_back(std::get<5>(message)[i]);
 
     std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", startAckPkt : " << startAckPkt <<
       ", Acks : " << Acks << " Message : " << msg << std::endl;
 
 
-    if (msg == "Hello Server")
-      AddMessage(std::string("Hello Client"));
-    else AddMessage("Hello Server");
+    // if (msg == "Hello Server")
+    //   AddMessage(std::string("Hello Client"));
+    // else AddMessage("Hello Server");
 
     // End of Debugging
 
