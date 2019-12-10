@@ -70,21 +70,23 @@ void GhostManager::ReadStream(BitStream& stream)
                 continue;
             }
         }
-
-        // No status change, just do as per normal
-        GhostObject* ghostObject = nullptr;
-        auto iter = m_GhostObjectsIDMap.find(ghostID);
-        if (iter != m_GhostObjectsIDMap.end())
-        {
-            ghostObject = iter->second;
-            GhostStateMask stateMask(ghostObject->GetPropertyCount());
-            stream >> stateMask;
-            ghostObject->ReadStream(stream, stateMask);
-        }
         else
         {
-            // Object not found. Perhaps not created yet?
-            // assert(false);
+            // No status change, just do as per normal
+            GhostObject* ghostObject = nullptr;
+            auto iter = m_GhostObjectsIDMap.find(ghostID);
+            if (iter != m_GhostObjectsIDMap.end())
+            {
+                ghostObject = iter->second;
+                GhostStateMask stateMask(ghostObject->GetPropertyCount());
+                stream >> stateMask;
+                ghostObject->ReadStream(stream, stateMask);
+            }
+            else
+            {
+                // Object not found. Perhaps not created yet?
+                // assert(false);
+            }
         }
 
         countObjectsInPacket--;
