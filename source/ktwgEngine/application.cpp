@@ -64,6 +64,8 @@ void Application::InitializeResources()
 void Application::LateInitialize()
 {
 #ifdef CLIENT
+  ConnectionManager::GetInstance().ConnectToServer();
+  StreamManager::GetInstance().GetGhostManager().GenerateGhostIDs();
   HypeRenderer::Initialize();
 #else
   HypeGraphicsWorld::Initialize();

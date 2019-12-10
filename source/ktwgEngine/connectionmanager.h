@@ -94,11 +94,12 @@ public:
   void StoreLostPacketsIDs(int pktid);
   void StoreAckPacketsIDs(int pktid, int p);
   std::map<int, std::vector<int>>& GetAckPacketIDs();
+
+  void ConnectToServer();
+
 private:
   virtual void InitializeInternal() override;
   virtual void ShutdownInternal() override;
-
-  void ConnectToServer();
   
   SocketWindowData mySocket;
 

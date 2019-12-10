@@ -54,7 +54,6 @@ void ConnectionManager::InitializeInternal()
 {
   SocketUtility::Init();
   mySocket.Init();
-  ConnectToServer();
 }
 
 void ConnectionManager::ShutdownInternal()
