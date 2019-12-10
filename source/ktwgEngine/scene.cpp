@@ -49,8 +49,10 @@ void Scene::CreateGhostEntity(BitStream & stream)
 }
 
 #if SERVER
-void Scene::CreateNewPlayer()
+void Scene::CreateNewPlayer(PeerID peerID)
 {
+  static bool called = false;
+  if(!called)
   {
     // Player
     Entity* player = m_GameScene->AddChild();
@@ -72,11 +74,15 @@ void Scene::CreateNewPlayer()
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
 
-    // CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
-    // playerBeh.Bind<PlayerController>();
+    CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    playerBeh.Bind<PlayerController>();
+    playerBeh.Get<PlayerController>().SetPeerID(peerID);
+    playerBeh.Get<PlayerController>().CreateMoveControlObject();
 
     player->MarkEntityForGhost();
     StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(player->GetGhostObject()->GetGhostID());
+
+    called = true;
   }
 }
 #endif

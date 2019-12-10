@@ -18,7 +18,7 @@ public:
 
   void CreateGhostEntity(BitStream& stream);
 #if SERVER
-  void CreateNewPlayer();
+  void CreateNewPlayer(PeerID peerID);
 #endif
 
 private:
