@@ -11,9 +11,7 @@
 /******************************************************************************/
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
+#include "win32_includes.h"
 #include <windowsx.h>
 
 // --------- Class that implements the operation on a Win32 Platform ------------ //

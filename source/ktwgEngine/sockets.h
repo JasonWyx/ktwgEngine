@@ -7,11 +7,11 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#pragma comment(lib, "ws2_32.lib")
-
 #include <WinSock2.h>
-#include <Windows.h>
 #include <WS2tcpip.h>
+#include <Windows.h>
+
+#pragma comment(lib, "ws2_32.lib")
 
 #else
 

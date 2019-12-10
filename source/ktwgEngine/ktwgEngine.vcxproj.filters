@@ -90,6 +90,7 @@
     <ClCompile Include="win32platform.cpp" />
     <ClCompile Include="win32window.cpp" />
     <ClCompile Include="windowmanager.cpp" />
+    <ClCompile Include="clientmovecontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aabb3.h" />
@@ -214,5 +215,7 @@
     <ClInclude Include="movecontrolobject.h" />
     <ClInclude Include="movestate.h" />
     <ClInclude Include="componentids.h" />
+    <ClInclude Include="clientmovecontroller.h" />
+    <ClInclude Include="win32_includes.h" />
   </ItemGroup>
 </Project>
