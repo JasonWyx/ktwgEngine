@@ -75,6 +75,8 @@ public:
 
   void MarkEntityAsGhost(GhostID ghostId);
 
+  void RegisterEntityGhostProperties(NetAuthority netAuthority);
+
   // These functions are only for creation of ghost objects, following which 
   void ReplicateGhostObjectFromBitstream(BitStream& bitstream);
 

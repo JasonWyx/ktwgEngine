@@ -12,6 +12,8 @@
 #include "ghostobject.h"
 #include "componentids.h"
 #include "streammanager.h"
+#include "ghostproperty.h"
+
 
 Entity::Entity(uint32_t id, const std::string& name)
   : m_Parent{ nullptr }, m_Children{}, m_Components{}, 
@@ -134,21 +136,41 @@ void Entity::Set(Entity* ent)
 
 void Entity::MarkEntityForGhost()
 {
+  if(m_GhostObject)
+    return;
+
   m_GhostObject = new GhostObject{};
   m_GhostObject->SetGhostID(StreamManager::GetInstance().GetGhostManager().GetAvailableGhostID());
   m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
   m_IsGhost = false;
 
   // When we mark an entity for ghost we also need to set all its properties
-  
+#if CLIENT
+  RegisterEntityGhostProperties(NetAuthority::Client);
+#else
+  RegisterEntityGhostProperties(NetAuthority::Server);
+#endif
 }
 
 void Entity::MarkEntityAsGhost(GhostID ghostId)
 {
+  if(m_GhostObject)
+    return;
+
   // The difference is that this ghost is not owned by this peer
   m_GhostObject = new GhostObject{};
   m_GhostObject->SetGhostID(ghostId);
   m_IsGhost = true;
+}
+
+void Entity::RegisterEntityGhostProperties(NetAuthority netAuthority)
+{
+  m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty<Transform>{m_Transform, netAuthority });
+  
+  for (auto& comp : m_Components)
+  {
+    comp->RegisterAsGhostProperty(m_GhostObject, netAuthority);
+  }
 }
 
 void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)

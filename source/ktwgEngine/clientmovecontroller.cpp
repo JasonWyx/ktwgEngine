@@ -24,32 +24,38 @@ void ClientMoveController::Update()
 {
 #if CLIENT
   MoveState moveState;
+  bool setThisFrame = false;
 
   if (Input().OnKeyDown(KTWG_UP))
   {
     moveState[MoveStateFlags::Up] = true;
     m_ShouldSend = true;
+    setThisFrame = true;
   }
   if (Input().OnKeyDown(KTWG_DOWN))
   {
     moveState[MoveStateFlags::Down] = true;
     m_ShouldSend = true;
+    setThisFrame = true;
   }
   if (Input().OnKeyDown(KTWG_LEFT))
   {
     moveState[MoveStateFlags::Left] = true;
     m_ShouldSend = true;
+    setThisFrame = true;
   }
   if (Input().OnKeyDown(KTWG_RIGHT))
   {
     moveState[MoveStateFlags::Right] = true;
     m_ShouldSend = true;
+    setThisFrame = true;
   }
 
   if (m_ShouldSend)
   {
     StreamManager::GetInstance().GetMoveManager().PushMoveState(moveState);
-    m_ShouldSend = false;
+    if(!setThisFrame)
+      m_ShouldSend = false;
   }
 #endif
 }
