@@ -1,3 +1,17 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file TCPSocket.cpp
+\author Low Jin Liang Aaron, aaron.low, 390001116
+\par aaron.low\@digipen.edu
+\date 12/11/2019
+
+Copyright (C) 2019 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "TCPSocket.h"
 #include "SocketAddress.h"
 #include "SocketUtility.h"
@@ -22,7 +36,7 @@ TCPSocket::~TCPSocket()
 int TCPSocket::Connect(const SocketAddress & inAddress)
 {
 #ifdef _WIN32
-  int result = connect(socket_, &inAddress.sockAddress_, inAddress.GetSize());
+  int result = connect(socket_, &inAddress.sockAddress_, static_cast<int>(inAddress.GetSize()));
 #else
   int result = connect(socket_, &inAddress.sockAddress_, static_cast<socklen_t>(inAddress.GetSize()));
 #endif
@@ -39,7 +53,7 @@ int TCPSocket::Connect(const SocketAddress & inAddress)
 int TCPSocket::Bind(const SocketAddress & inAddress)
 {
 #if _WIN32
-  auto result = bind(socket_, &inAddress.sockAddress_, inAddress.GetSize());
+  auto result = bind(socket_, &inAddress.sockAddress_, static_cast<int>(inAddress.GetSize()));
 #else
   auto result = bind(socket_, &inAddress.sockAddress_, static_cast<socklen_t>(inAddress.GetSize()));
 #endif

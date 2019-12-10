@@ -1,3 +1,17 @@
+/* Start Header
+*****************************************************************/
+/*!
+\file UDPSocket.cpp
+\author Low Jin Liang Aaron, aaron.low, 390001116
+\par aaron.low\@digipen.edu
+\date 12/11/2019
+
+Copyright (C) 2019 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the
+prior written consent of DigiPen Institute of Technology is prohibited.
+*/
+/* End Header
+*******************************************************************/
 #include "UDPSocket.h"
 #include "SocketAddress.h"
 #include "SocketUtility.h"
@@ -20,7 +34,7 @@ UDPSocket::~UDPSocket()
 int UDPSocket::Bind(const SocketAddress& inDestinationAddress)
 {
 #if _WIN32
-  auto result = bind(socket_, &inDestinationAddress.sockAddress_, inDestinationAddress.GetSize());
+  auto result = bind(socket_, &inDestinationAddress.sockAddress_, static_cast<int>(inDestinationAddress.GetSize()));
 #else
   auto result = bind(socket_, &inDestinationAddress.sockAddress_, static_cast<socklen_t>(inDestinationAddress.GetSize()));
 #endif
@@ -37,7 +51,7 @@ int UDPSocket::Bind(const SocketAddress& inDestinationAddress)
 int UDPSocket::SendTo(const void * inData, int inLen, const SocketAddress & inDestination)
 {
 #if _WIN32
-  auto bytesSent = sendto(socket_, static_cast<const char*>(inData), inLen, 0, &inDestination.sockAddress_, inDestination.GetSize());
+  auto bytesSent = sendto(socket_, static_cast<const char*>(inData), inLen, 0, &inDestination.sockAddress_, static_cast<int>(inDestination.GetSize()));
 #else
   auto bytesSent = static_cast<int>(sendto(socket_, static_cast<const char*>(inData), inLen, 0, &inDestination.sockAddress_, static_cast<socklen_t>(inDestination.GetSize())));
 #endif
@@ -55,7 +69,7 @@ int UDPSocket::SendTo(const void * inData, int inLen, const SocketAddress & inDe
 int UDPSocket::ReceiveFrom(void * inBuffer, int inLen, SocketAddress & outFrom)
 {
 #if _WIN32
-  int fromLength = outFrom.GetSize();
+  int fromLength = static_cast<int>(outFrom.GetSize());
 #else
   socklen_t fromLength = static_cast<socklen_t>(outFrom.GetSize());
 #endif
