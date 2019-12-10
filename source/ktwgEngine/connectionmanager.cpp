@@ -739,8 +739,8 @@ void SocketWindowData::ShutdownMessage()
   while(!msgQueue.empty())
     msgQueue.pop();
   std::string s = "shutdown";
-  SocketAddress reciever{ AF_INET, ntohl(inet_addr(SERVERIP)), sPort };
-  socket->SendTo(s.c_str(), s.size(), reciever);
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
+  socket->SendTo(s.c_str(), s.size(), *sockAddr);
 }
 
 void SocketWindowData::SetPlayer(int p)
