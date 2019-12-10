@@ -54,6 +54,7 @@ class SocketWindowData
   int                     player = -1;
   // to be removed if cause random DCs
   TIME                    timeOutTimer;
+  std::string		      clientIP;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
@@ -77,6 +78,7 @@ public:
   void ShutdownMessage();
   void SetPlayer(int p);
   int  GetPlayer();
+  void SetClientIP(std::string s);
 };
 
 #ifdef CLIENT

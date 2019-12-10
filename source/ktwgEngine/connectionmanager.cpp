@@ -5,7 +5,7 @@
 #include "streammanager.h"
 #include "SocketAddressFactory.h"
 
-#define SERVERIP "localhost" // localhost
+#define SERVERIP "10.83.33.82"// localhost
 #define PORT 8888 // Port for listen to get new port
 #define PORTSTR "8888"
 
@@ -170,7 +170,7 @@ void ConnectionManager::Update()
   {
     // std::cout << "Server: Recieve packet" << std::endl;
     // std::cout << "Server: Data : " << buffer << std::endl;
-
+    char *ip = inet_ntoa(client.GetAsSockAddrIn()->sin_addr);
     if (players > 4)
     {
       std::cout << "Server : Max Players" << std::endl;
@@ -211,6 +211,7 @@ void ConnectionManager::Update()
       tmp.SetSocket(s);
       tmp.SetPort(cPort);
       ++players;
+	  tmp.SetClientIP(ip);
       tmp.SetPlayer(connectedPlayerID);
       playerActive[connectedPlayerID] = true;
       serverSockets.push_back(tmp);
@@ -379,8 +380,11 @@ void SocketWindowData::DeliverMessage()
   int currWindowSize = windowSize - cumulativePktsSent;
   SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
 
+#ifdef CLIENT
   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
-
+#else
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
+#endif
   while (currWindowSize != 0)
   {
     if (msgQueue.empty()) break;
@@ -740,7 +744,7 @@ void SocketWindowData::ShutdownMessage()
     msgQueue.pop();
   std::string s = "shutdown";
   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
-  socket->SendTo(s.c_str(), s.size(), *sockAddr);
+  socket->SendTo(s.c_str(), s.size(), *sockAddr	);
 }
 
 void SocketWindowData::SetPlayer(int p)
@@ -751,4 +755,10 @@ void SocketWindowData::SetPlayer(int p)
 int SocketWindowData::GetPlayer()
 {
   return player;
+}
+
+void SocketWindowData::SetClientIP(std::string s)
+{
+  std::cout << "Client IP : " << s << std::endl;
+  clientIP = s;
 }
