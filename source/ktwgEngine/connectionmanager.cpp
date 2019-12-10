@@ -5,11 +5,7 @@
 #include "streammanager.h"
 #include "SocketAddressFactory.h"
 
-<<<<<<< HEAD
 #define SERVERIP "10.83.33.82"// localhost
-=======
-#define SERVERIP "10.83.33.82" // localhost
->>>>>>> 0ddd7c8a4877ccc62ac857e2b9b586b606a3b47a
 #define PORT 8888 // Port for listen to get new port
 #define PORTSTR "8888"
 
