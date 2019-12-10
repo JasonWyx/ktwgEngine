@@ -21,7 +21,7 @@ void GhostManager::GenerateGhostIDs()
 
     for (GhostID i = 0; i < 1 << 13; ++i)
     {
-        m_AvailableGhostIDs.push(static_cast<GhostID>(peerID) << 12 & i);
+        m_AvailableGhostIDs.push((static_cast<GhostID>(peerID) << 12) | i);
     }
 }
 
@@ -274,8 +274,11 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
     }
 
     // Successfully packed everthing into the current packet
-    packet.m_GhostStream << countObjectsInPacket;
-    packet.m_GhostStream += ghostObjectStream;
+    if(countObjectsInPacket > 0)
+    {
+        packet.m_GhostStream << countObjectsInPacket;
+        packet.m_GhostStream += ghostObjectStream;
+    }
     return true;
 }
 
@@ -408,10 +411,14 @@ void GhostManager::ClearStatusChanges()
 #endif
 }
 
+void GhostManager::RegisterGhostID(GhostObject * ghostObject)
+{
+  m_GhostObjectsIDMap.try_emplace(ghostObject->GetGhostID(), ghostObject);
+}
+
 void GhostManager::RegisterGhostObject(GhostObject* ghostObject)
 {   
     m_GhostObjects.push_back(ghostObject);
-    m_GhostObjectsIDMap.try_emplace(ghostObject->GetGhostID(), ghostObject);
 }
 
 void GhostManager::UnregisterGhostObject(GhostObject* ghostObject)

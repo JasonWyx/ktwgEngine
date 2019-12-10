@@ -25,6 +25,7 @@ public:
     void DropPendingData();
     void ClearStatusChanges();
 
+    void RegisterGhostID(GhostObject* ghostObject);
     void RegisterGhostObject(GhostObject* ghostObject);
     void UnregisterGhostObject(GhostObject* ghostObject);
 

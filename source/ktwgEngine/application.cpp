@@ -39,10 +39,10 @@ void Application::InitializeCoreSystems()
 
   StreamManager::Initialize();
 
-#ifdef CLIENT
+// #ifdef CLIENT
   D3D11RenderAPI::Initialize();
   D3D11RenderWindowManager::Initialize();
-#endif
+// #endif
 
   InputSystem::Initialize(::GetCapture());
 
@@ -55,10 +55,10 @@ void Application::InitializeCoreSystems()
 
 void Application::InitializeResources()
 {
-#ifdef CLIENT
+// #ifdef CLIENT
   HypeRenderer::LoadSystemShaders();
   HypeRenderer::CreateCommonResources();
-#endif
+// #endif
 }
 
 void Application::LateInitialize()
@@ -69,7 +69,8 @@ void Application::LateInitialize()
   HypeRenderer::Initialize();
 #else
   StreamManager::GetInstance().GetGhostManager().GenerateGhostIDs();
-  HypeGraphicsWorld::Initialize();
+  HypeRenderer::Initialize();
+//  HypeGraphicsWorld::Initialize();
 #endif
   Scene::Initialize();
 }
@@ -84,10 +85,10 @@ void Application::ShutdownInternal()
 
   InputSystem::Shutdown();
 
-#ifdef CLIENT
+// #ifdef CLIENT
   D3D11RenderWindowManager::Shutdown();
   D3D11RenderAPI::Shutdown();
-#endif
+// #endif
 
   Time::Shutdown();
 
@@ -114,9 +115,9 @@ void Application::Run()
   InputSystem& inputSys = InputSystem::GetInstance();
   Physics& physicsSys = Physics::GetInstance();
 
-#ifdef CLIENT
+// #ifdef CLIENT
   HypeRenderer& renderSys = HypeRenderer::GetInstance();
-#endif
+// #endif
 
   KTWGBehaviour& behSys = KTWGBehaviour::GetInstance();
 
@@ -169,9 +170,9 @@ void Application::Run()
     streamSys.Update();
 
     behSys.Update();
-#ifdef CLIENT
+// #ifdef CLIENT
     renderSys.Update();
-#endif
+// #endif
     inputSys.PostUpdate();
   }
 }

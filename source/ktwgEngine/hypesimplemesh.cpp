@@ -24,7 +24,7 @@ void HypeSimpleMesh::SetShape(SimpleMeshShape shape)
 
 void HypeSimpleMesh::Regenerate()
 {
-#if CLIENT
+// #if CLIENT
   switch (m_Shape)
   {
   case CUBE:
@@ -39,12 +39,12 @@ void HypeSimpleMesh::Regenerate()
     ClearResources();
     break;
   }
-#endif
+// #endif
 }
 
 void HypeSimpleMesh::DrawInstances()
 {
-#if CLIENT
+// #if CLIENT
   D3D11Context& context = D3D11RenderAPI::GetInstance().GetDevice()->GetImmediateContext();
   context.AddVertexBuffer(m_VertexBuffer, sizeof(Vertex), 0);
   context.AddVertexBuffer(m_VertexBuffer, sizeof(Vertex), sizeof(Vec3));
@@ -73,7 +73,7 @@ void HypeSimpleMesh::DrawInstances()
 
     context.DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_NumIndices, 0, 0);
   }
-#endif
+// #endif
 }
 
 void HypeSimpleMesh::ClearResources()
@@ -234,7 +234,7 @@ void HypeSimpleMesh::CreateSphereResources()
 
 void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& positions, const std::vector<Vec3>& normals, const std::vector<uint32_t>& indices)
 {
-#if CLIENT
+// #if CLIENT
   uint32_t numVertices = (uint32_t)positions.size();
   std::vector<Vertex> vertices;
   vertices.resize(numVertices);
@@ -254,7 +254,7 @@ void HypeSimpleMesh::InitializeHardwareBuffers(const std::vector<Vec3>& position
   m_IndexBuffer->Write(0, numIndices * sizeof(uint32_t), indices.data(), WT_DISCARD);
 
   m_NumIndices = numIndices;
-#endif
+// #endif
 }
 
 HypeGraphicObjectInstance * HypeSimpleMesh::NotifyInstanceCreatedInternal(Entity & instance)

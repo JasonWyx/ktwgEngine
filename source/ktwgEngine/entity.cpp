@@ -144,7 +144,7 @@ void Entity::MarkEntityForGhost()
   m_GhostObject->SetPeerID(StreamManager::GetInstance().GetPeerID());
   m_GhostObject->SetOwner(this);
   m_IsGhost = false;
-
+  StreamManager::GetInstance().GetGhostManager().RegisterGhostID(m_GhostObject);
   // When we mark an entity for ghost we also need to set all its properties
 #if CLIENT
   RegisterEntityGhostProperties(NetAuthority::Client);
@@ -163,6 +163,7 @@ void Entity::MarkEntityAsGhost(GhostID ghostId)
   m_GhostObject->SetGhostID(ghostId);
   m_GhostObject->SetOwner(this);
   m_IsGhost = true;
+  StreamManager::GetInstance().GetGhostManager().RegisterGhostID(m_GhostObject);
 }
 
 void Entity::RegisterEntityGhostProperties(NetAuthority netAuthority)
