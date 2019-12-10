@@ -46,6 +46,7 @@ void StreamManager::ShutdownClient()
 void StreamManager::UpdateClient()
 {
     // Get Packet notifications
+    ConnectionManager::GetInstance().GetLostPacketIDs();
 
     // Process incoming packets
     std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
@@ -301,7 +302,7 @@ void StreamManager::UnpackStream(const PeerID sourcePeerID, BitStream& stream)
 
     if (hasEvent)
     {
-        m_EventManager.ReadStream(stream);
+        m_EventManager.ReadStream(sourcePeerID, stream);
     }
 
     if (hasGhost)

@@ -108,6 +108,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         packingInfo.m_ObjectsToPack.clear();
         packingInfo.m_ObjectsToPack.reserve(m_GhostObjects.size());
         packingInfo.m_LastPackedIndex = 0;
+        packingInfo.m_IsDonePacking = false;
 
         for (GhostID ghostID : packingInfo.m_GhostsToCreate)
         {
@@ -270,6 +271,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
     // Successfully packed everthing into the current packet
     packet.m_GhostStream << countObjectsInPacket;
     packet.m_GhostStream += ghostObjectStream;
+    packingInfo.m_IsDonePacking = true;
     return true;
 }
 
