@@ -131,7 +131,6 @@ inline Vec3 MultiplyT(const Transform& lhs, const Vec3& rhs)
 
 inline BitStream& operator<<(BitStream& stream, const Transform& tfm)
 {
-  stream << CI_Transform;
   const Vec3& pos = tfm.GetPosition();
   stream << pos.x_ << pos.y_ << pos.z_;
   const Quaternion& rot = tfm.GetRotation();

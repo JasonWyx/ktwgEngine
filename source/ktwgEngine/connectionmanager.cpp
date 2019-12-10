@@ -515,7 +515,7 @@ void SocketWindowData::ReceiveMessage()
     //   --dynamicRecvPkt;
     // }
 
-    if (!(pktNum != 0 && !(pktNum % 9)))
+    //if (!(pktNum != 0 && !(pktNum % 9)))
     {
       ackSlip[index] = true;
       ConnectionManager::GetInstance().RecieveMessage(msg);

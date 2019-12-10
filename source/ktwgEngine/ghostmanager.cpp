@@ -212,12 +212,14 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #else
             ghostObject->ReplicateGhostObjectToBitstream(tr.m_TargetPeerID, packingInfo.m_CachedObjectStream);
 #endif
+            packingInfo.m_GhostsToCreate.erase(ghostID);
         }
         else if (packingInfo.m_GhostsToDelete.find(ghostID) != packingInfo.m_GhostsToDelete.end())
         {
             // Object is flagged for removal, do not need to pack state data
             packingInfo.m_CachedObjectStream << true << false;
             status = GhostStatusType::Delete;
+            packingInfo.m_GhostsToDelete.erase(ghostID);
         }
         else
         {
