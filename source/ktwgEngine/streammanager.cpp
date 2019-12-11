@@ -229,13 +229,16 @@ void StreamManager::UpdateServer()
     }
     
     // Process incoming packets
-    std::vector<std::vector<unsigned char>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
+    std::map<int, std::vector<std::vector<unsigned char>>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
 
-    for (std::vector<unsigned char>& message : incomingMessages)
+    for (auto&[peerID, messages] : incomingMessages)
     {
+      for (auto& message : messages)
+      {
         BitStream stream(message.size());
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
-        UnpackStream(0, stream); // todo: peerid here is stub for now until can get peerid from incoming messages
+        UnpackStream(peerID, stream); // todo: peerid here is stub for now until can get peerid from incoming messages
+      }
     }
 
     incomingMessages.clear();
