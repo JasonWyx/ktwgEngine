@@ -217,6 +217,8 @@ void ConnectionManager::Update()
       tmp.SetClientIP(ip);
       tmp.SetPlayer(connectedPlayerID);
       playerActive[connectedPlayerID] = true;
+      ackPacketIDs[connectedPlayerID];
+      recievedMessages[connectedPlayerID];
       serverSockets.push_back(tmp);
       // inform upper level here
       StreamManager::GetInstance().CreatePeer(connectedPlayerID);
@@ -230,6 +232,7 @@ void ConnectionManager::Update()
   }
 
   auto ackIT = ackPacketIDs.begin();
+  auto recIT = recievedMessages.begin();
   for (auto it = serverSockets.begin(); ackIT != ackPacketIDs.end() && it != serverSockets.end();)
   {
     int player = it->GetPlayer();
@@ -243,6 +246,7 @@ void ConnectionManager::Update()
       // inform upper level here
       playerActive[player] = false;
       ackIT = ackPacketIDs.erase(ackIT);
+      recIT = recievedMessages.erase(recIT);
       std::cout << "ackPacketIDs Size : " << ackPacketIDs.size() << ", Player IDs : ";
       for (auto p : ackPacketIDs) std::cout << p.first << ", ";
       std::cout << std::endl;
@@ -250,6 +254,7 @@ void ConnectionManager::Update()
     }
     else
     {
+      ++recIT;
       ++ackIT;
       ++it;
     }
@@ -275,12 +280,12 @@ void ConnectionManager::ShutdownInternal()
   SocketUtility::CleanUp();
 }
 
-void ConnectionManager::RecieveMessage(std::vector<unsigned char> msg)
+void ConnectionManager::RecieveMessage(std::vector<unsigned char> msg, int p)
 {
-  recievedMessages.push_back(msg);
+  recievedMessages[p].push_back(msg);
 }
 
-std::vector<std::vector<unsigned char>>& ConnectionManager::GetRecievedMessages()
+std::map<int, std::vector<std::vector<unsigned char>>>& ConnectionManager::GetRecievedMessages()
 {
   return recievedMessages;
 }
@@ -570,13 +575,17 @@ void SocketWindowData::ReceiveMessage()
     //   --dynamicRecvPkt;
     // }
 
-    // if (!(pktNum != 0 && !(pktNum % 9)))
+    // if (!(pktNum != 0 && !(pktNum % 100)))
     {
       // ackSlip[index] = true;
       if(!msg.empty() && index < ackSlip.size())
       {
         ackSlip[index] = true;
+#ifdef CLIENT
         ConnectionManager::GetInstance().RecieveMessage(msg);
+#else
+        ConnectionManager::GetInstance().RecieveMessage(msg, player);
+#endif
       }
     }
 
