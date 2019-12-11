@@ -17,6 +17,7 @@ void StreamManager::Update()
 {
 #ifdef CLIENT
     UpdateClient();
+  // ConnectionManager::GetInstance().AddPacket("asdasd", -1);
 #else
     UpdateServer();
 #endif
@@ -88,9 +89,9 @@ void StreamManager::UpdateClient()
     }
 
     // Process incoming packets
-    std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
+    std::vector<std::vector<unsigned char>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
     
-    for (std::string& message : incomingMessages)
+    for (std::vector<unsigned char>& message : incomingMessages)
     {
         BitStream stream(message.size());
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
@@ -114,7 +115,7 @@ void StreamManager::UpdateClient()
 
         // Send using connection manager
         BitStream finalPacketStream = newPacket.BuildStream();
-        std::string message;
+        std::vector<unsigned char> message;
         message.resize(finalPacketStream.GetByteLength());
         std::memcpy(message.data(), finalPacketStream.GetData(), finalPacketStream.GetByteLength());
         ConnectionManager::GetInstance().AddPacket(message, newPacket.m_ID);
@@ -158,7 +159,7 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         packet.m_HasEvent = true;
     }
-
+    /*
     // GhostManager
     packetStreamSize = packet.GetStreamSize();
 
@@ -174,7 +175,7 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         packet.m_HasGhost = true;
     }
-
+    */
     return true;
 }
 
@@ -238,9 +239,9 @@ void StreamManager::UpdateServer()
     }
     
     // Process incoming packets
-    std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
+    std::vector<std::vector<unsigned char>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
 
-    for (std::string& message : incomingMessages)
+    for (std::vector<unsigned char>& message : incomingMessages)
     {
         BitStream stream(message.size());
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
@@ -277,7 +278,7 @@ void StreamManager::UpdateServer()
 
                 // Add message to connection manager
                 BitStream finalPacketStream = newPacket.BuildStream();
-                std::string message;
+                std::vector<unsigned char> message;
                 message.resize(finalPacketStream.GetByteLength());
                 std::memcpy(message.data(), finalPacketStream.GetData(), finalPacketStream.GetByteLength());
                 ConnectionManager::GetInstance().AddPacket(message, newPacket.m_ID, peerID);

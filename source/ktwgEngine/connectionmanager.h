@@ -44,7 +44,7 @@ class SocketWindowData
   u_short                 sPort = 0;
   UDPSocketPtr            socket;
   std::vector<bool>       ackSlip;
-  std::deque<std::string> msgQueue;
+  std::deque<std::vector<unsigned char>> msgQueue;
   std::queue<int>         streamIDQueue;
   std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
@@ -55,21 +55,21 @@ class SocketWindowData
   // to be removed if cause random DCs
   TIME                    timeOutTimer;
   std::string		          clientIP;
-  bool                    notSentAckYet = true;
+  // bool                    notSentAckYet = false;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
 
   void ReceiveMessage();
   void UpdateTimer();
-  std::string PacketMessage(const std::string & msg, const unsigned char& startPkt);
+  std::vector<unsigned char> PacketMessage(const std::vector<unsigned char>& msg, const unsigned char& startPkt);
   int UpdateRecvAckSlip(int val, int size);
   int GetAcks();
   void DeliverMessage();
   int UpdateRecvAckSlipForAcksOnly(int val, int size);
 public:
   std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
-  void AddMessage(std::string msg);
+  void AddMessage(std::vector<unsigned char>& msg);
   void AddStreamPktID(int id);
   void SetSocket(UDPSocketPtr s);
   void SetPort(const u_short& p);
@@ -90,10 +90,10 @@ public:
   ConnectionManager();
   ~ConnectionManager();
   void Update();
-  void AddPacket(std::string msg, int pktid);
-  void RecieveMessage(std::string msg);
+  void AddPacket(std::vector<unsigned char> msg, int pktid);
+  void RecieveMessage(std::vector<unsigned char>& msg);
   int GetPlayerID();
-  std::vector<std::string>& GetRecievedMessages();
+  std::vector<std::vector<unsigned char>>& GetRecievedMessages();
   std::vector<int>& GetLostPacketIDs();
   void StoreLostPacketsIDs(int pktid);
   void StoreAckPacketsIDs(int pktid, int p);
@@ -109,7 +109,7 @@ private:
 
   // temporary buffer for testing
   char buf[BUFLEN];
-  std::vector<std::string> recievedMessages;
+  std::vector<std::vector<unsigned char>> recievedMessages;
   std::vector<int> lostPacketIDs;
   std::map<int, std::vector<int>> ackPacketIDs;
 };
@@ -131,17 +131,17 @@ class ConnectionManager : public Singleton<ConnectionManager>
 
   UDPSocketPtr hostSocket;
 
-  std::vector<std::string> recievedMessages;
+  std::vector<std::vector<unsigned char>> recievedMessages;
   std::vector<int> lostPacketIDs;
   std::map<int, std::vector<int>> ackPacketIDs;
 public:
   ConnectionManager();
   ~ConnectionManager();
   void Update();
-  void RecieveMessage(std::string msg);
+  void RecieveMessage(std::vector<unsigned char> msg);
   void StoreLostPacketsIDs(int pktid);
-  std::vector<std::string>& GetRecievedMessages();
-  void AddPacket(std::string msg, int pktid, int player);
+  std::vector<std::vector<unsigned char>>& GetRecievedMessages();
+  void AddPacket(std::vector<unsigned char> msg, int pktid, int player);
   std::vector<int>& GetLostPacketIDs();
   void StoreAckPacketsIDs(int pktid, int p);
   std::map<int, std::vector<int>>& GetAckPacketIDs();

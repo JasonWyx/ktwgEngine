@@ -26,7 +26,7 @@ void ConnectionManager::Update()
   mySocket.Update();
 }
 
-void ConnectionManager::RecieveMessage(std::string msg)
+void ConnectionManager::RecieveMessage(std::vector<unsigned char>& msg)
 {
   recievedMessages.push_back(msg);
 }
@@ -41,12 +41,12 @@ int ConnectionManager::GetPlayerID()
   return mySocket.GetPlayer();
 }
 
-std::vector<std::string>& ConnectionManager::GetRecievedMessages()
+std::vector<std::vector<unsigned char>>& ConnectionManager::GetRecievedMessages()
 {
   return recievedMessages;
 }
 
-void ConnectionManager::AddPacket(std::string msg, int pktid)
+void ConnectionManager::AddPacket(std::vector<unsigned char> msg, int pktid)
 {
   mySocket.AddMessage(msg);
   mySocket.AddStreamPktID(pktid);
@@ -272,17 +272,17 @@ void ConnectionManager::ShutdownInternal()
   SocketUtility::CleanUp();
 }
 
-void ConnectionManager::RecieveMessage(std::string msg)
+void ConnectionManager::RecieveMessage(std::vector<unsigned char> msg)
 {
   recievedMessages.push_back(msg);
 }
 
-std::vector<std::string>& ConnectionManager::GetRecievedMessages()
+std::vector<std::vector<unsigned char>>& ConnectionManager::GetRecievedMessages()
 {
   return recievedMessages;
 }
 
-void ConnectionManager::AddPacket(std::string msg, int pktid, int player)
+void ConnectionManager::AddPacket(std::vector<unsigned char> msg, int pktid, int player)
 {
   for (auto start = serverSockets.begin(); start != serverSockets.end(); ++start)
   {
@@ -374,16 +374,19 @@ void SocketWindowData::DeliverMessage()
 #endif
 
   if (msgQueue.empty() || !sPort) return;
-  if (notSentAckYet)
-  {
-    unsigned char startPkt = sentPkt - cumulativePktsSent;
-    std::string message = msgQueue.front();
-    msgQueue.pop_front();
-    int streamPktID = -1;
-    message = PacketMessage(message, startPkt);
-    socket->SendTo(message.c_str(), message.size(), *sockAddr);
-    return;
-  }
+  // if (notSentAckYet && sentMsg)
+  // {
+  //   std::cout << "pack unsent acks" << std::endl;
+  //   unsigned char startPkt = sentPkt - cumulativePktsSent;
+  //   std::string message = msgQueue.front();
+  //   msgQueue.pop_front();
+  //   int streamPktID = -1;
+  //   message = PacketMessage(message, startPkt);
+  //   socket->SendTo(message.c_str(), message.size(), *sockAddr);
+  //   notSentAckYet = false;
+  //   // return;
+  // }
+
   if (!cumulativePktsSent)
   {
     timeTracker.clear();
@@ -400,8 +403,8 @@ void SocketWindowData::DeliverMessage()
   {
     if (msgQueue.empty()) break;
     // std::cout << (int)startPkt << std::endl;
-    notSentAckYet = false;
-    std::string message = msgQueue.front();
+    // notSentAckYet = false;
+    std::vector<unsigned char> message = msgQueue.front();
     msgQueue.pop_front();
     int streamPktID = -1;
     if (!streamIDQueue.empty())
@@ -410,7 +413,7 @@ void SocketWindowData::DeliverMessage()
       streamIDQueue.pop();
     }
     message = PacketMessage(message, startPkt);
-    socket->SendTo(message.c_str(), message.size(), *sockAddr);
+    socket->SendTo(message.data(), message.size(), *sockAddr);
     --currWindowSize;
     float timeOut = rtt + 4 * devRTT;
     timeOut = timeOut < 1.f ? 1.f : timeOut;
@@ -478,8 +481,6 @@ void SocketWindowData::ReceiveMessage()
       for (int i = 0; i < 8; ++i) signal.push_back(buffer[i]);
       if (signal == "shutdown")
         shutdown = true;
-      else
-        continue;
     }
 
     auto message = UnPackMessage(buffer);
@@ -491,16 +492,16 @@ void SocketWindowData::ReceiveMessage()
     int pwindowSize = std::get<2>(message);
     int startAckPkt = (int)(std::get<3>(message));
     int Acks = std::get<4>(message);
-    std::string msg;
+    std::vector<unsigned char> msg;
     for (int i = 0; i < res - 8; ++i)
       msg.push_back(std::get<5>(message)[i]);
 
     std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", startAckPkt : " << startAckPkt <<
-      ", Acks : " << Acks << " Message : " << msg << std::endl;
+      ", Acks : " << Acks << std::endl;
 
 
 #ifdef CLIENT
-    // ConnectionManager::GetInstance().AddPacket("Hello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello Server", -1);
+    //ConnectionManager::GetInstance().AddPacket("Hello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello Server", -1);
     // AddMessage("Hello Server");
 #else
     // ConnectionManager::GetInstance().AddPacket("Hello Client", -1, player);
@@ -544,12 +545,21 @@ void SocketWindowData::ReceiveMessage()
 
     if (senderStartPkt != startPkt && !msg.empty())
     {
-      if (notSentAckYet)
-      {
-          msgQueue.emplace_front(std::string{});
-          DeliverMessage();
-      }
-      notSentAckYet = true;
+      // if (notSentAckYet && sentMsg)
+      // {
+      //     std::cout << "havent Send Ack yet" << std::endl;
+      // #ifdef CLIENT
+      //   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
+      // #else
+      //   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
+      // #endif
+      // std::cout << "pack unsent acks" << std::endl;
+      // unsigned char startPkt = sentPkt - cumulativePktsSent;
+      // std::string message = std::string{};
+      // message = PacketMessage(message, startPkt);
+      // socket->SendTo(message.c_str(), message.size(), *sockAddr);
+      // }
+      // notSentAckYet = true;
       senderStartPkt = startPkt;
       ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
@@ -565,7 +575,7 @@ void SocketWindowData::ReceiveMessage()
     // if (!(pktNum != 0 && !(pktNum % 9)))
     {
       // ackSlip[index] = true;
-      if(!msg.empty())
+      if(!msg.empty() && index < ackSlip.size())
       {
         ackSlip[index] = true;
         ConnectionManager::GetInstance().RecieveMessage(msg);
@@ -585,9 +595,12 @@ void SocketWindowData::ReceiveMessage()
     recvAckSlip = recvAckSlip | std::get<4>(message);
 
     int tmpRecvPkts = -1;
-    if(msg.empty())
-      tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
-    else
+    // if(msg.empty())
+    // {
+    //   std::cout << "Processing Acks" << std::endl;
+    //   tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
+    // }
+    // else
       tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
     dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
     std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
@@ -663,9 +676,9 @@ void SocketWindowData::UpdateTimer()
 
 }
 
-std::string SocketWindowData::PacketMessage(const std::string& msg, const unsigned char& startPkt)
+std::vector<unsigned char> SocketWindowData::PacketMessage(const std::vector<unsigned char>& msg, const unsigned char& startPkt)
 {
-  std::string message;
+  std::vector<unsigned char> message;
   message.push_back(sentPkt);
   message.push_back(startPkt);
   message.push_back((char)windowSize);
@@ -681,7 +694,9 @@ std::string SocketWindowData::PacketMessage(const std::string& msg, const unsign
   message.push_back(*(tmp + 2));
   message.push_back(*(tmp + 3));
 
-  message += msg;
+  for(int i = 0; i < msg.size(); ++i)
+    message.push_back(msg[i]);
+
   return message;
 }
 
@@ -741,7 +756,7 @@ int SocketWindowData::GetAcks()
   return ack;
 }
 
-void SocketWindowData::AddMessage(std::string msg)
+void SocketWindowData::AddMessage(std::vector<unsigned char>& msg)
 {
   msgQueue.push_back(msg);
 }
