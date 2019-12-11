@@ -132,6 +132,8 @@ void Application::Run()
   // Connect to server
 #endif // CLIENT
 
+  float accumDt = 0.0f;
+
   // For now just a loop forever
   while (true)
   {
@@ -165,14 +167,22 @@ void Application::Run()
       accumulator -= fixedDtMs;
     }
 
-    conSys.Update();
+    if (accumDt >= 0.016f)
+    {
+      conSys.Update();
 
-    streamSys.Update();
+      streamSys.Update();
 
-    behSys.Update();
+      behSys.Update();
+
 // #ifdef CLIENT
-    renderSys.Update();
+      renderSys.Update();
 // #endif
-    inputSys.PostUpdate();
+
+      inputSys.PostUpdate();
+
+      accumDt = 0.0f;
+    }
+    accumDt += dt;
   }
 }
