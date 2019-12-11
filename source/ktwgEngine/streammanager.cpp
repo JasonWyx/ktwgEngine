@@ -17,7 +17,6 @@ void StreamManager::Update()
 {
 #ifdef CLIENT
     UpdateClient();
-  // ConnectionManager::GetInstance().AddPacket("asdasd", -1);
 #else
     UpdateServer();
 #endif
@@ -57,12 +56,10 @@ void StreamManager::UpdateClient()
         m_EventManager.NotifyTransmissionFailure(*tr);
         m_TransmissionRecordMap.erase(lostPacketID);
 
-        m_TransmissionInfo.m_TransmissionRecords.remove_if(
-            [lostPacketID](TransmissionRecord& transmissionRecord)
+        m_TransmissionInfo.m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
         {
             return transmissionRecord.m_PacketID == lostPacketID;
-        }
-        );
+        });
     }
 
     lostPackets.clear();
@@ -78,12 +75,10 @@ void StreamManager::UpdateClient()
             m_EventManager.NotifyTransmissionSuccess(*tr);
             m_TransmissionRecordMap.erase(lostPacketID);
 
-            m_TransmissionInfo.m_TransmissionRecords.remove_if(
-                [lostPacketID](TransmissionRecord& transmissionRecord)
+            m_TransmissionInfo.m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
             {
                 return transmissionRecord.m_PacketID == lostPacketID;
-            }
-            );
+            });
         }
     }
 
@@ -107,10 +102,10 @@ void StreamManager::UpdateClient()
         Packet newPacket = { m_LastPacketID++ };
         isDonePacking = PackPacket(newPacket);
 
-        //if (!newPacket.HasContents())
-        //{
-        //    continue;
-        //}
+        if (!newPacket.HasContents())
+        {
+            continue;
+        }
 
         // Send using connection manager
         BitStream finalPacketStream = newPacket.BuildStream();
@@ -207,12 +202,10 @@ void StreamManager::UpdateServer()
         m_EventManager.NotifyTransmissionFailure(*tr);
         m_TransmissionRecordMap.erase(lostPacketID);
 
-        m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if(
-            [lostPacketID](TransmissionRecord& transmissionRecord)
+        m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
         {
             return transmissionRecord.m_PacketID == lostPacketID;
-        }
-        );
+        });
     }
 
     lostPackets.clear();
@@ -228,23 +221,24 @@ void StreamManager::UpdateServer()
             m_EventManager.NotifyTransmissionSuccess(*tr);
             m_TransmissionRecordMap.erase(lostPacketID);
 
-            m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if(
-                [lostPacketID](TransmissionRecord& transmissionRecord)
-                {
-                    return transmissionRecord.m_PacketID == lostPacketID;
-                }
-            );
+            m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
+            {
+                return transmissionRecord.m_PacketID == lostPacketID;
+            });
         }
     }
     
     // Process incoming packets
-    std::vector<std::vector<unsigned char>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
+    std::map<int, std::vector<std::vector<unsigned char>>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
 
-    for (std::vector<unsigned char>& message : incomingMessages)
+    for (auto&[peerID, messages] : incomingMessages)
     {
+      for (auto& message : messages)
+      {
         BitStream stream(message.size());
         std::memcpy(stream.GetData(), message.data(), stream.GetByteLength());
-        UnpackStream(0, stream); // todo: peerid here is stub for now until can get peerid from incoming messages
+        UnpackStream(peerID, stream); // todo: peerid here is stub for now until can get peerid from incoming messages
+      }
     }
 
     incomingMessages.clear();
@@ -270,10 +264,10 @@ void StreamManager::UpdateServer()
                 Packet newPacket = { m_LastPacketID++ };
                 isDonePacking[peerID] = PackPacket(peerID, newPacket);
 
-                //if (!newPacket.HasContents())
-                //{
-                //    continue;
-                //}
+                if (!newPacket.HasContents())
+                {
+                    continue;
+                }
 
                 // Add message to connection manager
                 BitStream finalPacketStream = newPacket.BuildStream();

@@ -132,16 +132,16 @@ class ConnectionManager : public Singleton<ConnectionManager>
 
   UDPSocketPtr hostSocket;
 
-  std::vector<std::vector<unsigned char>> recievedMessages;
+  std::map<int, std::vector<std::vector<unsigned char>>> recievedMessages;
   std::vector<int> lostPacketIDs;
   std::map<int, std::vector<int>> ackPacketIDs;
 public:
   ConnectionManager();
   ~ConnectionManager();
   void Update();
-  void RecieveMessage(std::vector<unsigned char> msg);
+  void RecieveMessage(std::vector<unsigned char> msg, int p);
   void StoreLostPacketsIDs(int pktid);
-  std::vector<std::vector<unsigned char>>& GetRecievedMessages();
+  std::map<int, std::vector<std::vector<unsigned char>>>& GetRecievedMessages();
   void AddPacket(std::vector<unsigned char> msg, int pktid, int player);
   std::vector<int>& GetLostPacketIDs();
   void StoreAckPacketsIDs(int pktid, int p);
