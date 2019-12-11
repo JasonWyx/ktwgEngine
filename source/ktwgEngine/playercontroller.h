@@ -49,7 +49,7 @@ private:
 
   Vec3 m_Directions[PD_MAX];
   uint8_t m_DirectionFlag;
-  CRigidBody* m_Rb;
+  CRigidBody* m_Rb = nullptr;
 
 #if SERVER
   PeerID m_PeerID;

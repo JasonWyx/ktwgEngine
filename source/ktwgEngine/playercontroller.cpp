@@ -25,8 +25,6 @@ PlayerController::~PlayerController()
 #endif
 }
 
-
-
 void PlayerController::Init()
 {
   BulletPool::Initialize();
@@ -39,6 +37,9 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
+  if (!m_Rb)
+    m_Rb = GetComponent<CRigidBody>();
+
   UpdateAction();
   UpdateMovement();
 }
@@ -65,6 +66,8 @@ void PlayerController::UpdateMovement()
   Vec3 direction;
   Quaternion rotation;
   m_DirectionFlag = 0;
+
+  movement.y_ = m_Rb->GetLinearVelocity().y_;
 
 #if CLIENT
   if (Input().OnKeyDown(KTWG_UP))
@@ -97,7 +100,6 @@ void PlayerController::UpdateMovement()
 
     direction.Normalize();
     movement += m_Speed * direction;
-	  movement.y_ = m_Rb->GetLinearVelocity().y_;
     rotation = LookRotation(direction);
   }
 

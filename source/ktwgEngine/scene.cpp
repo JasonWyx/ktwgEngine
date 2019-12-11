@@ -107,6 +107,8 @@ void Scene::CreateNewPlayer(PeerID peerID)
       PlayerController* playerController = (PlayerController*)playerBeh.GetInternal();
       playerController->SetPeerID(peerID);
       playerController->CreateMoveControlObject();
+      playerBeh.GetInternal()->Init();
+      playerBeh.GetInternal()->Start();
       
       player->MarkEntityForGhost();
       GhostID id = player->GetGhostObject()->GetGhostID();
