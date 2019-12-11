@@ -408,6 +408,7 @@ void SocketWindowData::DeliverMessage()
     ++cumulativePktsSent;
     ++sentPkt;
     sentMsg = true;
+    timeOutSendAckLiao = false;
   }
 
   // to be removed if cause random DCs
@@ -504,6 +505,12 @@ void SocketWindowData::ReceiveMessage()
 
     if (senderStartPkt != startPkt)
     {
+      if (timeOutSendAckLiao)
+      {
+        AddMessage(std::string{});
+        DeliverMessage();
+      }
+      timeOutSendAckLiao = true;
       senderStartPkt = startPkt;
       ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
@@ -519,7 +526,8 @@ void SocketWindowData::ReceiveMessage()
     //if (!(pktNum != 0 && !(pktNum % 9)))
     {
       ackSlip[index] = true;
-      ConnectionManager::GetInstance().RecieveMessage(msg);
+      if(!msg.empty())
+        ConnectionManager::GetInstance().RecieveMessage(msg);
     }
 
     std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
