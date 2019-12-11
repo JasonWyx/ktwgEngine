@@ -51,12 +51,9 @@ bool MoveManager::WritePacket(Packet& packet)
     {
         if (!m_MoveStateBuffer.empty())
         {
-            if (m_MoveStateObject.m_MoveStateCache != m_MoveStateBuffer.front())
-            {
-                m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
-                m_MoveStateObject.m_PacketCount = 0;
-                m_MoveSequenceNumber++;
-            }
+            m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
+            m_MoveStateObject.m_PacketCount = 0;
+            m_MoveSequenceNumber++;
             m_MoveStateBuffer.pop();
         }
         else
@@ -67,9 +64,9 @@ bool MoveManager::WritePacket(Packet& packet)
     }
 
     // Pack state into stream
+    packet.m_MoveStream << m_MoveSequenceNumber;
     for (size_t i = 0; i < MoveStateFlags::Count; i++)
     {
-        packet.m_MoveStream << m_MoveSequenceNumber;
         packet.m_MoveStream << m_MoveStateObject.m_MoveStateCache[i];
     }
 
@@ -128,7 +125,7 @@ void MoveManager::DropData()
 void MoveManager::PushMoveState(const MoveState& moveState)
 {
     // Don't need to dupliate moves
-    if (m_MoveStateBuffer.empty() || m_MoveStateBuffer.back() != moveState)
+    if (m_MoveStateObject.m_MoveStateCache != moveState)
     {
         m_MoveStateBuffer.push(moveState);
     }

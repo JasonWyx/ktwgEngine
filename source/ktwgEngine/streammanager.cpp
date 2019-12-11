@@ -48,7 +48,6 @@ void StreamManager::ShutdownClient()
 void StreamManager::UpdateClient()
 {
     // Get Packet notifications
-        // Get packet notification
     std::vector<int>& lostPackets = ConnectionManager::GetInstance().GetLostPacketIDs();
 
     for (int lostPacketID : lostPackets)
@@ -108,10 +107,10 @@ void StreamManager::UpdateClient()
         Packet newPacket = { m_LastPacketID++ };
         isDonePacking = PackPacket(newPacket);
 
-        if (!newPacket.HasContents())
-        {
-            continue;
-        }
+        //if (!newPacket.HasContents())
+        //{
+        //    continue;
+        //}
 
         // Send using connection manager
         BitStream finalPacketStream = newPacket.BuildStream();
@@ -159,7 +158,7 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         packet.m_HasEvent = true;
     }
-    /*
+    
     // GhostManager
     packetStreamSize = packet.GetStreamSize();
 
@@ -175,7 +174,7 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         packet.m_HasGhost = true;
     }
-    */
+    
     return true;
 }
 
@@ -271,10 +270,10 @@ void StreamManager::UpdateServer()
                 Packet newPacket = { m_LastPacketID++ };
                 isDonePacking[peerID] = PackPacket(peerID, newPacket);
 
-                if (!newPacket.HasContents())
-                {
-                    continue;
-                }
+                //if (!newPacket.HasContents())
+                //{
+                //    continue;
+                //}
 
                 // Add message to connection manager
                 BitStream finalPacketStream = newPacket.BuildStream();
