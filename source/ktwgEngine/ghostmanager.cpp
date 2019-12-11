@@ -276,6 +276,8 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         }
     }
 
+    packingInfo.m_IsDonePacking = true;
+
     // Successfully packed everthing into the current packet
     if(countObjectsInPacket > 0)
     {

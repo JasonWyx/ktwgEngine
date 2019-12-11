@@ -53,4 +53,9 @@ struct Packet
     {
         return 3 + m_MoveStream.GetBitLength() + m_EventStream.GetBitLength() + m_GhostStream.GetBitLength();
     }
+
+    bool HasContents() const
+    {
+        return m_HasMove || m_HasGhost || m_HasEvent;
+    }
 };

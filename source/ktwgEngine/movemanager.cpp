@@ -12,17 +12,17 @@ MoveManager::~MoveManager()
 void MoveManager::ReadStream(const PeerID sourcePeerID, BitStream& stream)
 {
 #ifdef CLIENT
-    MoveState ackMoveState;
+    //MoveState ackMoveState;
 
-    for (size_t i = 0; i < MoveStateFlags::Count; i++)
-    {
-        stream >> ackMoveState[i];
-    }
-    
-    if (m_MoveStateBuffer.size() && ackMoveState == m_MoveStateBuffer.front())
-    {
-        m_MoveStateBuffer.pop();
-    }
+    //for (size_t i = 0; i < MoveStateFlags::Count; i++)
+    //{
+    //    stream >> ackMoveState[i];
+    //}
+
+    //if (m_MoveStateBuffer.size() && ackMoveState == m_MoveStateBuffer.front())
+    //{
+    //    m_MoveStateBuffer.pop();
+    //}
 #else
     // Something about reading client input and moving control objects
     for (size_t i = 0; i < MoveStateFlags::Count; i++)
@@ -38,22 +38,21 @@ bool MoveManager::WritePacket(Packet& packet)
     // Packet has been sent 3 times and move buffer not empty
     if (m_MoveStateObject.m_PacketCount >= 3)
     {
-      if (!m_MoveStateBuffer.empty())
-      {
-        if (m_MoveStateObject.m_MoveStateCache != m_MoveStateBuffer.front())
+        if (!m_MoveStateBuffer.empty())
         {
-          m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
-            m_MoveStateObject.m_PacketCount = 0;
+            if (m_MoveStateObject.m_MoveStateCache != m_MoveStateBuffer.front())
+            {
+                m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
+                m_MoveStateObject.m_PacketCount = 0;
+            }
+            m_MoveStateBuffer.pop();
         }
-        m_MoveStateBuffer.pop();
-      }
-      else
-      {
-        // No pending moves, successfully packed nothing
-        return true;
-      }
+        else
+        {
+            // No pending moves, successfully packed nothing
+            return true;
+        }
     }
-
 
     // Pack state into stream
     for (size_t i = 0; i < MoveStateFlags::Count; i++)
@@ -66,39 +65,39 @@ bool MoveManager::WritePacket(Packet& packet)
         return false;
     }
 #else
-    // For each peer, check for state change and send acknowledgement when move state changes
-    for (auto&[peerID, moveStateObject] : m_MoveStateObject)
-    {
-        if(peerID == packet.m_TargetPeerID)
-        if (moveStateObject.m_PacketCount >= 3)
-        {
-            if (moveStateObject.m_MoveStateCache != moveStateObject.m_MoveControlObject->m_MoveState)
-            {
-                moveStateObject.m_MoveStateCache = moveStateObject.m_MoveControlObject->m_MoveState;
-                moveStateObject.m_PacketCount = 0;
-            }
-            else
-            {
-                // No pending moves, successfully packed nothing
-                return true;
-            }
-        }
+    //// For each peer, check for state change and send acknowledgement when move state changes
+    //for (auto&[peerID, moveStateObject] : m_MoveStateObject)
+    //{
+    //    if (peerID == packet.m_TargetPeerID)
+    //        if (moveStateObject.m_PacketCount >= 3)
+    //        {
+    //            if (moveStateObject.m_MoveStateCache != moveStateObject.m_MoveControlObject->m_MoveState)
+    //            {
+    //                moveStateObject.m_MoveStateCache = moveStateObject.m_MoveControlObject->m_MoveState;
+    //                moveStateObject.m_PacketCount = 0;
+    //            }
+    //            else
+    //            {
+    //                // No pending moves, successfully packed nothing
+    //                return true;
+    //            }
+    //        }
 
-        // Pack state into stream
-        for (size_t i = 0; i < MoveStateFlags::Count; i++)
-        {
-            packet.m_MoveStream << moveStateObject.m_MoveStateCache[i];
-        }
+    //    // Pack state into stream
+    //    for (size_t i = 0; i < MoveStateFlags::Count; i++)
+    //    {
+    //        packet.m_MoveStream << moveStateObject.m_MoveStateCache[i];
+    //    }
 
-        if (moveStateObject.m_PacketCount++ < 3)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    //    if (moveStateObject.m_PacketCount++ < 3)
+    //    {
+    //        return false;
+    //    }
+    //    else
+    //    {
+    //        return true;
+    //    }
+    //}
 #endif
     return true;
 }
