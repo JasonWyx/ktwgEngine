@@ -100,7 +100,7 @@ void ConnectionManager::ConnectToServer()
   }
   else
   {
-    std::string message = "Hello Server";
+    std::string message = "Hello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello Server";
 
     // ConnectionManager::GetInstance().AddPacket(message, -1);
       // mySocket.AddMessage(message);
@@ -367,7 +367,23 @@ void SocketWindowData::SlowStart(const bool& ss)
 
 void SocketWindowData::DeliverMessage()
 {
+#ifdef CLIENT
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
+#else
+  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
+#endif
+
   if (msgQueue.empty() || !sPort) return;
+  if (notSentAckYet)
+  {
+    unsigned char startPkt = sentPkt - cumulativePktsSent;
+    std::string message = msgQueue.front();
+    msgQueue.pop_front();
+    int streamPktID = -1;
+    message = PacketMessage(message, startPkt);
+    socket->SendTo(message.c_str(), message.size(), *sockAddr);
+    return;
+  }
   if (!cumulativePktsSent)
   {
     timeTracker.clear();
@@ -380,17 +396,13 @@ void SocketWindowData::DeliverMessage()
   int currWindowSize = windowSize - cumulativePktsSent;
   SocketAddress server{ AF_INET, inet_addr(SERVERIP), PORT };
 
-#ifdef CLIENT
-  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
-#else
-  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
-#endif
   while (currWindowSize != 0)
   {
     if (msgQueue.empty()) break;
     // std::cout << (int)startPkt << std::endl;
+    notSentAckYet = false;
     std::string message = msgQueue.front();
-    msgQueue.pop();
+    msgQueue.pop_front();
     int streamPktID = -1;
     if (!streamIDQueue.empty())
     {
@@ -459,7 +471,7 @@ void SocketWindowData::ReceiveMessage()
 
 
 #ifdef CLIENT
-    // ConnectionManager::GetInstance().AddPacket("Hello Server", -1);
+    // ConnectionManager::GetInstance().AddPacket("Hello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello Server", -1);
     // AddMessage("Hello Server");
 #else
     // ConnectionManager::GetInstance().AddPacket("Hello Client", -1, player);
@@ -501,8 +513,14 @@ void SocketWindowData::ReceiveMessage()
     }
     if (index < 0) return;
 
-    if (senderStartPkt != startPkt)
+    if (senderStartPkt != startPkt && !msg.empty())
     {
+      if (notSentAckYet)
+      {
+          msgQueue.emplace_front(std::string{});
+          DeliverMessage();
+      }
+      notSentAckYet = true;
       senderStartPkt = startPkt;
       ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
@@ -515,10 +533,14 @@ void SocketWindowData::ReceiveMessage()
     //   --dynamicRecvPkt;
     // }
 
-    if (!(pktNum != 0 && !(pktNum % 9)))
+    // if (!(pktNum != 0 && !(pktNum % 9)))
     {
-      ackSlip[index] = true;
-      ConnectionManager::GetInstance().RecieveMessage(msg);
+      // ackSlip[index] = true;
+      if(!msg.empty())
+      {
+        ackSlip[index] = true;
+        ConnectionManager::GetInstance().RecieveMessage(msg);
+      }
     }
 
     std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
@@ -616,6 +638,9 @@ std::string SocketWindowData::PacketMessage(const std::string& msg, const unsign
   message.push_back((char)windowSize);
   message.push_back(senderStartPkt);
 
+  for(int i = 0; i < ackSlip.size(); ++i)
+  std::cout << ackSlip[i];
+
   int acks = GetAcks();
   char* tmp = (char*)(&acks);
   message.push_back(*tmp);
@@ -685,7 +710,7 @@ int SocketWindowData::GetAcks()
 
 void SocketWindowData::AddMessage(std::string msg)
 {
-  msgQueue.push(msg);
+  msgQueue.push_back(msg);
 }
 
 void SocketWindowData::AddStreamPktID(int id)
@@ -741,7 +766,7 @@ bool SocketWindowData::GetShutdown()
 void SocketWindowData::ShutdownMessage()
 {
   while (!msgQueue.empty())
-    msgQueue.pop();
+    msgQueue.pop_front();
   std::string s = "shutdown";
   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
   socket->SendTo(s.c_str(), s.size(), *sockAddr);

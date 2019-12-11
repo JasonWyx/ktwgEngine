@@ -44,7 +44,7 @@ class SocketWindowData
   u_short                 sPort = 0;
   UDPSocketPtr            socket;
   std::vector<bool>       ackSlip;
-  std::queue<std::string> msgQueue;
+  std::deque<std::string> msgQueue;
   std::queue<int>         streamIDQueue;
   std::vector<PktTimer>   timeTracker;
   bool                    sentMsg = false;
@@ -54,7 +54,8 @@ class SocketWindowData
   int                     player = -1;
   // to be removed if cause random DCs
   TIME                    timeOutTimer;
-  std::string		      clientIP;
+  std::string		          clientIP;
+  bool                    notSentAckYet = true;
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
