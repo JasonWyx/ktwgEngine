@@ -73,7 +73,6 @@ void Application::LateInitialize()
   StreamManager::GetInstance().GetEventManager().RegisterEvents();
   HypeRenderer::Initialize();
 //  HypeGraphicsWorld::Initialize();
-  GameplayManager::Initialize();
 #endif
   Scene::Initialize();
 }

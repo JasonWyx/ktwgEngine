@@ -24,9 +24,7 @@ void GameStateManager::Start()
   m_WinObject->SetActive(false);
   m_LoseObject->SetActive(false);
 
-#if SERVER
   GameOverEvent::RegisterSubscriber(this);
-#endif
 }
 
 void GameStateManager::Update()
