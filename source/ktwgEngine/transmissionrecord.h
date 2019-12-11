@@ -1,7 +1,8 @@
 #pragma once
 #include "ghosttransmissionrecord.h"
-#include "eventtransmissionrecord.h"
 #include "packet.h"
+#include "event.h"
+#include <list>
 
 struct TransmissionRecord
 {
@@ -9,7 +10,7 @@ struct TransmissionRecord
     PeerID m_TargetPeerID;
 
     std::vector<GhostTransmissionRecord> m_GhostTransmissionRecords;
-    std::vector<EventTransmissionRecord> m_EventTransmissionRecords;
+    std::list<Event*> m_Events;
 
     bool operator<(const TransmissionRecord& rhs)
     {
