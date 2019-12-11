@@ -91,6 +91,7 @@
     <ClCompile Include="win32window.cpp" />
     <ClCompile Include="windowmanager.cpp" />
     <ClCompile Include="clientmovecontroller.cpp" />
+    <ClCompile Include="gamestatemanagerscript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aabb3.h" />
@@ -216,5 +217,6 @@
     <ClInclude Include="componentids.h" />
     <ClInclude Include="clientmovecontroller.h" />
     <ClInclude Include="win32_includes.h" />
+    <ClInclude Include="gamestatemanagerscript.h" />
   </ItemGroup>
 </Project>
