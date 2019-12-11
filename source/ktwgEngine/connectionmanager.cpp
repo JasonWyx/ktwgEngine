@@ -591,7 +591,8 @@ void SocketWindowData::UpdateTimer()
         if (elapsedTime > timeOut)
         {
           PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f, streamPktID);
-          ConnectionManager::GetInstance().StoreLostPacketsIDs(streamPktID);
+          if (streamPktID >= 0)
+            ConnectionManager::GetInstance().StoreLostPacketsIDs(streamPktID);
           // store streamPktID for lost packet
           timeTracker[i] = tmp;
           ++timeOutPkt;
@@ -661,7 +662,8 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
         //std::cout << "DevRtt : " << devRTT << std::endl;
         //std::cout << "RTT : " << rtt << std::endl;
         timeTracker[i] = tmp;
-        ConnectionManager::GetInstance().StoreAckPacketsIDs(streamPktID, player);
+        if(streamPktID >= 0)
+          ConnectionManager::GetInstance().StoreAckPacketsIDs(streamPktID, player);
       }
     }
     bit = bit << 1;
