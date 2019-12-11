@@ -29,7 +29,7 @@ void EventManager::ReadStream(const PeerID peerID, BitStream& stream)
     stream >> sequence;
   }
 
-  uint8_t numEvents;
+  uint8_t numEvents = 0;
   stream.Read(numEvents, 3);
   numEvents++;
   for (uint8_t i = 0; i < numEvents; ++i)

@@ -74,7 +74,7 @@ BitStream& BitStream::Write(const T& value, size_t bitCount)
         
         while (bitPointer > 0)
         {
-            (*this) << static_cast<bool>(value | bitPointer);
+            (*this) << static_cast<bool>(value & bitPointer);
             bitPointer >>= 1;
         }
     }
@@ -152,6 +152,8 @@ BitStream& BitStream::Read(T& value, size_t bitCount)
 {
     assert(bitCount > 0 && bitCount <= 64);
 
+    value = 0;
+    
     // Lazy looping for now, might optimize in the future
     if (bitCount > 0 && bitCount <= 64)
     {
