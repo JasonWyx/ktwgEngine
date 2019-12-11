@@ -198,6 +198,7 @@
     <ClCompile Include="enemypool.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="entitypool.cpp" />
+    <ClCompile Include="event.cpp" />
     <ClCompile Include="fcollider.cpp" />
     <ClCompile Include="gameplaymanager.cpp" />
     <ClCompile Include="eventmanager.cpp" />

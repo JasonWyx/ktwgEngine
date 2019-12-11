@@ -451,7 +451,7 @@ void SocketWindowData::ReceiveMessage()
     int startAckPkt = (int)(std::get<3>(message));
     int Acks = std::get<4>(message);
     std::string msg;
-    for (int i = 8; i < res; ++i)
+    for (int i = 0; i < res - 8; ++i)
       msg.push_back(std::get<5>(message)[i]);
 
     std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", startAckPkt : " << startAckPkt <<

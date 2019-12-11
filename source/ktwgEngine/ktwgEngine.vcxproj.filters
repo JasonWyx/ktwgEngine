@@ -92,6 +92,7 @@
     <ClCompile Include="windowmanager.cpp" />
     <ClCompile Include="clientmovecontroller.cpp" />
     <ClCompile Include="gamestatemanagerscript.cpp" />
+    <ClCompile Include="event.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aabb3.h" />
