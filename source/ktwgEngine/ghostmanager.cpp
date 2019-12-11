@@ -58,10 +58,10 @@ void GhostManager::ReadStream(BitStream& stream)
 
                 // jason todo: create object here with m_IsLocalOwner set to false in ghost object so
                 // that local client does not send updates to server for broadcast
-				
-				        // read data here and send to scene to create
+
+                        // read data here and send to scene to create
 #if CLIENT
-              Scene::GetInstance().CreateGhostEntity(stream);
+                Scene::GetInstance().CreateGhostEntity(stream);
 #endif
             }
             else
@@ -150,7 +150,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
             }
         }
     }
-    else if(headerSizeInBits + packetSizeInBits + packingInfo.m_CachedObjectStream.GetBitLength() <= MAX_PACKET_BIT_SIZE)
+    else if (headerSizeInBits + packetSizeInBits + packingInfo.m_CachedObjectStream.GetBitLength() <= MAX_PACKET_BIT_SIZE)
     {
         // jason todo: check if the current cached object can go into the packet
         // if not, return false again
@@ -158,7 +158,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         ghostObjectStream += packingInfo.m_CachedObjectStream;
 
         GhostTransmissionRecord& gtr = tr.m_GhostTransmissionRecords.emplace_back(packingInfo.m_CachedTransmissionRecord);
-        
+
         if (GhostObject* ghostObject = packingInfo.m_ObjectsToPack.size() ? m_GhostObjectsIDMap[packingInfo.m_ObjectsToPack[packingInfo.m_LastPackedIndex].first] : nullptr)
         {
 #ifdef CLIENT
@@ -185,7 +185,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 
     /*
         In this loop, we build the ghost object stream first, then we check if the size can fit.
-        1. If it fits, we append to the objects stream 
+        1. If it fits, we append to the objects stream
         2. If it does not fit, we append what we have to the packet with the object count and return false
     */
     for (size_t i = packingInfo.m_LastPackedIndex; i < packingInfo.m_ObjectsToPack.size(); ++i)
@@ -193,7 +193,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         // Packet structure [GhostID][StatusChange][StateMask][StateData]
         packingInfo.m_CachedObjectStream.Clear();
 
-        auto& [ghostID, stateMask] = packingInfo.m_ObjectsToPack[i];
+        auto&[ghostID, stateMask] = packingInfo.m_ObjectsToPack[i];
 
         GhostObject* ghostObject = m_GhostObjectsIDMap[ghostID];
 
@@ -239,6 +239,9 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         packingInfo.m_CachedTransmissionRecord.m_GhostID = ghostObject->GetGhostID();
         packingInfo.m_CachedTransmissionRecord.m_StateMask = stateMask;
         packingInfo.m_CachedTransmissionRecord.m_Status = status;
+        packingInfo.m_CachedTransmissionRecord.m_NextTransmissionRecord = nullptr;
+        packingInfo.m_CachedTransmissionRecord.m_PreviousTransmissionRecord = nullptr;
+
 
         // Checking for buffer overflow...
         // HeaderSize + ObjectsStreamSize + CurrentObjectSize + CurrentPacketSize > MaxPacketBitSize
@@ -266,9 +269,9 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 #else
             ghostObject->SetLatestTransmissionRecord(tr.m_TargetPeerID, &gtr);
 #endif
-        } 
+        }
         else
-        { 
+        {
             // Packet what ever we have and notify that we still have more ghost objects to pack
             packet.m_GhostStream << countObjectsInPacket;
             packet.m_GhostStream += ghostObjectStream;
@@ -279,7 +282,7 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
     packingInfo.m_IsDonePacking = true;
 
     // Successfully packed everthing into the current packet
-    if(countObjectsInPacket > 0)
+    if (countObjectsInPacket > 0)
     {
         packet.m_GhostStream << countObjectsInPacket;
         packet.m_GhostStream += ghostObjectStream;
@@ -392,7 +395,7 @@ void GhostManager::DropPendingData()
     m_PackingInfo.m_LastPackedIndex = 0;
     m_PackingInfo.m_ObjectsToPack.clear();
 #else
-    for (auto& [peerID, packingInfo] : m_PackingInfo)
+    for (auto&[peerID, packingInfo] : m_PackingInfo)
     {
         packingInfo.m_CachedObjectStream.Clear();
         packingInfo.m_IsDonePacking = true;
@@ -408,7 +411,7 @@ void GhostManager::ClearStatusChanges()
     m_PackingInfo.m_GhostsToCreate.clear();
     m_PackingInfo.m_GhostsToDelete.clear();
 #else
-    for (auto& [peerID, packingInfo] : m_PackingInfo)
+    for (auto&[peerID, packingInfo] : m_PackingInfo)
     {
         packingInfo.m_GhostsToCreate.clear();
         packingInfo.m_GhostsToDelete.clear();
@@ -418,11 +421,11 @@ void GhostManager::ClearStatusChanges()
 
 void GhostManager::RegisterGhostID(GhostObject * ghostObject)
 {
-  m_GhostObjectsIDMap.try_emplace(ghostObject->GetGhostID(), ghostObject);
+    m_GhostObjectsIDMap.try_emplace(ghostObject->GetGhostID(), ghostObject);
 }
 
 void GhostManager::RegisterGhostObject(GhostObject* ghostObject)
-{   
+{
     m_GhostObjects.push_back(ghostObject);
 }
 
@@ -454,7 +457,7 @@ void GhostManager::CreatePeer(PeerID peerID)
 
 void GhostManager::ReplicateForAllPeer(GhostID ghostID)
 {
-    for (auto& [peerID, packingInfo] : m_PackingInfo)
+    for (auto&[peerID, packingInfo] : m_PackingInfo)
     {
         packingInfo.m_GhostsToCreate.emplace(ghostID);
     }
@@ -462,7 +465,7 @@ void GhostManager::ReplicateForAllPeer(GhostID ghostID)
 
 void GhostManager::UnreplicateForAllPeer(GhostID ghostID)
 {
-    for (auto& [peerID, packingInfo] : m_PackingInfo)
+    for (auto&[peerID, packingInfo] : m_PackingInfo)
     {
         packingInfo.m_GhostsToDelete.emplace(ghostID);
     }

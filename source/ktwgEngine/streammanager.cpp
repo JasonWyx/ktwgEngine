@@ -74,8 +74,8 @@ void StreamManager::UpdateClient()
         for (int lostPacketID : lostPackets)
         {
             TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
-            m_GhostManager.NotifyTransmissionFailure(*tr);
-            m_EventManager.NotifyTransmissionFailure(*tr);
+            m_GhostManager.NotifyTransmissionSuccess(*tr);
+            m_EventManager.NotifyTransmissionSuccess(*tr);
             m_TransmissionRecordMap.erase(lostPacketID);
 
             m_TransmissionInfo.m_TransmissionRecords.remove_if(
@@ -196,6 +196,12 @@ void StreamManager::UpdateServer()
 
     for (int lostPacketID : lostPackets)
     {
+        auto iter = m_TransmissionRecordMap.find((PacketID)lostPacketID);
+        if (iter == m_TransmissionRecordMap.end())
+        {
+            continue;
+        };
+
         TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
         m_GhostManager.NotifyTransmissionFailure(*tr);
         m_EventManager.NotifyTransmissionFailure(*tr);
@@ -203,9 +209,9 @@ void StreamManager::UpdateServer()
 
         m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if(
             [lostPacketID](TransmissionRecord& transmissionRecord)
-            {
-                return transmissionRecord.m_PacketID == lostPacketID;
-            }
+        {
+            return transmissionRecord.m_PacketID == lostPacketID;
+        }
         );
     }
 
@@ -218,8 +224,8 @@ void StreamManager::UpdateServer()
         for (int lostPacketID : lostPackets)
         {
             TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
-            m_GhostManager.NotifyTransmissionFailure(*tr);
-            m_EventManager.NotifyTransmissionFailure(*tr);
+            m_GhostManager.NotifyTransmissionSuccess(*tr);
+            m_EventManager.NotifyTransmissionSuccess(*tr);
             m_TransmissionRecordMap.erase(lostPacketID);
 
             m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if(
