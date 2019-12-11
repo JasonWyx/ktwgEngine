@@ -6,9 +6,11 @@
 #include <map>
 #include <memory>
 
+
 class EventManager
 {
 public:
+    using EventHandler_t = void(*)(Event*);
 
     EventManager();
     ~EventManager();
@@ -21,6 +23,7 @@ public:
     void BroadcastEvent(Event* event, bool guaranteed);
     void ProcessEvents();
 
+    void AddListener(EventID eventID, EventHandler_t handler);
 
 private:
 
@@ -49,5 +52,5 @@ private:
     std::map<PeerID, EventCache> m_EventCache;
 
 #endif
-
+    std::map<EventID, std::vector<EventHandler_t>> m_EventListeners;
 };
