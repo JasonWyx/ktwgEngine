@@ -144,7 +144,6 @@
     <ClInclude Include="entitypool.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="eventmanager.h" />
-    <ClInclude Include="eventtransmissionrecord.h" />
     <ClInclude Include="fcollider.h" />
     <ClInclude Include="gameplaymanager.h" />
     <ClInclude Include="ghostmanager.h" />

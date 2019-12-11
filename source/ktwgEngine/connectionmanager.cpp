@@ -214,6 +214,7 @@ void ConnectionManager::Update()
 	  tmp.SetClientIP(ip);
       tmp.SetPlayer(connectedPlayerID);
       playerActive[connectedPlayerID] = true;
+      ackPacketIDs[connectedPlayerID];
       serverSockets.push_back(tmp);
       // inform upper level here
       StreamManager::GetInstance().CreatePeer(connectedPlayerID);
