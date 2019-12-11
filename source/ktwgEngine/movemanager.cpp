@@ -12,23 +12,34 @@ MoveManager::~MoveManager()
 void MoveManager::ReadStream(const PeerID sourcePeerID, BitStream& stream)
 {
 #ifdef CLIENT
-    //MoveState ackMoveState;
 
-    //for (size_t i = 0; i < MoveStateFlags::Count; i++)
-    //{
-    //    stream >> ackMoveState[i];
-    //}
-
-    //if (m_MoveStateBuffer.size() && ackMoveState == m_MoveStateBuffer.front())
-    //{
-    //    m_MoveStateBuffer.pop();
-    //}
 #else
     // Something about reading client input and moving control objects
-    for (size_t i = 0; i < MoveStateFlags::Count; i++)
+    unsigned moveSequenceNumber;
+    stream >> moveSequenceNumber;
+
+    // Only update the move state if the sequence number has changed
+    if (moveSequenceNumber >= m_MoveStateObject[sourcePeerID].m_MoveSequenceNumber)
     {
-        stream >> m_MoveStateObject[sourcePeerID].m_MoveControlObject->m_MoveState[i];
+        for (size_t i = 0; i < MoveStateFlags::Count; i++)
+        {
+            stream >> m_MoveStateObject[sourcePeerID].m_MoveControlObject->m_MoveState[i];
+        }
+
+        // Bump the number over the over flow
+        if (moveSequenceNumber == 0xFFFFFFFF)
+        {
+            moveSequenceNumber = 0;
+        }
+        m_MoveStateObject[sourcePeerID].m_MoveSequenceNumber = moveSequenceNumber;
     }
+    else
+    {
+        bool dummy;
+        stream >> dummy >> dummy >> dummy >> dummy;
+    }
+
+
 #endif
 }
 
@@ -44,6 +55,7 @@ bool MoveManager::WritePacket(Packet& packet)
             {
                 m_MoveStateObject.m_MoveStateCache = m_MoveStateBuffer.front();
                 m_MoveStateObject.m_PacketCount = 0;
+                m_MoveSequenceNumber++;
             }
             m_MoveStateBuffer.pop();
         }
@@ -57,6 +69,7 @@ bool MoveManager::WritePacket(Packet& packet)
     // Pack state into stream
     for (size_t i = 0; i < MoveStateFlags::Count; i++)
     {
+        packet.m_MoveStream << m_MoveSequenceNumber;
         packet.m_MoveStream << m_MoveStateObject.m_MoveStateCache[i];
     }
 

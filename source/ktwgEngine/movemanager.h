@@ -29,11 +29,13 @@ private:
         MoveControlObject* m_MoveControlObject;
         MoveState m_MoveStateCache;
         unsigned m_PacketCount = 3;
+        unsigned m_MoveSequenceNumber = 0;
     };
 
 #ifdef CLIENT
     std::queue<MoveState> m_MoveStateBuffer;
     MoveStateObject m_MoveStateObject;
+    unsigned m_MoveSequenceNumber = 0;
 #else
     std::map<PeerID, MoveStateObject> m_MoveStateObject;
 #endif
