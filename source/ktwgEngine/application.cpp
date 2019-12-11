@@ -157,7 +157,8 @@ void Application::Run()
     double dtMs = time.GetDeltaTimeMs();
 
     // Update all engine systems
-    inputSys.Update();
+    if (accumDt >= 0.016f)
+      inputSys.Update();
 
     accumulator += dtMs;
 
