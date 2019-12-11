@@ -34,6 +34,7 @@ void PlayerController::Init()
 
 void PlayerController::Start()
 {
+  m_Rb = GetComponent<CRigidBody>();
 }
 
 void PlayerController::Update()
@@ -96,10 +97,11 @@ void PlayerController::UpdateMovement()
 
     direction.Normalize();
     movement += m_Speed * direction;
+	  movement.y_ = m_Rb->GetLinearVelocity().y_;
     rotation = LookRotation(direction);
   }
 
-  GetComponent<CRigidBody>()->SetLinearVelocity(movement);
+  m_Rb->SetLinearVelocity(movement);
   GetTransform().SetRotation(rotation);
 }
 
