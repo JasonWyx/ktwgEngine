@@ -70,13 +70,26 @@ struct GameOverEvent : public Event
 
     virtual void ReadStream(BitStream& stream) override
     {
-        stream >> m_WinningPeer;
+      stream >> m_Win;
     }
 
     virtual void WriteStream(BitStream& stream) override
     {
-        stream << m_WinningPeer;
+      stream << m_Win;
     }
-    
-    PeerID m_WinningPeer;
+
+    static void GameOverEventHandler(Event* evt);
+
+    static void RegisterSubscriber(Behaviour* behaviour)
+    {
+      ms_Subscribers.emplace_back(behaviour);
+    }
+
+    static void RemoveSubscriber(Behaviour* behaviour)
+    {
+      ms_Subscribers.erase(std::remove(ms_Subscribers.begin(), ms_Subscribers.end(), behaviour), ms_Subscribers.end());
+    }
+
+    static std::vector<Behaviour*> ms_Subscribers;
+    bool m_Win;
 };

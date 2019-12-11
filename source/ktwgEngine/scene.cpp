@@ -17,6 +17,8 @@
 #include "clientmovecontroller.h"
 #include "gamestatemanagerscript.h"
 
+#include "gameplaymanager.h"
+
 // Network
 #include "streammanager.h"
 
@@ -116,6 +118,8 @@ void Scene::CreateNewPlayer(PeerID peerID)
       StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
 
       called = true;
+
+      GameplayManager::GetInstance().OnPlayerConnected(player);
     }
   }
 }

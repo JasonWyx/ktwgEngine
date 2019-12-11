@@ -30,12 +30,15 @@ public:
   void Start() override;
   void Update() override;
 
+  void OnCollisionEnter(Collision&);
+
 #if SERVER
   // Set PeerID should only be called once! and should precede the call to CreateMoveControlObject on the server
   void CreateMoveControlObject();
   void SetPeerID(PeerID peerID) { m_PeerID = peerID; }
   PeerID GetPeerID() const { return m_PeerID; }
   void OnBulletFireEvent(BulletFireEvent* bulletFireEvent) override;
+  bool GetIsAlive() const;
 #endif
 
 private:
@@ -51,6 +54,8 @@ private:
   Vec3 m_Directions[PD_MAX];
   uint8_t m_DirectionFlag;
   CRigidBody* m_Rb = nullptr;
+
+  bool m_IsAlive;
 
 #if SERVER
   PeerID m_PeerID;

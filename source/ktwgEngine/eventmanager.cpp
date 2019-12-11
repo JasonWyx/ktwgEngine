@@ -331,4 +331,5 @@ void EventManager::AddEventHandler(EventID eventID, EventHandler_t handler)
 void EventManager::RegisterEvents()
 {
   REGISTER_NEW_EVENT(EventID_BulletFire, &BulletFireEvent::BulletFireEventHandler);
+  REGISTER_NEW_EVENT(EventID_GameOver, &GameOverEvent::GameOverEventHandler);
 }

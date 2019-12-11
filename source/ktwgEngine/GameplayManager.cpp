@@ -1,7 +1,9 @@
 #include "gameplaymanager.h"
 #include "entity.h"
+#include "playercontroller.h"
+#include "streammanager.h"
 
-Entity * GameplayManager::GetNearestPlayer(const Vec3 & position)
+Entity* GameplayManager::GetNearestPlayer(const Vec3 & position)
 {
   float closestSqDist = FLT_MAX;
   int index = -1;
@@ -47,4 +49,26 @@ void GameplayManager::OnPlayerConnected(Entity * player)
 void GameplayManager::OnPlayerDisconnected(Entity * player)
 {
   m_ConnectedPlayers.erase(std::remove(m_ConnectedPlayers.begin(), m_ConnectedPlayers.end(), player), m_ConnectedPlayers.end());
+}
+
+void GameplayManager::OnPlayerDeath()
+{
+  bool allDead = true;
+  for (auto& player : m_ConnectedPlayers)
+  {
+    PlayerController* playerBeh = player->GetComponent<PlayerController>();
+    if (playerBeh->GetIsAlive())
+    {
+      allDead = false;
+      break;
+    }
+  }
+
+  if (allDead)
+  {
+    // Send activate lose
+    GameOverEvent* evt = new GameOverEvent;
+    evt->m_Win = false;
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+  }
 }
