@@ -140,8 +140,8 @@ void CRigidBody::GhostPropertyReplicateFromStream(BitStream & stream)
 
 void CRigidBody::RegisterAsGhostProperty(GhostObject * ghostObject, NetAuthority netAuthority)
 {
-  GhostPropertyComponent<CRigidBody>* prop = new GhostPropertyComponent<CRigidBody>{ this, netAuthority };
-  ghostObject->RegisterPropertyCustom(prop);
+  //GhostPropertyComponent<CRigidBody>* prop = new GhostPropertyComponent<CRigidBody>{ this, netAuthority };
+  //ghostObject->RegisterPropertyCustom(prop);
 }
 
 void CRigidBody::AddForce(const Vec3& force)

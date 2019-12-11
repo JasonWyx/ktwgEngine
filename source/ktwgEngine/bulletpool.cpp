@@ -7,9 +7,12 @@
 #include "crenderable.h"
 #include "hypegraphicobject.h"
 #include "bulletbehaviourscript.h"
+#include "streammanager.h"
 
 BulletPool::BulletPool()
 {
+  m_Pool.reserve(1 << 13);
+
   m_Object = Scene::GetInstance().CreateEntity("Bullet");
 
   Transform& tf = m_Object->GetTransform();
@@ -65,5 +68,9 @@ void BulletPool::IncreasePool(unsigned size)
 
     clone->SetActive(false);
     m_Pool.emplace_back(clone);
+
+    clone->MarkEntityForGhost();
+    GhostID id = clone->GetGhostObject()->GetGhostID();
+    StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
   }
 }

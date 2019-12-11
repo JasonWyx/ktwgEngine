@@ -403,6 +403,7 @@ void StreamManager::UnpackStream(const PeerID sourcePeerID, BitStream& stream)
     if (hasEvent)
     {
         m_EventManager.ReadStream(sourcePeerID, stream);
+        m_EventManager.ProcessEvents();
     }
 
     if (hasGhost)
