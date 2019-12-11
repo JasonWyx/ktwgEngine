@@ -57,6 +57,93 @@ void CRigidBody::Set(Component* comp)
   m_Internal->Set(rb->m_Internal);
 }
 
+void CRigidBody::GhostPropertyReadStream(BitStream & stream)
+{
+  ComponentID dummyCi;
+  stream >> dummyCi;
+
+  ComponentType dummyType;
+  stream >> dummyType;
+
+  Vec3 linearVelocity;
+  stream >> linearVelocity.x_ >> linearVelocity.y_ >> linearVelocity.z_;
+  Vec3 angularVelocity;
+  stream >> angularVelocity.x_ >> angularVelocity.y_ >> angularVelocity.z_;
+  uint8_t bodyType;
+  stream >> bodyType;
+  float mass;
+  stream >> mass;
+  float linearDamping;
+  stream >> linearDamping;
+  float angularDamping;
+  stream >> angularDamping;
+  float gravityScale;
+  stream >> gravityScale;
+  bool useGravity;
+  stream >> useGravity;
+  stream >> m_Internal->m_Flags;
+
+  SetLinearVelocity(linearVelocity);
+  SetAngularVelocity(angularVelocity);
+}
+
+void CRigidBody::GhostPropertyWriteStream(BitStream & stream)
+{
+  // ALWAYS PREFIX WITH CLASSID FOR COMPONENT AND COMPONENTTYPE DON'T NEED TO READ THIS BACK
+  stream << CI_Component;
+  stream << GetType();
+
+  Vec3 linearVelocity = GetLinearVelocity();
+  stream << linearVelocity.x_ << linearVelocity.y_ << linearVelocity.z_;
+  Vec3 angularVelocity = GetAngularVelocity();
+  stream << angularVelocity.x_ << angularVelocity.y_ << angularVelocity.z_;
+  stream << (uint8_t)GetBodyType();
+  stream << GetMass();
+  stream << GetLinearDamping();
+  stream << GetAngularDamping();
+  stream << GetGravityScale();
+  stream << GetUseGravity();
+  stream << m_Internal->m_Flags;
+}
+
+void CRigidBody::GhostPropertyReplicateFromStream(BitStream & stream)
+{
+  Vec3 linearVelocity;
+  stream >> linearVelocity.x_ >> linearVelocity.y_ >> linearVelocity.z_;
+  Vec3 angularVelocity;
+  stream >> angularVelocity.x_ >> angularVelocity.y_ >> angularVelocity.z_;
+  uint8_t bodyType;
+  stream >> bodyType;
+  float mass;
+  stream >> mass;
+  float linearDamping;
+  stream >> linearDamping;
+  float angularDamping;
+  stream >> angularDamping;
+  float gravityScale;
+  stream >> gravityScale;
+  bool useGravity;
+  stream >> useGravity;
+  stream >> m_Internal->m_Flags;
+
+  SetBodyType((RBType)bodyType);
+  SetMass(mass);
+  SetLinearDamping(linearDamping);
+  SetAngularDamping(angularDamping);
+  SetGravityScale(gravityScale);
+  SetUseGravity(useGravity);
+  SetFreezeRotationX(GetFreezeRotationX());
+  SetFreezeRotationY(GetFreezeRotationY());
+  SetFreezeRotationZ(GetFreezeRotationZ());
+  SetIgnorePhysics(GetIgnorePhysics());
+}
+
+void CRigidBody::RegisterAsGhostProperty(GhostObject * ghostObject, NetAuthority netAuthority)
+{
+  GhostPropertyComponent<CRigidBody>* prop = new GhostPropertyComponent<CRigidBody>{ this, netAuthority };
+  ghostObject->RegisterPropertyCustom(prop);
+}
+
 void CRigidBody::AddForce(const Vec3& force)
 {
   assert(m_Internal);

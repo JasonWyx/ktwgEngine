@@ -59,6 +59,51 @@ public:
 
   void Set(Component* comp) override;
 
+  // Network
+  void GhostPropertyReadStream(BitStream& stream) override;
+  void GhostPropertyWriteStream(BitStream& stream) override;
+  void GhostPropertyReplicateFromStream(BitStream& stream) override;
+
+  void RegisterAsGhostProperty(GhostObject* ghostObject, NetAuthority netAuthority) override;
+
 private:
   RigidBody* m_Internal;
+};
+
+// Type T = Component Type e.g ComponentGhostProperty<CRenderable>
+template <>
+class GhostPropertyComponent<CRigidBody, typename std::enable_if<std::is_base_of<Component, CRigidBody>::value>::type> : public GhostProperty
+{
+public:
+  GhostPropertyComponent(CRigidBody* component, NetAuthority authority)
+    : GhostProperty{ authority }
+    , m_Component{ component }
+  {
+
+  }
+
+  void WriteStream(BitStream& stream) override
+  {
+    m_Component->GhostPropertyWriteStream(stream);
+  }
+
+  void ReadStream(BitStream& stream) override
+  {
+    m_Component->GhostPropertyReadStream(stream);
+  }
+
+  bool IsPropertyChanged() const override
+  {
+    Vec3 linearVel = m_Component->GetLinearVelocity();
+    return !(linearVel == m_PrevLinearVel);
+  }
+
+  void Sync() override
+  {
+    m_PrevLinearVel = m_Component->GetLinearVelocity();
+  }
+
+private:
+  Vec3 m_PrevLinearVel;
+  CRigidBody* m_Component;
 };
