@@ -19,6 +19,8 @@ public:
 
   void OnPlayerConnected(Entity* player);
   void OnPlayerDisconnected(Entity* player);
+  
+  void OnPlayerDeath();
 
 private:
   std::vector<Entity*> m_ConnectedPlayers;

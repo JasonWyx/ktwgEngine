@@ -1,7 +1,7 @@
 #include "gamestatemanagerscript.h"
 #include "inputsystem.h"
 #include "scene.h"
-#include <iostream>
+#include "event.h"
 
 GameStateManager::GameStateManager(Entity& entity)
   : Behaviour{ typeid(GameStateManager), entity }
@@ -23,6 +23,10 @@ void GameStateManager::Start()
 
   m_WinObject->SetActive(false);
   m_LoseObject->SetActive(false);
+
+#if SERVER
+  GameOverEvent::RegisterSubscriber(this);
+#endif
 }
 
 void GameStateManager::Update()
@@ -33,3 +37,16 @@ void GameStateManager::Update()
   if (Input().OnKeyPress(KTWG_L))
     m_LoseObject->SetActive(!m_LoseObject->GetActive());
 }
+
+void GameStateManager::OnGameOverEvent(GameOverEvent * evt)
+{
+  if (evt->m_Win)
+  {
+    m_WinObject->SetActive(true);
+  }
+  else
+  {
+    m_LoseObject->SetActive(true);
+  }
+}
+

@@ -3,6 +3,8 @@
 #include "bulletpool.h"
 #include "bulletbehaviourscript.h"
 #include "event.h"
+#include "collision.h"
+#include "gameplaymanager.h"
 
 #if SERVER
 #include "streammanager.h"
@@ -17,6 +19,7 @@ PlayerController::PlayerController(Entity& entity)
   m_Directions[PD_BACKWARD] = Vec3{ 0.0f, 0.0f, -100.0f };
   m_Directions[PD_LEFT] = Vec3{ -100.0f, 0.0f, 0.0f };
   m_Directions[PD_RIGHT] = Vec3{ 100.0f, 0.0f, 0.0f };
+
 }
 
 PlayerController::~PlayerController()
@@ -34,6 +37,7 @@ void PlayerController::Init()
 
 void PlayerController::Start()
 {
+  m_IsAlive = true;
   m_Rb = GetComponent<CRigidBody>();
 #if SERVER
   BulletFireEvent::RegisterSubscriber(m_PeerID, this);
@@ -42,11 +46,24 @@ void PlayerController::Start()
 
 void PlayerController::Update()
 {
+  if (!m_IsAlive)
+    return;
+
   if (!m_Rb)
     m_Rb = GetComponent<CRigidBody>();
 
   UpdateAction();
   UpdateMovement();
+}
+
+void PlayerController::OnCollisionEnter(Collision& other)
+{
+  if (other.entity->GetName() == "Enemy")
+  {
+    m_IsAlive = false;
+    GetComponent<CRenderable>()->GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+    GameplayManager::GetInstance().OnPlayerDeath();
+  }
 }
 
 #if SERVER
@@ -60,6 +77,10 @@ void PlayerController::CreateMoveControlObject()
 void PlayerController::OnBulletFireEvent(BulletFireEvent * bulletFireEvent)
 {
   Fire();
+}
+bool PlayerController::GetIsAlive() const
+{
+  return m_IsAlive;
 }
 #endif
 
