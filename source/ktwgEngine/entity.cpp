@@ -100,10 +100,7 @@ void Entity::SetAllComponentsActive(bool active)
 void Entity::SetAllChildrenActive(bool active)
 {
   for (auto& child : m_Children)
-  {
-    if (m_State != INACTIVE)
-      child->SetActive(false);
-  }
+    child->SetActive(active);
 }
 
 void Entity::Set(Entity* ent)

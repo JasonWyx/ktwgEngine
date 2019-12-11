@@ -66,9 +66,11 @@ void Application::LateInitialize()
 #ifdef CLIENT
   ConnectionManager::GetInstance().ConnectToServer();
   StreamManager::GetInstance().GetGhostManager().GenerateGhostIDs();
+  StreamManager::GetInstance().GetEventManager().RegisterEvents();
   HypeRenderer::Initialize();
 #else
   StreamManager::GetInstance().GetGhostManager().GenerateGhostIDs();
+  StreamManager::GetInstance().GetEventManager().RegisterEvents();
   HypeRenderer::Initialize();
 //  HypeGraphicsWorld::Initialize();
 #endif
@@ -157,7 +159,8 @@ void Application::Run()
     double dtMs = time.GetDeltaTimeMs();
 
     // Update all engine systems
-    inputSys.Update();
+    if (accumDt >= 0.016f)
+      inputSys.Update();
 
     accumulator += dtMs;
 

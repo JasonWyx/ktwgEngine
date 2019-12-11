@@ -9,7 +9,7 @@ struct TransmissionRecord
     PacketID m_PacketID;
     PeerID m_TargetPeerID;
 
-    std::vector<GhostTransmissionRecord> m_GhostTransmissionRecords;
+    std::list<GhostTransmissionRecord> m_GhostTransmissionRecords;
     std::list<Event*> m_Events;
 
     bool operator<(const TransmissionRecord& rhs)

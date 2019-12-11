@@ -2,6 +2,7 @@
 #include "time.h"
 #include "bulletpool.h"
 #include "bulletbehaviourscript.h"
+#include "event.h"
 
 #if SERVER
 #include "streammanager.h"
@@ -22,6 +23,7 @@ PlayerController::~PlayerController()
 {
 #if SERVER
   StreamManager::GetInstance().GetMoveManager().UnregisterMoveObject(m_PeerID);
+  BulletFireEvent::RemoveSubscriber(m_PeerID, this);
 #endif
 }
 
@@ -33,6 +35,9 @@ void PlayerController::Init()
 void PlayerController::Start()
 {
   m_Rb = GetComponent<CRigidBody>();
+#if SERVER
+  BulletFireEvent::RegisterSubscriber(m_PeerID, this);
+#endif
 }
 
 void PlayerController::Update()
@@ -48,6 +53,13 @@ void PlayerController::Update()
 void PlayerController::CreateMoveControlObject()
 {
   StreamManager::GetInstance().GetMoveManager().RegisterMoveObject(m_PeerID, &m_ControlObject);
+}
+#endif
+
+#if SERVER
+void PlayerController::OnBulletFireEvent(BulletFireEvent * bulletFireEvent)
+{
+  Fire();
 }
 #endif
 

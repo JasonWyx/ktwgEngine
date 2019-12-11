@@ -1,8 +1,12 @@
 #pragma once
 #include "netdefs.h"
 #include "bitstream.h"
+#include <unordered_map>
+#include <algorithm>
 
 using EventSequenceID = unsigned char;
+
+class Behaviour;
 
 enum EventID
 {
@@ -32,12 +36,26 @@ struct BulletFireEvent : public Event
     {
         stream >> m_SourcePeerID;
     }
-
+     
     virtual void WriteStream(BitStream& stream) override
     {
         stream << m_SourcePeerID;
     }
 
+    static void BulletFireEventHandler(Event* evt);
+    
+    static void RegisterSubscriber(PeerID peerID, Behaviour* behaviour)
+    {
+      ms_Subscribers[peerID].emplace_back(behaviour);
+    }
+
+    static void RemoveSubscriber(PeerID peerID, Behaviour* behaviour)
+    {
+      std::vector<Behaviour*>& subscribers = ms_Subscribers[peerID];
+      subscribers.erase(std::remove(subscribers.begin(), subscribers.end(), behaviour), subscribers.end());
+    }
+
+    static std::unordered_map<PeerID, std::vector<Behaviour*>> ms_Subscribers;
     PeerID m_SourcePeerID;
 };
 

@@ -15,6 +15,7 @@ class InputSystem;
 class Time;
 class Scene;
 struct Collision;
+struct BulletFireEvent;
 
 class Behaviour
 {
@@ -36,6 +37,8 @@ public:
   virtual void OnTriggerEnter(Collision&) {};
   virtual void OnTriggerStay(Collision&) {};
   virtual void OnTriggerExit(Collision&) {};
+
+  virtual void OnBulletFireEvent(BulletFireEvent*) {}
 
   void Set(Behaviour* comp);
   void SetActive(bool active);

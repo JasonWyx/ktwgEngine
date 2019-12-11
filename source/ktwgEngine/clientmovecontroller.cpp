@@ -45,5 +45,13 @@ void ClientMoveController::Update()
 
   StreamManager::GetInstance().GetMoveManager().PushMoveState(moveState);
 
+
+  if (Input().OnKeyPress(KTWG_SPACE))
+  {
+    PeerID peerID = StreamManager::GetInstance().GetPeerID();
+    BulletFireEvent* bulletFireEvent = new BulletFireEvent;
+    bulletFireEvent->m_SourcePeerID = peerID;
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(bulletFireEvent, false);
+  }
 #endif
 }

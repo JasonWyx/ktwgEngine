@@ -7,6 +7,8 @@
 #include <memory>
 
 
+#define REGISTER_NEW_EVENT(EventID, EventHandler) StreamManager::GetInstance().GetEventManager().AddEventHandler(EventID, EventHandler)
+
 class EventManager
 {
 public:
@@ -23,8 +25,9 @@ public:
     void BroadcastEvent(Event* event, bool guaranteed);
     void ProcessEvents();
 
-    void AddListener(EventID eventID, EventHandler_t handler);
+    void AddEventHandler(EventID eventID, EventHandler_t handler);
 
+    void RegisterEvents();
 private:
 
     struct EventCache

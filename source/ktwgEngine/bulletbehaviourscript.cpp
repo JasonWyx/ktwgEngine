@@ -1,6 +1,7 @@
 #include "bulletbehaviourscript.h"
 #include "collision.h"
 #include "enemybehaviourscript.h"
+#include "gamestatemanagerscript.h"
 
 BulletBehaviour::BulletBehaviour(Entity& entity)
   : Behaviour{ typeid(BulletBehaviour), entity}
