@@ -47,6 +47,7 @@ class SocketWindowData
   std::queue<std::string> msgQueue;
   std::queue<int>         streamIDQueue;
   std::vector<PktTimer>   timeTracker;
+  bool                    timeOutSendAckLiao = true;
   bool                    sentMsg = false;
   int                     timeOutPkt = 0;
   bool                    shutdown = false;

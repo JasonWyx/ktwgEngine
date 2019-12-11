@@ -1,4 +1,5 @@
 #include "eventmanager.h"
+#include <algorithm>
 
 EventManager::EventManager()
 {
@@ -10,23 +11,66 @@ EventManager::~EventManager()
 
 void EventManager::ReadStream(const PeerID peerID, BitStream& stream)
 {
-    bool isGuaranteed = false;
+#ifdef CLIENT
+  EventCache& eventCache = m_EventCache;
+#else
+  EventCache& eventCache = m_EventCache[peerID];
+#endif
 
-    stream >> isGuaranteed;
+  bool isGuaranteed = false;
+
+  stream >> isGuaranteed;
+  unsigned char sequence = 0;
+
+  if (isGuaranteed)
+  {
+    stream >> sequence;
+  }
+
+  uint8_t numEvents;
+  stream.Read(numEvents, 3);
+  for (uint8_t i = 0; i < numEvents; ++i)
+  {
+    // Reconstruct the event
+    EventID eventID;
+    stream >> eventID;
+
+    Event* recvEvent = nullptr;
+    switch (eventID)
+    {
+    case EventID_BulletFire:
+      recvEvent = new BulletFireEvent;
+      break;
+    case EventID_GameStart:
+      recvEvent = new GameStartEvent;
+      break;
+    case EventID_GameOver:
+      recvEvent = new GameOverEvent;
+      break;
+    default:
+      continue;
+    }
+
+    recvEvent->ReadStream(stream);
 
     if (isGuaranteed)
     {
-        unsigned char sequence = 0;
-        stream >> sequence;
-
+      if (std::find_if(eventCache.m_GuaranteedEventsToProcess.begin(), eventCache.m_GuaranteedEventsToProcess.end(), [sequence](Event* evt) { return evt->m_EventSequenceID == sequence; }) != eventCache.m_GuaranteedEventsToProcess.end())
+      {
+        delete recvEvent;
+      }
+      else
+      {
+        eventCache.m_GuaranteedEventsToProcess.emplace_back(recvEvent);
+      }
+      ++sequence;
     }
-
-
-#ifdef CLIENT
-
-#else
-
-#endif
+    else
+    {
+      eventCache.m_NonGuaranteedEventsToProcess.emplace_back(recvEvent);
+    }
+  }
+  
 }
 
 bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
@@ -93,7 +137,7 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 
                     if (countEventsInPacket > 8)
                     {
-                        packet.m_EventStream << false;
+                        packet.m_EventStream << true;
                         packet.m_EventStream << firstSequenceID;
                         packet.m_EventStream.Write(countEventsInPacket, 3);
                         packet.m_EventStream += cumulatedEventStream;
@@ -124,7 +168,7 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
 
                     if (countEventsInPacket > 8)
                     {
-                        packet.m_EventStream << false;
+                        packet.m_EventStream << true;
                         packet.m_EventStream << firstSequenceID;
                         packet.m_EventStream.Write(countEventsInPacket, 3);
                         packet.m_EventStream += cumulatedEventStream;
@@ -200,24 +244,14 @@ void EventManager::BroadcastEvent(Event* event, bool guaranteed)
 void EventManager::ProcessEvents()
 {
 #ifdef CLIENT
-
     while (m_EventCache.m_NonGuaranteedEventsToProcess.size() > 0)
     {
         Event* evt = m_EventCache.m_NonGuaranteedEventsToProcess.front();
-        switch (evt->m_EventID)
-        {
-        case EventID_BulletFire:
-            //BulletFireEvent * bulletEvent = dynamic_cast<BulletFireEvent*>(evt);
-            break;
-        case EventID_GameStart:
-            //GameStartEvent * gameStartEvent = dynamic_cast<GameStartEvent*>(evt);
-            break;
-        case EventID_GameOver:
-            //GameOverEvent * gameOverEvent = dynamic_cast<GameOverEvent*>(evt);
-            break;
-        default:
-            break;
+        std::vector<EventHandler_t>& eventListeners = m_EventListeners[evt->m_EventID];
 
+        for (auto& handler : eventListeners)
+        {
+          handler(evt);
         }
         delete evt;
         m_EventCache.m_NonGuaranteedEventsToProcess.pop_front();
@@ -231,20 +265,11 @@ void EventManager::ProcessEvents()
         {
             break;
         }
+        std::vector<EventHandler_t>& eventListeners = m_EventListeners[evt->m_EventID];
 
-        switch (evt->m_EventID)
+        for (auto& handler : eventListeners)
         {
-        case EventID_BulletFire:
-            //BulletFireEvent * bulletEvent = dynamic_cast<BulletFireEvent*>(evt);
-            break;
-        case EventID_GameStart:
-            //GameStartEvent * gameStartEvent = dynamic_cast<GameStartEvent*>(evt);
-            break;
-        case EventID_GameOver:
-            //GameOverEvent * gameOverEvent = dynamic_cast<GameOverEvent*>(evt);
-            break;
-        default:
-            break;
+          handler(evt);
         }
         delete evt;
         m_EventCache.m_NextEventToProcess++;
@@ -255,55 +280,42 @@ void EventManager::ProcessEvents()
 
     for (auto&[peerID, eventCache] : m_EventCache)
     {
-        while (eventCache.m_NonGuaranteedEventsToProcess.size() > 0)
+      while (eventCache.m_NonGuaranteedEventsToProcess.size() > 0)
+      {
+        Event* evt = eventCache.m_NonGuaranteedEventsToProcess.front();
+        std::vector<EventHandler_t>& eventListeners = m_EventListeners[evt->m_EventID];
+
+        for (auto& handler : eventListeners)
         {
-            Event* evt = eventCache.m_NonGuaranteedEventsToProcess.front();
-            switch (evt->m_EventID)
-            {
-            case EventID_BulletFire:
-                //BulletFireEvent * bulletEvent = dynamic_cast<BulletFireEvent*>(evt);
-                break;
-            case EventID_GameStart:
-                //GameStartEvent * gameStartEvent = dynamic_cast<GameStartEvent*>(evt);
-                break;
-            case EventID_GameOver:
-                //GameOverEvent * gameOverEvent = dynamic_cast<GameOverEvent*>(evt);
-                break;
-            default:
-                break;
-
-            }
-            delete evt;
-            eventCache.m_NonGuaranteedEventsToProcess.pop_front();
+          handler(evt);
         }
+        delete evt;
+        eventCache.m_NonGuaranteedEventsToProcess.pop_front();
+      }
 
-        while (eventCache.m_GuaranteedEventsToProcess.size() > 0)
+      while (eventCache.m_GuaranteedEventsToProcess.size() > 0)
+      {
+        Event* evt = eventCache.m_GuaranteedEventsToProcess.front();
+
+        if (evt->m_EventSequenceID != eventCache.m_NextEventToProcess)
         {
-            Event* evt = eventCache.m_GuaranteedEventsToProcess.front();
-
-            if (evt->m_EventSequenceID != eventCache.m_NextEventToProcess)
-            {
-                break;
-            }
-
-            switch (evt->m_EventID)
-            {
-            case EventID_BulletFire:
-                //BulletFireEvent * bulletEvent = dynamic_cast<BulletFireEvent*>(evt);
-                break;
-            case EventID_GameStart:
-                //GameStartEvent * gameStartEvent = dynamic_cast<GameStartEvent*>(evt);
-                break;
-            case EventID_GameOver:
-                //GameOverEvent * gameOverEvent = dynamic_cast<GameOverEvent*>(evt);
-                break;
-            default:
-                break;
-            }
-            delete evt;
-            eventCache.m_NextEventToProcess++;
-            eventCache.m_NonGuaranteedEventsToProcess.pop_front();
+          break;
         }
+        std::vector<EventHandler_t>& eventListeners = m_EventListeners[evt->m_EventID];
+
+        for (auto& handler : eventListeners)
+        {
+          handler(evt);
+        }
+        delete evt;
+        eventCache.m_NextEventToProcess++;
+        eventCache.m_NonGuaranteedEventsToProcess.pop_front();
+      }
     }
 #endif
+}
+
+void EventManager::AddListener(EventID eventID, EventHandler_t handler)
+{
+  m_EventListeners[eventID].emplace_back(handler);
 }

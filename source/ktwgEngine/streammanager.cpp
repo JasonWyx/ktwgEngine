@@ -47,7 +47,45 @@ void StreamManager::ShutdownClient()
 void StreamManager::UpdateClient()
 {
     // Get Packet notifications
-    ConnectionManager::GetInstance().GetLostPacketIDs();
+        // Get packet notification
+    std::vector<int>& lostPackets = ConnectionManager::GetInstance().GetLostPacketIDs();
+
+    for (int lostPacketID : lostPackets)
+    {
+        TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
+        m_GhostManager.NotifyTransmissionFailure(*tr);
+        m_EventManager.NotifyTransmissionFailure(*tr);
+        m_TransmissionRecordMap.erase(lostPacketID);
+
+        m_TransmissionInfo.m_TransmissionRecords.remove_if(
+            [lostPacketID](TransmissionRecord& transmissionRecord)
+        {
+            return transmissionRecord.m_PacketID == lostPacketID;
+        }
+        );
+    }
+
+    lostPackets.clear();
+
+    auto& successPackets = ConnectionManager::GetInstance().GetAckPacketIDs();
+
+    for (auto&[peerID, transmissionRecords] : successPackets)
+    {
+        for (int lostPacketID : lostPackets)
+        {
+            TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
+            m_GhostManager.NotifyTransmissionFailure(*tr);
+            m_EventManager.NotifyTransmissionFailure(*tr);
+            m_TransmissionRecordMap.erase(lostPacketID);
+
+            m_TransmissionInfo.m_TransmissionRecords.remove_if(
+                [lostPacketID](TransmissionRecord& transmissionRecord)
+            {
+                return transmissionRecord.m_PacketID == lostPacketID;
+            }
+            );
+        }
+    }
 
     // Process incoming packets
     std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
@@ -68,6 +106,11 @@ void StreamManager::UpdateClient()
     {
         Packet newPacket = { m_LastPacketID++ };
         isDonePacking = PackPacket(newPacket);
+
+        if (!newPacket.HasContents())
+        {
+            continue;
+        }
 
         // Send using connection manager
         BitStream finalPacketStream = newPacket.BuildStream();
@@ -149,6 +192,44 @@ void StreamManager::ShutdownServer()
 void StreamManager::UpdateServer()
 {
     // Get packet notification
+    std::vector<int>& lostPackets = ConnectionManager::GetInstance().GetLostPacketIDs();
+
+    for (int lostPacketID : lostPackets)
+    {
+        TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
+        m_GhostManager.NotifyTransmissionFailure(*tr);
+        m_EventManager.NotifyTransmissionFailure(*tr);
+        m_TransmissionRecordMap.erase(lostPacketID);
+
+        m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if(
+            [lostPacketID](TransmissionRecord& transmissionRecord)
+            {
+                return transmissionRecord.m_PacketID == lostPacketID;
+            }
+        );
+    }
+
+    lostPackets.clear();
+
+    auto& successPackets = ConnectionManager::GetInstance().GetAckPacketIDs();
+
+    for (auto&[peerID, transmissionRecords] : successPackets)
+    {
+        for (int lostPacketID : lostPackets)
+        {
+            TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
+            m_GhostManager.NotifyTransmissionFailure(*tr);
+            m_EventManager.NotifyTransmissionFailure(*tr);
+            m_TransmissionRecordMap.erase(lostPacketID);
+
+            m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if(
+                [lostPacketID](TransmissionRecord& transmissionRecord)
+                {
+                    return transmissionRecord.m_PacketID == lostPacketID;
+                }
+            );
+        }
+    }
     
     // Process incoming packets
     std::vector<std::string>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
@@ -182,7 +263,12 @@ void StreamManager::UpdateServer()
             {
                 Packet newPacket = { m_LastPacketID++ };
                 isDonePacking[peerID] = PackPacket(peerID, newPacket);
-                
+
+                if (!newPacket.HasContents())
+                {
+                    continue;
+                }
+
                 // Add message to connection manager
                 BitStream finalPacketStream = newPacket.BuildStream();
                 std::string message;

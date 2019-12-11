@@ -408,6 +408,7 @@ void SocketWindowData::DeliverMessage()
     ++cumulativePktsSent;
     ++sentPkt;
     sentMsg = true;
+    timeOutSendAckLiao = false;
   }
 
   // to be removed if cause random DCs
@@ -504,6 +505,12 @@ void SocketWindowData::ReceiveMessage()
 
     if (senderStartPkt != startPkt)
     {
+      if (timeOutSendAckLiao)
+      {
+        AddMessage(std::string{});
+        DeliverMessage();
+      }
+      timeOutSendAckLiao = true;
       senderStartPkt = startPkt;
       ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
@@ -519,7 +526,8 @@ void SocketWindowData::ReceiveMessage()
     //if (!(pktNum != 0 && !(pktNum % 9)))
     {
       ackSlip[index] = true;
-      ConnectionManager::GetInstance().RecieveMessage(msg);
+      if(!msg.empty())
+        ConnectionManager::GetInstance().RecieveMessage(msg);
     }
 
     std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
@@ -583,7 +591,8 @@ void SocketWindowData::UpdateTimer()
         if (elapsedTime > timeOut)
         {
           PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f, streamPktID);
-          ConnectionManager::GetInstance().StoreLostPacketsIDs(streamPktID);
+          if (streamPktID >= 0)
+            ConnectionManager::GetInstance().StoreLostPacketsIDs(streamPktID);
           // store streamPktID for lost packet
           timeTracker[i] = tmp;
           ++timeOutPkt;
@@ -653,7 +662,8 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
         //std::cout << "DevRtt : " << devRTT << std::endl;
         //std::cout << "RTT : " << rtt << std::endl;
         timeTracker[i] = tmp;
-        ConnectionManager::GetInstance().StoreAckPacketsIDs(streamPktID, player);
+        if(streamPktID >= 0)
+          ConnectionManager::GetInstance().StoreAckPacketsIDs(streamPktID, player);
       }
     }
     bit = bit << 1;
