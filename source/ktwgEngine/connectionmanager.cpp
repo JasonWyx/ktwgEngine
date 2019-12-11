@@ -426,6 +426,35 @@ void SocketWindowData::DeliverMessage()
     timeOutTimer = std::chrono::CLOCK_TYPE::now();
 }
 
+int SocketWindowData::UpdateRecvAckSlipForAcksOnly(int val, int size)
+{
+  int recvPkts = 0;
+  int bit = 0x1;
+  // PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
+  for (int i = size - 1; i >= 0; --i)
+  {
+    int result = val & bit;
+    if (result)
+    {
+      ++recvPkts;
+      if (i < cumulativePktsSent)
+      {
+        auto now = std::chrono::CLOCK_TYPE::now();
+        auto then = std::get<1>(timeTracker[i]);
+        int streamPktID = std::get<3>(timeTracker[i]);
+        float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(now - then)).count();
+        //std::cout << "RTT' :" << elapsedTime << std::endl;
+        devRTT = (1.f - BETA) * devRTT + BETA * std::fabs((float)elapsedTime - rtt);
+        rtt = (1.f - ALPHA) * (float)elapsedTime + ALPHA * rtt;
+        //std::cout << "DevRtt : " << devRTT << std::endl;
+        //std::cout << "RTT : " << rtt << std::endl;
+      }
+    }
+    bit = bit << 1;
+  }
+  return recvPkts;
+}
+
 void SocketWindowData::ReceiveMessage()
 {
   char buffer[BUFLEN];
@@ -555,7 +584,11 @@ void SocketWindowData::ReceiveMessage()
 
     recvAckSlip = recvAckSlip | std::get<4>(message);
 
-    int tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
+    int tmpRecvPkts = -1;
+    if(msg.empty())
+      tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
+    else
+      tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
     dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
     std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
     // IMPT :

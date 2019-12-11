@@ -66,6 +66,7 @@ class SocketWindowData
   int UpdateRecvAckSlip(int val, int size);
   int GetAcks();
   void DeliverMessage();
+  int UpdateRecvAckSlipForAcksOnly(int val, int size);
 public:
   std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
   void AddMessage(std::string msg);
