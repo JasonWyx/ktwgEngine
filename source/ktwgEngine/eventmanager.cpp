@@ -1,4 +1,6 @@
 #include "eventmanager.h"
+#include "event.h"
+#include "streammanager.h"
 #include <algorithm>
 
 EventManager::EventManager()
@@ -315,7 +317,12 @@ void EventManager::ProcessEvents()
 #endif
 }
 
-void EventManager::AddListener(EventID eventID, EventHandler_t handler)
+void EventManager::AddEventHandler(EventID eventID, EventHandler_t handler)
 {
   m_EventListeners[eventID].emplace_back(handler);
+}
+
+void EventManager::RegisterEvents()
+{
+  REGISTER_NEW_EVENT(EventID_BulletFire, &BulletFireEvent::BulletFireEventHandler);
 }

@@ -35,6 +35,7 @@ public:
   void CreateMoveControlObject();
   void SetPeerID(PeerID peerID) { m_PeerID = peerID; }
   PeerID GetPeerID() const { return m_PeerID; }
+  void OnBulletFireEvent(BulletFireEvent* bulletFireEvent) override;
 #endif
 
 private:
