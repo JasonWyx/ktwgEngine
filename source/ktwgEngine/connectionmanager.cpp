@@ -100,10 +100,13 @@ void ConnectionManager::ConnectToServer()
   }
   else
   {
-    std::string message = "Hello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello Server";
-
-    // ConnectionManager::GetInstance().AddPacket(message, -1);
-      // mySocket.AddMessage(message);
+      // std::vector<unsigned char> tmpBuf;
+      // tmpBuf.push_back(0);
+      // tmpBuf.push_back(0);
+      // tmpBuf.push_back(0);
+      // tmpBuf.push_back(0);
+      // tmpBuf.push_back(0);
+      // ConnectionManager::GetInstance().AddPacket(std::vector<unsigned char>(tmpBuf), -1);
 
     std::string portMsg;
     std::string playerID;
@@ -374,18 +377,6 @@ void SocketWindowData::DeliverMessage()
 #endif
 
   if (msgQueue.empty() || !sPort) return;
-  // if (notSentAckYet && sentMsg)
-  // {
-  //   std::cout << "pack unsent acks" << std::endl;
-  //   unsigned char startPkt = sentPkt - cumulativePktsSent;
-  //   std::string message = msgQueue.front();
-  //   msgQueue.pop_front();
-  //   int streamPktID = -1;
-  //   message = PacketMessage(message, startPkt);
-  //   socket->SendTo(message.c_str(), message.size(), *sockAddr);
-  //   notSentAckYet = false;
-  //   // return;
-  // }
 
   if (!cumulativePktsSent)
   {
@@ -422,6 +413,7 @@ void SocketWindowData::DeliverMessage()
     ++cumulativePktsSent;
     ++sentPkt;
     sentMsg = true;
+    checkAckTimer = std::chrono::CLOCK_TYPE::now();
   }
 
   // to be removed if cause random DCs
@@ -501,7 +493,13 @@ void SocketWindowData::ReceiveMessage()
 
 
 #ifdef CLIENT
-    //ConnectionManager::GetInstance().AddPacket("Hello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello ServerHello Server", -1);
+    // std::vector<unsigned char> tmpBuf;
+    // tmpBuf.push_back(0);
+    // tmpBuf.push_back(0);
+    // tmpBuf.push_back(0);
+    // tmpBuf.push_back(0);
+    // tmpBuf.push_back(0);
+    // ConnectionManager::GetInstance().AddPacket(std::vector<unsigned char>(tmpBuf), -1);
     // AddMessage("Hello Server");
 #else
     // ConnectionManager::GetInstance().AddPacket("Hello Client", -1, player);
@@ -543,11 +541,11 @@ void SocketWindowData::ReceiveMessage()
     }
     if (index < 0) return;
 
-    if (senderStartPkt != startPkt && !msg.empty())
+    if (senderStartPkt != startPkt)
     {
-      // if (notSentAckYet && sentMsg)
+      // if (notSentAckYet)
       // {
-      //     std::cout << "havent Send Ack yet" << std::endl;
+      // std::cout << "havent Send Ack yet" << std::endl;
       // #ifdef CLIENT
       //   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
       // #else
@@ -555,11 +553,11 @@ void SocketWindowData::ReceiveMessage()
       // #endif
       // std::cout << "pack unsent acks" << std::endl;
       // unsigned char startPkt = sentPkt - cumulativePktsSent;
-      // std::string message = std::string{};
+      // std::vector<unsigned char> message;
       // message = PacketMessage(message, startPkt);
-      // socket->SendTo(message.c_str(), message.size(), *sockAddr);
+      // socket->SendTo(message.data(), message.size(), *sockAddr);
       // }
-      // notSentAckYet = true;
+      notSentAckYet = true;
       senderStartPkt = startPkt;
       ackSlip.clear();
       ackSlip.resize(std::get<2>(message));
@@ -595,12 +593,12 @@ void SocketWindowData::ReceiveMessage()
     recvAckSlip = recvAckSlip | std::get<4>(message);
 
     int tmpRecvPkts = -1;
-    // if(msg.empty())
-    // {
-    //   std::cout << "Processing Acks" << std::endl;
-    //   tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
-    // }
-    // else
+    if(msg.empty())
+    {
+      std::cout << "Processing Acks" << std::endl;
+      tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
+    }
+    else
       tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
     dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
     std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
@@ -668,11 +666,30 @@ void SocketWindowData::UpdateTimer()
     recvAckSlip = 0;
     timeOutPkt = 0;
   }
-  // ungracefull disconnection
-  if (timeOutPkt == windowSize)
+
+  auto currentTimer = std::chrono::CLOCK_TYPE::now();
+  auto timePassed = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(currentTimer - checkAckTimer)).count();
+  if (timePassed < 0.5f)
   {
-    shutdown = true;
+    //std::cout << "havent Send Ack yet" << std::endl;
+#ifdef CLIENT
+    SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
+#else
+    SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
+#endif
+    // std::cout << "pack unsent acks" << std::endl;
+    unsigned char startPkt = sentPkt - cumulativePktsSent;
+    std::vector<unsigned char> message;
+    message = PacketMessage(message, startPkt);
+    socket->SendTo(message.data(), message.size(), *sockAddr);
+    checkAckTimer = std::chrono::CLOCK_TYPE::now();
   }
+
+  // ungracefull disconnection
+  // if (timeOutPkt == windowSize)
+  // {
+  //   shutdown = true;
+  // }
 
 }
 
@@ -788,16 +805,16 @@ void SocketWindowData::Update()
   UpdateTimer();
 
   // to be removed if cause random DCs
-  if (msgQueue.empty() && sentMsg)
-  {
-    auto current = std::chrono::CLOCK_TYPE::now();
-    float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(current - timeOutTimer)).count();
-    if (elapsedTime > 10.f)
-    {
-      std::cout << "Player " << player << " has Disconnected" << std::endl;
-      shutdown = true;
-    }
-  }
+  // if (msgQueue.empty() && sentMsg)
+  // {
+  //   auto current = std::chrono::CLOCK_TYPE::now();
+  //   float elapsedTime = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(current - timeOutTimer)).count();
+  //   if (elapsedTime > 10.f)
+  //   {
+  //     std::cout << "Player " << player << " has Disconnected" << std::endl;
+  //     shutdown = true;
+  //   }
+  // }
 }
 
 void SocketWindowData::Init()

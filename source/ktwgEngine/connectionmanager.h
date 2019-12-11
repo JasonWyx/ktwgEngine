@@ -55,7 +55,8 @@ class SocketWindowData
   // to be removed if cause random DCs
   TIME                    timeOutTimer;
   std::string		          clientIP;
-  // bool                    notSentAckYet = false;
+  bool                    notSentAckYet = true;
+  TIME                    checkAckTimer = std::chrono::CLOCK_TYPE::now();
 
   void ReadACKS(const int& acks);
   void SlowStart(const bool& ss);
