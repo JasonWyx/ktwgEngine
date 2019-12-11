@@ -32,13 +32,13 @@ public:
 
   void OnCollisionEnter(Collision&);
 
+  bool GetIsAlive() const;
 #if SERVER
   // Set PeerID should only be called once! and should precede the call to CreateMoveControlObject on the server
   void CreateMoveControlObject();
   void SetPeerID(PeerID peerID) { m_PeerID = peerID; }
   PeerID GetPeerID() const { return m_PeerID; }
   void OnBulletFireEvent(BulletFireEvent* bulletFireEvent) override;
-  bool GetIsAlive() const;
 #endif
 
 private:

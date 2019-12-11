@@ -69,8 +69,10 @@ void BulletPool::IncreasePool(unsigned size)
     clone->SetActive(false);
     m_Pool.emplace_back(clone);
 
+#if SERVER
     clone->MarkEntityForGhost();
     GhostID id = clone->GetGhostObject()->GetGhostID();
     StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
+#endif
   }
 }

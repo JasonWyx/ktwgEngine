@@ -78,11 +78,11 @@ void PlayerController::OnBulletFireEvent(BulletFireEvent * bulletFireEvent)
 {
   Fire();
 }
+#endif
 bool PlayerController::GetIsAlive() const
 {
   return m_IsAlive;
 }
-#endif
 
 void PlayerController::UpdateAction()
 {
