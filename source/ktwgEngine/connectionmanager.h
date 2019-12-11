@@ -16,7 +16,7 @@
 #include <stack>
 #include <map>
 
-#define CLOCK_TYPE steady_clock
+#define CLOCK_TYPE high_resolution_clock
 
 using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
@@ -27,8 +27,8 @@ using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
 class SocketWindowData
 {
-  typedef std::tuple<bool, TIME, float, int> PktTimer;
-  float                   rtt = 1.0f;
+  typedef std::tuple<bool, TIME, long, int> PktTimer;
+  long                    rtt = 25;
   int                     windowSize = 1;
   unsigned char           cumulativePktsSent = 0;
   unsigned char           dynamicRecvPkt = 0;
@@ -39,7 +39,7 @@ class SocketWindowData
   unsigned char           recvPkt = 0;
   const int               ssThres = 10;
   TIME                    timer;
-  float                   devRTT = 1.0f;
+  long                    devRTT = 25;
   u_short                 mPort = 0;
   u_short                 sPort = 0;
   UDPSocketPtr            socket;
