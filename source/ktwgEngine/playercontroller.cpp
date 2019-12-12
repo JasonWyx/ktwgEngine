@@ -5,6 +5,9 @@
 #include "event.h"
 #include "collision.h"
 #include "gameplaymanager.h"
+#include "gamestatemanagerscript.h"
+#include "scene.h"
+#include "inputsystem.h"
 
 #if SERVER
 #include "streammanager.h"
@@ -27,6 +30,7 @@ PlayerController::~PlayerController()
 #if SERVER
   StreamManager::GetInstance().GetMoveManager().UnregisterMoveObject(m_PeerID);
   BulletFireEvent::RemoveSubscriber(m_PeerID, this);
+  PlayerReadyEvent::RemoveSubscriber(m_PeerID, this);
 #endif
 }
 
@@ -37,15 +41,23 @@ void PlayerController::Init()
 
 void PlayerController::Start()
 {
+  m_IsReady = false;
   m_IsAlive = true;
   m_Rb = GetComponent<CRigidBody>();
+
+  m_GSManager = Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>();
+
 #if SERVER
   BulletFireEvent::RegisterSubscriber(m_PeerID, this);
+  PlayerReadyEvent::RegisterSubscriber(m_PeerID, this);
 #endif
 }
 
 void PlayerController::Update()
 {
+  if (!m_GSManager->GetIsGameStarted())
+    UpdatePlayerStatus();
+
   if (!m_IsAlive)
     return;
 
@@ -78,7 +90,16 @@ void PlayerController::OnBulletFireEvent(BulletFireEvent * bulletFireEvent)
 {
   Fire();
 }
+void PlayerController::OnPlayerReadyEvent(PlayerReadyEvent * playerReadyEvent)
+{
+  m_IsReady = playerReadyEvent->m_Ready;
+  GameplayManager::GetInstance().OnPlayerReady();
+}
 #endif
+bool PlayerController::GetIsReady() const
+{
+  return m_IsReady;
+}
 bool PlayerController::GetIsAlive() const
 {
   return m_IsAlive;
@@ -138,6 +159,15 @@ void PlayerController::UpdateMovement()
 
   m_Rb->SetLinearVelocity(movement);
   GetTransform().SetRotation(rotation);
+}
+
+void PlayerController::UpdatePlayerStatus()
+{
+#if CLIENT
+  if (Input().OnKeyDown(KTWG_R))
+    m_IsReady = !m_IsReady;
+#else
+#endif
 }
 
 void PlayerController::Fire()

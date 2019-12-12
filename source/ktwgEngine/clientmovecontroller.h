@@ -1,6 +1,8 @@
 #pragma once
 #include "behaviour.h"
 
+class GameStateManager;
+
 class ClientMoveController : public Behaviour
 {
 public:
@@ -12,5 +14,7 @@ public:
   void Update() override;
 
 private:
+  GameStateManager* m_GSManager;
+
   bool m_ShouldSend;
 };

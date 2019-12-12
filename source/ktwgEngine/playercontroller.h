@@ -5,6 +5,8 @@
 #include "movecontrolobject.h"
 #endif
 
+class GameStateManager;
+
 class PlayerController : public Behaviour
 {
   enum PlayerDirection {
@@ -32,6 +34,7 @@ public:
 
   void OnCollisionEnter(Collision&);
 
+  bool GetIsReady() const;
   bool GetIsAlive() const;
 #if SERVER
   // Set PeerID should only be called once! and should precede the call to CreateMoveControlObject on the server
@@ -39,11 +42,13 @@ public:
   void SetPeerID(PeerID peerID) { m_PeerID = peerID; }
   PeerID GetPeerID() const { return m_PeerID; }
   void OnBulletFireEvent(BulletFireEvent* bulletFireEvent) override;
+  void OnPlayerReadyEvent(PlayerReadyEvent* playerReadyEvent) override;
 #endif
 
 private:
   void UpdateAction();
   void UpdateMovement();
+  void UpdatePlayerStatus();
 
   void Fire();
 
@@ -55,7 +60,10 @@ private:
   uint8_t m_DirectionFlag;
   CRigidBody* m_Rb = nullptr;
 
+  GameStateManager* m_GSManager;
+
   bool m_IsAlive;
+  bool m_IsReady;
 
 #if SERVER
   PeerID m_PeerID;
