@@ -10,7 +10,7 @@ struct TransmissionRecord
     PeerID m_TargetPeerID;
 
     std::list<GhostTransmissionRecord> m_GhostTransmissionRecords;
-    std::list<Event*> m_Events;
+    std::list<Event*> m_EventTransmissionRecords;
 
     bool operator<(const TransmissionRecord& rhs)
     {
