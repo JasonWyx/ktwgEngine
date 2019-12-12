@@ -54,73 +54,40 @@ void Scene::CreateGhostEntity(BitStream & stream)
 #if SERVER
 void Scene::CreateNewPlayer(PeerID peerID)
 {
-  static bool called = false;
-  if(!called)
   {
-    {
-      // Player
-      Entity* player = m_GameScene->AddChild();
-      player->SetName("Player2");
+    // Player
+    Entity* player = m_GameScene->AddChild();
+    player->SetName("Player");
 
-      Transform& groundTF = player->GetTransform();
-      groundTF.SetPosition(Vec3{ 20.f, 21.0f, 22.0f });
-      groundTF.SetScale(Vec3{ 15.0f, 15.0f, 15.0f });
+    Transform& groundTF = player->GetTransform();
+    groundTF.SetPosition(Vec3{ 20.f, 21.0f, 22.0f });
+    groundTF.SetScale(Vec3{ 10.0f, 10.0f, 10.0f });
 
-      CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
-      playerRB.SetBodyType(RBT_DYNAMIC);
-      playerRB.SetFreezeRotationX(true);
-      playerRB.SetFreezeRotationZ(true);
+    CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
+    playerRB.SetBodyType(RBT_DYNAMIC);
+    playerRB.SetFreezeRotationX(true);
+    playerRB.SetFreezeRotationZ(true);
 
-      CBoxCollider& boxABC = player->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
+    CBoxCollider& boxABC = player->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
 
-      CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
-      renderable.SetGraphicObject("Cube");
-      renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
-
-      player->MarkEntityForGhost();
-      GhostID id = player->GetGhostObject()->GetGhostID();
-      StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
-
-    }
-    {
-      // Player
-      Entity* player = m_GameScene->AddChild();
-      player->SetName("Player");
-
-      Transform& groundTF = player->GetTransform();
-      groundTF.SetPosition(Vec3{ 20.f, 21.0f, 22.0f });
-      groundTF.SetScale(Vec3{ 10.0f, 10.0f, 10.0f });
-
-      CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
-      playerRB.SetBodyType(RBT_DYNAMIC);
-      playerRB.SetFreezeRotationX(true);
-      playerRB.SetFreezeRotationZ(true);
-
-      CBoxCollider& boxABC = player->AddComponent(CT_BOXCOLLIDER)->Get<CBoxCollider>();
-
-      CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
-      renderable.SetGraphicObject("Cube");
-      renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
-
+    CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable.SetGraphicObject("Cube");
+    renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
       
-      CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
-      playerBeh.Bind<PlayerController>();
-      PlayerController* playerController = (PlayerController*)playerBeh.GetInternal();
-      playerController->SetPeerID(peerID);
-      playerController->CreateMoveControlObject();
-      playerBeh.GetInternal()->Init();
-      playerBeh.GetInternal()->Start();
+    CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
+    playerBeh.Bind<PlayerController>();
+    PlayerController* playerController = (PlayerController*)playerBeh.GetInternal();
+    playerController->SetPeerID(peerID);
+    playerController->CreateMoveControlObject();
+    playerBeh.GetInternal()->Init();
+    playerBeh.GetInternal()->Start();
       
-      player->MarkEntityForGhost();
-      GhostID id = player->GetGhostObject()->GetGhostID();
-      StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
+    player->MarkEntityForGhost();
+    GhostID id = player->GetGhostObject()->GetGhostID();
+    StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
 
-      called = true;
-
-      GameplayManager::GetInstance().OnPlayerConnected(player);
-    }
+    GameplayManager::GetInstance().OnPlayerConnected(player);
   }
 }
 #endif

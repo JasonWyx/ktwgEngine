@@ -47,7 +47,7 @@ public:
   inline void SetType(ComponentType type) { m_Type = type; }
   inline void SetTypeInfo(const ::TypeInfo& info) { m_Info = info; }
   inline void SetId(uint32_t id) { m_Id = id; }
-  inline virtual void SetActive(bool active) { m_State = active ? ACTIVE : INACTIVE; m_IsDirty = true; }
+  inline virtual void SetActive(bool active) { m_State = active ? ACTIVE : INACTIVE; }
   inline void SetIsDirty(bool isDirty) { m_IsDirty = isDirty; }
 
   // Override these functions for compatability with ghosting, default behaviour does nothing
