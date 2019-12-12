@@ -22,9 +22,11 @@ void GameStateManager::Start()
 {
   m_WinObject = Scene::GetInstance().FindEntityByName("Win");
   m_LoseObject = Scene::GetInstance().FindEntityByName("Lose");
+  m_ReadyObject = Scene::GetInstance().FindEntityByName("Ready");
 
   m_WinObject->SetActive(false);
   m_LoseObject->SetActive(false);
+  m_ReadyObject->SetActive(false);
 
   m_IsGameStarted = false;
 
@@ -39,6 +41,9 @@ void GameStateManager::Update()
 
   if (Input().OnKeyPress(KTWG_L))
     m_LoseObject->SetActive(!m_LoseObject->GetActive());
+
+  if (Input().OnKeyPress(KTWG_J))
+    m_ReadyObject->SetActive(!m_ReadyObject->GetActive());
 }
 
 void GameStateManager::OnGameOverEvent(GameOverEvent * evt)
@@ -56,6 +61,7 @@ void GameStateManager::OnGameOverEvent(GameOverEvent * evt)
 void GameStateManager::OnGameStartEvent(GameStartEvent * evt)
 {
   m_IsGameStarted = evt->m_Start;
+  m_ReadyObject->SetActive(false);
 }
 
 bool GameStateManager::GetIsGameStarted() const
@@ -66,5 +72,15 @@ bool GameStateManager::GetIsGameStarted() const
 void GameStateManager::SetIsGameStarted(bool start)
 {
   m_IsGameStarted = start;
+}
+
+bool GameStateManager::GetReadyActive() const
+{
+  return m_ReadyObject->GetActive();
+}
+
+void GameStateManager::SetReadyActive(bool active)
+{
+  m_ReadyObject->SetActive(active);
 }
 

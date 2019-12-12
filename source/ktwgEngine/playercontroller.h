@@ -61,7 +61,7 @@ private:
   CRigidBody* m_Rb = nullptr;
 
   GameStateManager* m_GSManager;
-
+  
   bool m_IsAlive;
   bool m_IsReady;
 

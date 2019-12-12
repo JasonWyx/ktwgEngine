@@ -573,6 +573,83 @@ void Scene::CreateStaticScene()
     renderable_e3.GetGraphicObjectInstance()->CreateOverrideMaterial();
     renderable_e3.GetGraphicObjectInstance()->GetMaterial()->SetColor(1.0f, 0.5f, 0.5f, 1.0f);
   }
+
+  {
+    // Ready State object
+    Entity* ready = m_GameScene->AddChild();
+    ready->SetName("Ready");
+
+    // Ready - r0
+    Entity* ready_r0 = ready->AddChild();
+    Transform& ready_r0Tf = ready_r0->GetTransform();
+    ready_r0Tf.SetPosition(Vec3{ -1.44f, 50.0f, 0.0f });
+    ready_r0Tf.SetScale(Vec3{ 1.0f, 1.0f, 5.0f });
+
+    CRenderable& renderable_r0 = ready_r0->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable_r0.SetGraphicObject("Cube");
+    renderable_r0.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable_r0.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+    // Ready - r1
+    Entity* ready_r1 = ready->AddChild();
+    Transform& ready_r1Tf = ready_r1->GetTransform();
+    ready_r1Tf.SetPosition(Vec3{ 0.06f, 50.0f, 2.0f });
+    ready_r1Tf.SetScale(Vec3{ 2.0f, 1.0f, 1.0f });
+
+    CRenderable& renderable_r1 = ready_r1->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable_r1.SetGraphicObject("Cube");
+    renderable_r1.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable_r1.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+    // ready - r2
+    Entity* ready_r2 = ready->AddChild();
+    Transform& ready_r2Tf = ready_r2->GetTransform();
+    ready_r2Tf.SetPosition(Vec3{ 1.56f, 50.0f, 1.0f });
+    ready_r2Tf.SetScale(Vec3{ 1.0f, 1.0f, 3.0f });
+
+    CRenderable& renderable_r2 = ready_r2->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable_r2.SetGraphicObject("Cube");
+    renderable_r2.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable_r2.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+    // ready - r3
+    Entity* ready_r3 = ready->AddChild();
+    Transform& ready_r3Tf = ready_r3->GetTransform();
+    ready_r3Tf.SetPosition(Vec3{ 0.06f, 50.0f, 0.0f });
+    ready_r3Tf.SetScale(Vec3{ 2.0f, 1.0f, 1.0f });
+
+    CRenderable& renderable_r3 = ready_r3->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable_r3.SetGraphicObject("Cube");
+    renderable_r3.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable_r3.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+    // ready - r4
+    Entity* ready_r4 = ready->AddChild();
+    Transform& ready_r4Tf = ready_r4->GetTransform();
+    ready_r4Tf.SetPosition(Vec3{ 0.37f, 50.0f, -1.37f });
+    ready_r4Tf.SetScale(Vec3{ 3.0f, 1.0f, 1.0f });
+
+    CRenderable& renderable_r4 = ready_r4->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable_r4.SetGraphicObject("Cube");
+    renderable_r4.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable_r4.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+
+    // ready - r5
+    Entity* ready_r5 = ready->AddChild();
+    Transform& ready_r5Tf = ready_r5->GetTransform();
+    ready_r5Tf.SetPosition(Vec3{ 1.45f, 50.0f, -1.87f });
+    ready_r5Tf.SetScale(Vec3{ 1.0f, 1.0f, 1.2f });
+
+    CRenderable& renderable_r5 = ready_r5->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
+    renderable_r5.SetGraphicObject("Cube");
+    renderable_r5.GetGraphicObjectInstance()->CreateOverrideMaterial();
+    renderable_r5.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+  }
 }
 
 Entity* Scene::FindEntityByNameInternal(Entity* ent, const std::string& name)
