@@ -210,6 +210,10 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
     bitstream >> classID;
     switch (classID)
     {
+    case CI_Entity:
+      m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty(*this, netAuthority));
+      ReplicateFromStream(bitstream, *this);
+      break;
     case CI_Component:
       {
         ComponentType cType;
