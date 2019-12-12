@@ -632,6 +632,7 @@ void Scene::CreateStaticScene()
     Transform& ready_r4Tf = ready_r4->GetTransform();
     ready_r4Tf.SetPosition(Vec3{ 0.37f, 50.0f, -1.37f });
     ready_r4Tf.SetScale(Vec3{ 3.0f, 1.0f, 1.0f });
+    ready_r4Tf.SetRotation(ConvertAxisAngleToQuaternion(Vec3{ 0.0f, 1.0f, 0.0f }, 15));
 
     CRenderable& renderable_r4 = ready_r4->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable_r4.SetGraphicObject("Cube");
