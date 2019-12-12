@@ -55,6 +55,10 @@ void CRenderable::GhostPropertyReadStream(BitStream & stream)
   ComponentType dummyType;
   stream >> dummyType;
 
+  bool active;
+  stream >> active;
+  SetActive(active);
+
   bool hasOverrideMaterial;
   stream >> hasOverrideMaterial;
 
@@ -85,6 +89,8 @@ void CRenderable::GhostPropertyReadStream(BitStream & stream)
     a = tmpA / 255.0f;
     m_Instance->GetMaterial()->SetColor(r, g, b, a);
   }
+
+  SetIsDirty(false);
 }
 
 void CRenderable::GhostPropertyWriteStream(BitStream & stream)
@@ -92,6 +98,9 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
   // ALWAYS PREFIX WITH CLASSID FOR COMPONENT AND COMPONENTTYPE DON'T NEED TO READ THIS BACK
   stream << CI_Component;
   stream << GetType();
+
+  bool active = GetActive();
+  stream << active;
 
   bool hasOverrideMaterial = m_Instance->HasOverrideMaterial();
   stream << hasOverrideMaterial;
@@ -120,6 +129,10 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
 
 void CRenderable::GhostPropertyReplicateFromStream(BitStream & stream)
 {
+  bool active;
+  stream >> active;
+  SetActive(active);
+
   bool hasOverrideMaterial;
   stream >> hasOverrideMaterial;
 
@@ -150,6 +163,8 @@ void CRenderable::GhostPropertyReplicateFromStream(BitStream & stream)
     a = tmpA / 255.0f;
     m_Instance->GetMaterial()->SetColor(r, g, b, a);
   }
+
+  SetIsDirty(false);
 }
 
 void CRenderable::RegisterAsGhostProperty(GhostObject * ghostObject, NetAuthority netAuthority)

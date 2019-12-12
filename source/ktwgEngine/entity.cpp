@@ -165,7 +165,6 @@ void Entity::MarkEntityAsGhost(GhostID ghostId)
 
 void Entity::RegisterEntityGhostProperties(NetAuthority netAuthority)
 {
-  m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty<Entity::State>(m_State, netAuthority));
   m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty<Transform>{m_Transform, netAuthority });
   
   for (auto& comp : m_Components)
