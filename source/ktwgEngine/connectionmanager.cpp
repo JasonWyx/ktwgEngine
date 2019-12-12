@@ -335,7 +335,7 @@ void SocketWindowData::ReadACKS(const int& acks)
     ackPkt = tmpAckPkt;
     bool ss = true;
     // std::vector<int> nackSlip;
-    std::cout << ackVal << std::endl;
+    // std::cout << ackVal << std::endl;
     recvPkt += windowSize;
     while (tmpWindowSize)
     {
@@ -346,23 +346,23 @@ void SocketWindowData::ReadACKS(const int& acks)
             windowSize /= 2;
             if (windowSize <= 0) windowSize = 1;
             ss = false;
-            std::cout << (int)tmpAckPkt << " is Nacked" << std::endl;
+            // std::cout << (int)tmpAckPkt << " is Nacked" << std::endl;
         }
         else
         {
-            std::cout << (int)tmpAckPkt << " is acked" << std::endl;
+            // std::cout << (int)tmpAckPkt << " is acked" << std::endl;
         }
         --tmpAckPkt;
         --tmpWindowSize;
         bit = bit << 1;
     }
 
-    std::cout << "Recvied Pkts : " << (int)recvPkt << std::endl;
+    // std::cout << "Recvied Pkts : " << (int)recvPkt << std::endl;
     SlowStart(ss);
     cumulativePktsSent = 0;
     // Send nackSlip to Stream Manager
 
-    std::cout << "WindowSize : " << windowSize << std::endl;
+    // std::cout << "WindowSize : " << windowSize << std::endl;
 }
 
 void SocketWindowData::SlowStart(const bool& ss)
@@ -470,7 +470,7 @@ void SocketWindowData::ReceiveMessage()
             std::cout << "MY PORT : " << sPort << std::endl;
         }
 
-        std::cout << "Recieved Size is : " << res << std::endl;
+        // std::cout << "Recieved Size is : " << res << std::endl;
 
         if (res == 8)
         {
@@ -493,8 +493,8 @@ void SocketWindowData::ReceiveMessage()
         for (int i = 0; i < res - 8; ++i)
             msg.push_back(std::get<5>(message)[i]);
 
-        std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", startAckPkt : " << startAckPkt <<
-            ", Acks : " << Acks << std::endl;
+        // std::cout << "Recieved : Packet Number : " << pktNum << ", startPkt : " << startPkt << ", windowSize : " << pwindowSize << ", startAckPkt : " << startAckPkt <<
+        //    ", Acks : " << Acks << std::endl;
 
 
 #ifdef CLIENT
@@ -542,7 +542,7 @@ void SocketWindowData::ReceiveMessage()
         if ((int)std::get<1>(message) + (int)std::get<2>(message) > 256 && index < 0)
         {
             index += 256;
-            std::cout << "index : " << index << std::endl;
+            // std::cout << "index : " << index << std::endl;
         }
         if (index < 0) return;
 
@@ -589,15 +589,15 @@ void SocketWindowData::ReceiveMessage()
             }
         }
 
-        std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
+        // std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
 
-        std::cout << "ACK bits " << ackSlip.size() << " ";
-        for (auto b : ackSlip)
-        {
-            if (b) std::cout << "1 ";
-            else std::cout << "0 ";
-        }
-        std::cout << std::endl;
+        // std::cout << "ACK bits " << ackSlip.size() << " ";
+        // for (auto b : ackSlip)
+        // {
+        //     if (b) std::cout << "1 ";
+        //     else std::cout << "0 ";
+        // }
+        // std::cout << std::endl;
 
         recvAckSlip = recvAckSlip | std::get<4>(message);
 
@@ -610,7 +610,7 @@ void SocketWindowData::ReceiveMessage()
         // else
         tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
         dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
-        std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
+        // std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
         // IMPT :
         // Update ack slip here with timeout
         // read the ackslip and update the dynamicRecvPkt, remove all previous dynamicRecvPkt
@@ -632,8 +632,8 @@ void SocketWindowData::ReceiveMessage()
         //   recvAckSlip = 0;
         // }
 
-        std::cout << "MSG QUEUE : " << msgQueue.size() << std::endl;
-        std::cout << std::endl;
+        // std::cout << "MSG QUEUE : " << msgQueue.size() << std::endl;
+        // std::cout << std::endl;
 
         ZeroMemory(buffer, BUFLEN);
     }
@@ -661,7 +661,7 @@ void SocketWindowData::UpdateTimer()
                     // store streamPktID for lost packet
                     timeTracker[i] = tmp;
                     ++timeOutPkt;
-                    std::cout << "TimeOut : " << timeOut << " elapsedTime : " << elapsedTime << std::endl;
+                    // std::cout << "TimeOut : " << timeOut << " elapsedTime : " << elapsedTime << std::endl;
                 }
             }
         }
@@ -669,7 +669,7 @@ void SocketWindowData::UpdateTimer()
 
     if ((dynamicRecvPkt + timeOutPkt == windowSize) && sentMsg)
     {
-        std::cout << "DYNAMIC RECV PKT : " << (int)dynamicRecvPkt << " TIMEOUT PKT : " << timeOutPkt << " recvAckSlip : " << recvAckSlip << std::endl;
+        // std::cout << "DYNAMIC RECV PKT : " << (int)dynamicRecvPkt << " TIMEOUT PKT : " << timeOutPkt << " recvAckSlip : " << recvAckSlip << std::endl;
         ReadACKS(recvAckSlip);
         dynamicRecvPkt = 0;
         recvAckSlip = 0;
