@@ -20,9 +20,13 @@ public:
   bool GetIsGameStarted() const;
   void SetIsGameStarted(bool start);
 
+  bool GetReadyActive() const;
+  void SetReadyActive(bool active);
+
 private:
   Entity* m_WinObject;
   Entity* m_LoseObject;
+  Entity* m_ReadyObject;
 
   bool m_IsGameStarted;
 };
