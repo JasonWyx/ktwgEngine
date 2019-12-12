@@ -322,6 +322,7 @@ void StreamManager::CreatePeer(PeerID peerID)
     m_PeerTransmissionInfos.try_emplace(peerID);
     m_GhostManager.CreatePeer(peerID);
     // Add a player into the scene
+    m_GhostManager.ReplicateGhostObjectsToPeer(peerID);
     Scene::GetInstance().CreateNewPlayer(peerID);
 }
 

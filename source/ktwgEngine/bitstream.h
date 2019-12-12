@@ -42,12 +42,12 @@ public:
     // Input stream
     template<typename T>    BitStream& Write(const T& value, size_t bitCount);
     template<typename T>    BitStream& operator<<(const T& value);
-    template<>              BitStream& operator<<(const bool& value);
+    // template<>              BitStream& operator<<(const bool& value);
 
     // Output stream
     template<typename T>    BitStream& Read(T& value, size_t bitCount);
     template<typename T>    BitStream& operator>>(T& output);
-    template<>              BitStream& operator>>(bool& output);
+    // template<>              BitStream& operator>>(bool& output);
 
     BitStream  operator+(const BitStream& rhs) const;
     BitStream& operator+=(const BitStream& rhs);
@@ -129,6 +129,7 @@ BitStream& BitStream::operator<<(const T& value)
     return *this;
 }
 
+/*
 template<>
 BitStream& BitStream::operator<<(const bool& value)
 {
@@ -146,6 +147,7 @@ BitStream& BitStream::operator<<(const bool& value)
 
     return *this;
 }
+*/
 
 template<typename T>
 BitStream& BitStream::Read(T& value, size_t bitCount)
@@ -201,6 +203,7 @@ BitStream& BitStream::operator>>(T& output)
     return *this;
 }
 
+/*
 template<> 
 BitStream& BitStream::operator>>(bool& output)
 {
@@ -213,3 +216,4 @@ BitStream& BitStream::operator>>(bool& output)
 
     return *this;
 }
+*/

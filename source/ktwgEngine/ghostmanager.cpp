@@ -481,4 +481,36 @@ void GhostManager::UnreplicateForPeer(PeerID targetPeerID, GhostID ghostID)
     m_PackingInfo[targetPeerID].m_GhostsToDelete.emplace(ghostID);
 }
 
+void GhostManager::ReplicateGhostObjectsToPeer(PeerID peerID)
+{
+  for (auto& ghostObject : m_GhostObjects)
+  {
+    ReplicateForPeer(peerID, ghostObject->GetGhostID());
+  }
+}
+
+void GhostManager::UnreplicateGhostObjectsToPeer(PeerID peerID)
+{
+  for (auto& ghostObject : m_GhostObjects)
+  {
+    UnreplicateForPeer(peerID, ghostObject->GetGhostID());
+  }
+}
+
+void GhostManager::ReplicateAllGhostsToAllPeers()
+{
+  for (auto& ghostObject : m_GhostObjects)
+  {
+    ReplicateForAllPeer(ghostObject->GetGhostID());
+  }
+}
+
+void GhostManager::UnreplicateAllGhostsToAllPeers()
+{
+  for (auto& ghostObject : m_GhostObjects)
+  {
+    UnreplicateForAllPeer(ghostObject->GetGhostID());
+  }
+}
+
 #endif

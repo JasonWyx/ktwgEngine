@@ -37,6 +37,10 @@ public:
     void UnreplicateForAllPeer(GhostID ghostID);
     void ReplicateForPeer(PeerID targetPeerID, GhostID ghostID);
     void UnreplicateForPeer(PeerID targetPeerID, GhostID ghostID);
+    void ReplicateGhostObjectsToPeer(PeerID peerID);
+    void UnreplicateGhostObjectsToPeer(PeerID peerID);
+    void ReplicateAllGhostsToAllPeers();
+    void UnreplicateAllGhostsToAllPeers();
 #endif
 
 private:

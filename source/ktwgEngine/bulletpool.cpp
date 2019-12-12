@@ -56,7 +56,7 @@ Entity* BulletPool::GetBullet()
 
 void BulletPool::OnPlayerConnected()
 {
-  IncreasePool(6);
+  IncreasePool(3);
 }
 
 void BulletPool::IncreasePool(unsigned size)

@@ -86,7 +86,6 @@ void Scene::CreateNewPlayer(PeerID peerID)
     player->MarkEntityForGhost();
     GhostID id = player->GetGhostObject()->GetGhostID();
     StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(id);
-
     GameplayManager::GetInstance().OnPlayerConnected(player);
   }
 }
