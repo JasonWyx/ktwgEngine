@@ -11,6 +11,7 @@ GameStateManager::GameStateManager(Entity& entity)
 GameStateManager::~GameStateManager()
 {
   GameOverEvent::RemoveSubscriber(this);
+  GameStartEvent::RemoveSubscriber(this);
 }
 
 void GameStateManager::Init()
@@ -28,6 +29,7 @@ void GameStateManager::Start()
   m_IsGameStarted = false;
 
   GameOverEvent::RegisterSubscriber(this);
+  GameStartEvent::RegisterSubscriber(this);
 }
 
 void GameStateManager::Update()

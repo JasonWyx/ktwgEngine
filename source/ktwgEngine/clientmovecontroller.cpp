@@ -28,7 +28,8 @@ void ClientMoveController::Start()
 void ClientMoveController::Update()
 {
 #if CLIENT
-  if (!m_GSManager->GetIsGameStarted())
+  if (!m_GSManager->GetIsGameStarted()) 
+  {
     if (Input().OnKeyPress(KTWG_R))
     {
       PeerID peerID = StreamManager::GetInstance().GetPeerID();
@@ -37,6 +38,7 @@ void ClientMoveController::Update()
       StreamManager::GetInstance().GetEventManager().BroadcastEvent(playerReadyEvent, false);
     }
     return;
+  }
 
   MoveState moveState;
   moveState.fill(false);

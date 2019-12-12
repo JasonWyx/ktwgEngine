@@ -57,7 +57,7 @@ void GameplayManager::OnPlayerReady()
   for (auto& player : m_ConnectedPlayers)
   {
     PlayerController* playerBeh = player->GetComponent<PlayerController>();
-    if (playerBeh->GetIsReady())
+    if (!playerBeh->GetIsReady())
     {
       allReady = false;
       break;
