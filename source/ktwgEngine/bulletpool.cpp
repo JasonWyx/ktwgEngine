@@ -35,7 +35,7 @@ BulletPool::BulletPool()
 
   m_Object->SetActive(false);
 
-  IncreasePool(3);
+  IncreasePool(2);
 }
 
 BulletPool::~BulletPool()

@@ -47,6 +47,12 @@ void CRenderable::SetGraphicObject(const std::string & name)
   SetGraphicObject(HypeGraphicsWorld::GetInstance().GetGraphicObject(name));
 }
 
+void CRenderable::SetActive(bool active)
+{
+  Component::SetActive(active);
+  SetIsDirty(true);
+}
+
 void CRenderable::GhostPropertyReadStream(BitStream & stream)
 {
   ComponentID dummyCi;

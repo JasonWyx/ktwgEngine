@@ -36,7 +36,8 @@ PlayerController::~PlayerController()
 
 void PlayerController::Init()
 {
-  BulletPool::Initialize();
+   if(!BulletPool::IsInitialized())
+      BulletPool::Initialize();
 }
 
 void PlayerController::Start()

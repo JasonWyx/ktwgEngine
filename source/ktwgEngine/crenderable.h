@@ -18,6 +18,8 @@ public:
   void                SetGraphicObject(HypeGraphicObject* graphicObject);
   void                SetGraphicObject(const std::string& name);
 
+  void SetActive(bool active) override;
+
   void GhostPropertyReadStream(BitStream& stream) override;
   void GhostPropertyWriteStream(BitStream& stream) override;
   void GhostPropertyReplicateFromStream(BitStream& stream) override;
