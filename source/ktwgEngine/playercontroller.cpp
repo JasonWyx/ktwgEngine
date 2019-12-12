@@ -36,8 +36,10 @@ PlayerController::~PlayerController()
 
 void PlayerController::Init()
 {
-   if(!BulletPool::IsInitialized())
-      BulletPool::Initialize();
+  if (!BulletPool::IsInitialized())
+    BulletPool::Initialize();
+  else
+    BulletPool::GetInstance().OnPlayerConnected();
 }
 
 void PlayerController::Start()
