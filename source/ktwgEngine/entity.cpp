@@ -165,6 +165,7 @@ void Entity::MarkEntityAsGhost(GhostID ghostId)
 
 void Entity::RegisterEntityGhostProperties(NetAuthority netAuthority)
 {
+  m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty<Entity>{*this, netAuthority});
   m_GhostObject->RegisterPropertyCustom(new CustomGhostProperty<Transform>{m_Transform, netAuthority });
   
   for (auto& comp : m_Components)
@@ -184,6 +185,10 @@ void Entity::ReplicateGhostObjectFromBitstream(BitStream & bitstream)
   bitstream >> ghostId;
 
   MarkEntityAsGhost(ghostId);
+
+  bool active;
+  bitstream >> active;
+  SetActive(active);
 
   // Basically reconstructs this entity from the bitstream
   uint8_t nameLen;
@@ -231,6 +236,8 @@ void Entity::ReplicateGhostObjectToBitstream(BitStream & bitstream)
 {
   // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
   bitstream << m_GhostObject->GetGhostID();
+
+  bitstream << GetActive();
  
   uint8_t nameLen = (uint8_t)m_Name.length();
   bitstream << nameLen;
@@ -250,6 +257,8 @@ void Entity::ReplicateGhostObjectToBitstream(const PeerID targetPeerID, BitStrea
 {
   // ASSERT THAT THIS OBJECT HAS TO BE A GHOST
   bitstream << m_GhostObject->GetGhostID();
+
+  bitstream << GetActive();
 
   uint8_t nameLen = (uint8_t)m_Name.length();
   bitstream << nameLen;

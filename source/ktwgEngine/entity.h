@@ -18,15 +18,14 @@ class Entity
   template <typename T>
   using container_t = std::vector<T>;
 
-  enum State : char 
-  { 
-    ACTIVE   = 0, 
-    INACTIVE = 1, 
-    DEAD     = 1 << 2, 
-    NONE     = 1 << 6
-  };
-
 public:
+  enum State : char
+  {
+    ACTIVE = 0,
+    INACTIVE = 1,
+    DEAD = 1 << 2,
+    NONE = 1 << 6
+  };
   Entity(uint32_t id, const std::string& name="");
   
   Entity(Entity&& rhs)            = default;
@@ -149,3 +148,43 @@ inline Entity::container_t<T*> Entity::GetAllComponentsOfType()
 
   return result;
 }
+
+
+template<>
+class CustomGhostProperty<Entity> : public GhostProperty
+{
+public:
+
+  CustomGhostProperty(Entity& property, NetAuthority authority)
+    : GhostProperty(authority)
+    , m_Entity(property)
+    , m_PrevActive(property.GetActive())
+  { }
+
+  virtual void WriteStream(BitStream& stream) override
+  {
+    bool active = m_Entity.GetActive();
+    stream << active;
+  }
+
+  virtual void ReadStream(BitStream& stream) override
+  {
+    bool active;
+    stream >> active;
+    m_Entity.SetActive(active);
+  }
+
+  virtual bool IsPropertyChanged() const override
+  {
+    return m_PrevActive != m_Entity.GetActive();
+  }
+
+  virtual void Sync() override
+  {
+    m_PrevActive = m_Entity.GetActive();
+  }
+
+private:
+  Entity& m_Entity;
+  bool m_PrevActive;
+};

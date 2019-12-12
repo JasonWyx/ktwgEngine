@@ -131,6 +131,8 @@ void CRenderable::GhostPropertyWriteStream(BitStream & stream)
       << (uint8_t)(b * 255.0f)
       << (uint8_t)(a * 255.0f);
   }
+
+  SetIsDirty(false);
 }
 
 void CRenderable::GhostPropertyReplicateFromStream(BitStream & stream)
