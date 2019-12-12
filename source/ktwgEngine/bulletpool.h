@@ -15,6 +15,7 @@ public:
   virtual void ShutdownInternal() override {};
 
   Entity* GetBullet();
+  void OnPlayerConnected();
 
 private:
   void IncreasePool(unsigned size);

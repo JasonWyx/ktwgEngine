@@ -16,7 +16,7 @@ BulletPool::BulletPool()
   m_Object = Scene::GetInstance().CreateEntity("Bullet");
 
   Transform& tf = m_Object->GetTransform();
-  tf.SetScale(Vec3{ 0.5f, 0.5f, 0.5f });
+  tf.SetScale(Vec3{ 2.0f, 2.0f, 2.0f });
 
   CRigidBody& rb = m_Object->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
   rb.SetBodyType(RBT_DYNAMIC);
@@ -34,8 +34,6 @@ BulletPool::BulletPool()
   renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.75f, 0.75f, 0.25f, 1.0f);
 
   m_Object->SetActive(false);
-
-  IncreasePool(2);
 }
 
 BulletPool::~BulletPool()
@@ -54,6 +52,11 @@ Entity* BulletPool::GetBullet()
   IncreasePool(static_cast<unsigned>(currSize));
 
   return m_Pool[currSize];
+}
+
+void BulletPool::OnPlayerConnected()
+{
+  IncreasePool(6);
 }
 
 void BulletPool::IncreasePool(unsigned size)
