@@ -10,6 +10,7 @@ GameStateManager::GameStateManager(Entity& entity)
 
 GameStateManager::~GameStateManager()
 {
+  GameOverEvent::RemoveSubscriber(this);
 }
 
 void GameStateManager::Init()
@@ -23,6 +24,8 @@ void GameStateManager::Start()
 
   m_WinObject->SetActive(false);
   m_LoseObject->SetActive(false);
+
+  m_IsGameStarted = false;
 
   GameOverEvent::RegisterSubscriber(this);
 }
@@ -46,5 +49,20 @@ void GameStateManager::OnGameOverEvent(GameOverEvent * evt)
   {
     m_LoseObject->SetActive(true);
   }
+}
+
+void GameStateManager::OnGameStartEvent(GameStartEvent * evt)
+{
+  m_IsGameStarted = evt->m_Start;
+}
+
+bool GameStateManager::GetIsGameStarted() const
+{
+  return m_IsGameStarted;
+}
+
+void GameStateManager::SetIsGameStarted(bool start)
+{
+  m_IsGameStarted = start;
 }
 

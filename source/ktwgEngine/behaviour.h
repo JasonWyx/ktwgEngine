@@ -17,6 +17,8 @@ class Scene;
 struct Collision;
 struct BulletFireEvent;
 struct GameOverEvent;
+struct GameStartEvent;
+struct PlayerReadyEvent;
 
 class Behaviour
 {
@@ -41,6 +43,8 @@ public:
 
   virtual void OnBulletFireEvent(BulletFireEvent*) {}
   virtual void OnGameOverEvent(GameOverEvent*) {}
+  virtual void OnGameStartEvent(GameStartEvent*) {}
+  virtual void OnPlayerReadyEvent(PlayerReadyEvent*) {}
 
   void Set(Behaviour* comp);
   void SetActive(bool active);

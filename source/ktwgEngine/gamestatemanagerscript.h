@@ -15,8 +15,14 @@ public:
   void Update() override;
 
   void OnGameOverEvent(GameOverEvent* evt) override;
+  void OnGameStartEvent(GameStartEvent* evt) override;
+
+  bool GetIsGameStarted() const;
+  void SetIsGameStarted(bool start);
 
 private:
   Entity* m_WinObject;
   Entity* m_LoseObject;
+
+  bool m_IsGameStarted;
 };

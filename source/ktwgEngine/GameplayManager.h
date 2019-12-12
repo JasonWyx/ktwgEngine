@@ -20,6 +20,7 @@ public:
   void OnPlayerConnected(Entity* player);
   void OnPlayerDisconnected(Entity* player);
   
+  void OnPlayerReady();
   void OnPlayerDeath();
 
 private:

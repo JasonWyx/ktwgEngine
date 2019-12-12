@@ -233,7 +233,7 @@ void ConnectionManager::Update()
 
   auto ackIT = ackPacketIDs.begin();
   auto recIT = recievedMessages.begin();
-  for (auto it = serverSockets.begin(); ackIT != ackPacketIDs.end() && it != serverSockets.end();)
+  for (auto it = serverSockets.begin(); recIT != recievedMessages.end() && ackIT != ackPacketIDs.end() && it != serverSockets.end();)
   {
     int player = it->GetPlayer();
     if (it->GetShutdown())

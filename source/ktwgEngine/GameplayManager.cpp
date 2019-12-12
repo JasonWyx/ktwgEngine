@@ -51,6 +51,28 @@ void GameplayManager::OnPlayerDisconnected(Entity * player)
   m_ConnectedPlayers.erase(std::remove(m_ConnectedPlayers.begin(), m_ConnectedPlayers.end(), player), m_ConnectedPlayers.end());
 }
 
+void GameplayManager::OnPlayerReady()
+{
+  bool allReady = true;
+  for (auto& player : m_ConnectedPlayers)
+  {
+    PlayerController* playerBeh = player->GetComponent<PlayerController>();
+    if (playerBeh->GetIsReady())
+    {
+      allReady = false;
+      break;
+    }
+  }
+
+  if (allReady)
+  {
+    // Send start game
+    GameStartEvent* evt = new GameStartEvent;
+    evt->m_Start = true;
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+  }
+}
+
 void GameplayManager::OnPlayerDeath()
 {
   bool allDead = true;
