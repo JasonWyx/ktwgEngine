@@ -169,12 +169,14 @@ void Application::Run()
       physicsSys.Update(fixedDt);
       accumulator -= fixedDtMs;
     }
-
+    
     if (accumDt >= 0.016f)
     {
-      conSys.Update();
 
+      
       streamSys.Update();
+      conSys.Update();
+      conSys.Update();
 
       behSys.Update();
 

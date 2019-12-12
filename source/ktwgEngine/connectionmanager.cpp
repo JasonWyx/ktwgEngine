@@ -5,7 +5,7 @@
 #include "streammanager.h"
 #include "SocketAddressFactory.h"
 
-#define SERVERIP "10.83.33.83"// localhost
+#define SERVERIP "10.83.33.82"// localhost
 #define PORT 8888 // Port for listen to get new port
 #define PORTSTR "8888"
 
@@ -233,7 +233,7 @@ void ConnectionManager::Update()
 
   auto ackIT = ackPacketIDs.begin();
   auto recIT = recievedMessages.begin();
-  for (auto it = serverSockets.begin(); recIT != recievedMessages.end() && ackIT != ackPacketIDs.end() && it != serverSockets.end();)
+  for (auto it = serverSockets.begin(); recIT!=recievedMessages.end() && ackIT != ackPacketIDs.end() && it != serverSockets.end();)
   {
     int player = it->GetPlayer();
     if (it->GetShutdown())
@@ -602,12 +602,12 @@ void SocketWindowData::ReceiveMessage()
     recvAckSlip = recvAckSlip | std::get<4>(message);
 
     int tmpRecvPkts = -1;
-    if(msg.empty())
-    {
-      std::cout << "Processing Acks" << std::endl;
-      tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
-    }
-    else
+    // if(msg.empty())
+    // {
+    //   std::cout << "Processing Acks" << std::endl;
+    //   tmpRecvPkts = UpdateRecvAckSlipForAcksOnly(std::get<4>(message), windowSize);
+    // }
+    // else
       tmpRecvPkts = UpdateRecvAckSlip(std::get<4>(message), windowSize);
     dynamicRecvPkt = tmpRecvPkts > dynamicRecvPkt ? tmpRecvPkts : dynamicRecvPkt;
     std::cout << "Update Recv Ack Slip : " << (int)dynamicRecvPkt << ", window size : " << windowSize << std::endl;
@@ -710,8 +710,8 @@ std::vector<unsigned char> SocketWindowData::PacketMessage(const std::vector<uns
   message.push_back((char)windowSize);
   message.push_back(senderStartPkt);
 
-  for(int i = 0; i < ackSlip.size(); ++i)
-  std::cout << ackSlip[i];
+  // for(int i = 0; i < ackSlip.size(); ++i)
+  // std::cout << ackSlip[i];
 
   int acks = GetAcks();
   char* tmp = (char*)(&acks);
@@ -737,6 +737,7 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
     if (result)
     {
       ++recvPkts;
+      if (i >= timeTracker.size()) continue;
       bool recv = std::get<0>(timeTracker[i]);
       if (i < cumulativePktsSent)
       {
