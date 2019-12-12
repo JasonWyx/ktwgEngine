@@ -23,13 +23,13 @@ using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 #define BUFLEN 512
 #define BETA 0.25f
 #define ALPHA 0.125f
-#define MAX_WINDOW 20
+#define MAX_WINDOW 30
 
 class SocketWindowData
 {
     typedef std::tuple<bool, TIME, float, int> PktTimer;
     float                   rtt = 1.0f;
-    int                     windowSize = 1;
+    int                     windowSize = 30;
     unsigned char           cumulativePktsSent = 0;
     unsigned char           dynamicRecvPkt = 0;
     int                     recvAckSlip = 0;

@@ -677,8 +677,8 @@ void SocketWindowData::UpdateTimer()
     }
 
     auto currentTimer = std::chrono::CLOCK_TYPE::now();
-    auto timePassed = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(currentTimer - checkAckTimer)).count();
-    if (timePassed < 0.5f)
+    // auto timePassed = std::chrono::duration<float>(std::chrono::duration_cast<std::chrono::seconds>(currentTimer - checkAckTimer)).count();
+    if (true)
     {
         //std::cout << "havent Send Ack yet" << std::endl;
 #ifdef CLIENT
@@ -691,7 +691,7 @@ void SocketWindowData::UpdateTimer()
         std::vector<unsigned char> message;
         message = PacketMessage(message, startPkt);
         socket->SendTo(message.data(), message.size(), *sockAddr);
-        checkAckTimer = std::chrono::CLOCK_TYPE::now();
+        // checkAckTimer = std::chrono::CLOCK_TYPE::now();
     }
 
     // ungracefull disconnection
@@ -829,8 +829,9 @@ void SocketWindowData::Update()
 
 void SocketWindowData::Init()
 {
-    ackSlip.resize(1);
-    ackSlip[0] = false;
+    ackSlip.resize(windowSize);
+    std::fill(ackSlip.begin(), ackSlip.end(), false);
+    // ackSlip[0] = false;
 }
 
 bool SocketWindowData::GetShutdown()
