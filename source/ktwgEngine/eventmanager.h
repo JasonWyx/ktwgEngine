@@ -5,7 +5,7 @@
 #include <list>
 #include <map>
 #include <memory>
-
+#include <bitset>
 
 #define REGISTER_NEW_EVENT(EventID, EventHandler) StreamManager::GetInstance().GetEventManager().AddEventHandler(EventID, EventHandler)
 
@@ -33,7 +33,6 @@ private:
     struct EventCache
     {
         EventSequenceID m_NextEventID = 0;
-        EventSequenceID m_NextEventToBroadcast = 0;
         std::list<Event*> m_NonGuaranteedEventsToBroadcast;
         std::list<Event*> m_GuaranteedEventsToBroadcast;
         std::list<Event*> m_EventsToRetransmit;
@@ -42,8 +41,9 @@ private:
         std::list<Event*> m_NonGuaranteedEventsToProcess;
         std::list<Event*> m_GuaranteedEventsToProcess;
 
-        unsigned m_CountEventsInFlight = 0;
-        const unsigned m_MaxEventsInFlight = 128;
+        EventSequenceID m_EventsInFlight = 0;
+        EventSequenceID m_EventsWindowStart = 0;
+        std::bitset<64> m_AckedEvents;
     };
 
 #ifdef CLIENT

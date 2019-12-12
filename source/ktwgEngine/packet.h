@@ -2,8 +2,8 @@
 #include "bitstream.h"
 #include "netdefs.h"
 
-constexpr size_t MAX_PACKET_SIZE = 512;
-constexpr size_t MAX_PACKET_BIT_SIZE = 512 * 8;
+constexpr size_t MAX_PACKET_SIZE = 1024;
+constexpr size_t MAX_PACKET_BIT_SIZE = MAX_PACKET_SIZE * 8;
 
 using PacketID = unsigned char;
 

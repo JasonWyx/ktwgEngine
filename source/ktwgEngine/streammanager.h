@@ -53,7 +53,6 @@ private:
     virtual void InitializeInternal() override;
     virtual void ShutdownInternal() override;
 
-    void NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus);
     Packet CreatePacket();
 
     PeerID m_PeerID;

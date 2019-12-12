@@ -22,11 +22,6 @@ void StreamManager::Update()
 #endif
 }
 
-void StreamManager::NotifyPacketStatus(PacketID packetID, PacketStatus packetStatus)
-{
-
-}
-
 Packet StreamManager::CreatePacket()
 {
     return Packet{ m_LastPacketID++ };
@@ -52,8 +47,14 @@ void StreamManager::UpdateClient()
     for (int lostPacketID : lostPackets)
     {
         TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
-        m_GhostManager.NotifyTransmissionFailure(*tr);
-        m_EventManager.NotifyTransmissionFailure(*tr);
+        if (!tr->m_GhostTransmissionRecords.empty())
+        {
+            m_GhostManager.NotifyTransmissionFailure(*tr);
+        }
+        if (!tr->m_EventTransmissionRecords.empty())
+        {
+            m_EventManager.NotifyTransmissionFailure(*tr);
+        }
         m_TransmissionRecordMap.erase(lostPacketID);
 
         m_TransmissionInfo.m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
@@ -71,8 +72,14 @@ void StreamManager::UpdateClient()
         for (int lostPacketID : lostPackets)
         {
             TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
-            m_GhostManager.NotifyTransmissionSuccess(*tr);
-            m_EventManager.NotifyTransmissionSuccess(*tr);
+            if (!tr->m_GhostTransmissionRecords.empty())
+            {
+                m_GhostManager.NotifyTransmissionSuccess(*tr);
+            }
+            if (!tr->m_EventTransmissionRecords.empty())
+            {
+                m_EventManager.NotifyTransmissionSuccess(*tr);
+            }
             m_TransmissionRecordMap.erase(lostPacketID);
 
             m_TransmissionInfo.m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
@@ -186,20 +193,20 @@ void StreamManager::ShutdownServer()
 
 void StreamManager::UpdateServer()
 {
-    // Get packet notification
+    // Get Packet notifications
     std::vector<int>& lostPackets = ConnectionManager::GetInstance().GetLostPacketIDs();
 
     for (int lostPacketID : lostPackets)
     {
-        auto iter = m_TransmissionRecordMap.find((PacketID)lostPacketID);
-        if (iter == m_TransmissionRecordMap.end())
-        {
-            continue;
-        };
-
         TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
-        m_GhostManager.NotifyTransmissionFailure(*tr);
-        m_EventManager.NotifyTransmissionFailure(*tr);
+        if (!tr->m_GhostTransmissionRecords.empty())
+        {
+            m_GhostManager.NotifyTransmissionFailure(*tr);
+        }
+        if (!tr->m_EventTransmissionRecords.empty())
+        {
+            m_EventManager.NotifyTransmissionFailure(*tr);
+        }
         m_TransmissionRecordMap.erase(lostPacketID);
 
         m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
@@ -217,8 +224,14 @@ void StreamManager::UpdateServer()
         for (int lostPacketID : lostPackets)
         {
             TransmissionRecord* tr = m_TransmissionRecordMap[lostPacketID];
-            m_GhostManager.NotifyTransmissionSuccess(*tr);
-            m_EventManager.NotifyTransmissionSuccess(*tr);
+            if (!tr->m_GhostTransmissionRecords.empty())
+            {
+                m_GhostManager.NotifyTransmissionSuccess(*tr);
+            }
+            if (!tr->m_EventTransmissionRecords.empty())
+            {
+                m_EventManager.NotifyTransmissionSuccess(*tr);
+            }
             m_TransmissionRecordMap.erase(lostPacketID);
 
             m_PeerTransmissionInfos[tr->m_TargetPeerID].m_TransmissionRecords.remove_if([lostPacketID](TransmissionRecord& transmissionRecord)
@@ -227,7 +240,7 @@ void StreamManager::UpdateServer()
             });
         }
     }
-    
+
     // Process incoming packets
     std::map<int, std::vector<std::vector<unsigned char>>>& incomingMessages = ConnectionManager::GetInstance().GetRecievedMessages();
 

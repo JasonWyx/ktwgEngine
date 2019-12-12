@@ -27,125 +27,125 @@ using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
 class SocketWindowData
 {
-  typedef std::tuple<bool, TIME, float, int> PktTimer;
-  float                   rtt = 1.0f;
-  int                     windowSize = 1;
-  unsigned char           cumulativePktsSent = 0;
-  unsigned char           dynamicRecvPkt = 0;
-  int                     recvAckSlip = 0;
-  unsigned char           senderStartPkt = 0;
-  unsigned char           sentPkt = 0;
-  unsigned char           ackPkt = 0;
-  unsigned char           recvPkt = 0;
-  const int               ssThres = 10;
-  TIME                    timer;
-  float                   devRTT = 1.0f;
-  u_short                 mPort = 0;
-  u_short                 sPort = 0;
-  UDPSocketPtr            socket;
-  std::vector<bool>       ackSlip;
-  std::deque<std::vector<unsigned char>> msgQueue;
-  std::queue<int>         streamIDQueue;
-  std::vector<PktTimer>   timeTracker;
-  bool                    sentMsg = false;
-  int                     timeOutPkt = 0;
-  bool                    shutdown = false;
-  // for server side only
-  int                     player = -1;
-  // to be removed if cause random DCs
-  TIME                    timeOutTimer;
-  std::string		          clientIP;
-  bool                    notSentAckYet = true;
-  TIME                    checkAckTimer = std::chrono::CLOCK_TYPE::now();
+    typedef std::tuple<bool, TIME, float, int> PktTimer;
+    float                   rtt = 1.0f;
+    int                     windowSize = 1;
+    unsigned char           cumulativePktsSent = 0;
+    unsigned char           dynamicRecvPkt = 0;
+    int                     recvAckSlip = 0;
+    unsigned char           senderStartPkt = 0;
+    unsigned char           sentPkt = 0;
+    unsigned char           ackPkt = 0;
+    unsigned char           recvPkt = 0;
+    const int               ssThres = 10;
+    TIME                    timer;
+    float                   devRTT = 1.0f;
+    u_short                 mPort = 0;
+    u_short                 sPort = 0;
+    UDPSocketPtr            socket;
+    std::vector<bool>       ackSlip;
+    std::deque<std::vector<unsigned char>> msgQueue;
+    std::queue<int>         streamIDQueue;
+    std::vector<PktTimer>   timeTracker;
+    bool                    sentMsg = false;
+    int                     timeOutPkt = 0;
+    bool                    shutdown = false;
+    // for server side only
+    int                     player = -1;
+    // to be removed if cause random DCs
+    TIME                    timeOutTimer;
+    std::string		          clientIP;
+    bool                    notSentAckYet = true;
+    TIME                    checkAckTimer = std::chrono::CLOCK_TYPE::now();
 
-  void ReadACKS(const int& acks);
-  void SlowStart(const bool& ss);
+    void ReadACKS(const int& acks);
+    void SlowStart(const bool& ss);
 
-  void ReceiveMessage();
-  void UpdateTimer();
-  std::vector<unsigned char> PacketMessage(const std::vector<unsigned char>& msg, const unsigned char& startPkt);
-  int UpdateRecvAckSlip(int val, int size);
-  int GetAcks();
-  void DeliverMessage();
-  int UpdateRecvAckSlipForAcksOnly(int val, int size);
+    void ReceiveMessage();
+    void UpdateTimer();
+    std::vector<unsigned char> PacketMessage(const std::vector<unsigned char>& msg, const unsigned char& startPkt);
+    int UpdateRecvAckSlip(int val, int size);
+    int GetAcks();
+    void DeliverMessage();
+    int UpdateRecvAckSlipForAcksOnly(int val, int size);
 public:
-  std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
-  void AddMessage(std::vector<unsigned char>& msg);
-  void AddStreamPktID(int id);
-  void SetSocket(UDPSocketPtr s);
-  void SetPort(const u_short& p);
-  UDPSocketPtr GetSocket();
-  void Update();
-  void Init();
-  bool GetShutdown();
-  void ShutdownMessage();
-  void SetPlayer(int p);
-  int  GetPlayer();
-  void SetClientIP(std::string s);
+    std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
+    void AddMessage(std::vector<unsigned char>& msg);
+    void AddStreamPktID(int id);
+    void SetSocket(UDPSocketPtr s);
+    void SetPort(const u_short& p);
+    UDPSocketPtr GetSocket();
+    void Update();
+    void Init();
+    bool GetShutdown();
+    void ShutdownMessage();
+    void SetPlayer(int p);
+    int  GetPlayer();
+    void SetClientIP(std::string s);
 };
 
 #ifdef CLIENT
 class ConnectionManager : public Singleton <ConnectionManager>
 {
 public:
-  ConnectionManager();
-  ~ConnectionManager();
-  void Update();
-  void AddPacket(std::vector<unsigned char> msg, int pktid);
-  void RecieveMessage(std::vector<unsigned char>& msg);
-  int GetPlayerID();
-  std::vector<std::vector<unsigned char>>& GetRecievedMessages();
-  std::vector<int>& GetLostPacketIDs();
-  void StoreLostPacketsIDs(int pktid);
-  void StoreAckPacketsIDs(int pktid, int p);
-  std::map<int, std::vector<int>>& GetAckPacketIDs();
+    ConnectionManager();
+    ~ConnectionManager();
+    void Update();
+    void AddPacket(std::vector<unsigned char> msg, int pktid);
+    void RecieveMessage(std::vector<unsigned char>& msg);
+    int GetPlayerID();
+    std::vector<std::vector<unsigned char>>& GetRecievedMessages();
+    std::vector<int>& GetLostPacketIDs();
+    void StoreLostPacketsIDs(int pktid);
+    void StoreAckPacketsIDs(int pktid, int p);
+    std::map<int, std::vector<int>>& GetAckPacketIDs();
 
-  void ConnectToServer();
+    void ConnectToServer();
 
 private:
-  virtual void InitializeInternal() override;
-  virtual void ShutdownInternal() override;
+    virtual void InitializeInternal() override;
+    virtual void ShutdownInternal() override;
 
-  SocketWindowData mySocket;
+    SocketWindowData mySocket;
 
-  // temporary buffer for testing
-  char buf[BUFLEN];
-  std::vector<std::vector<unsigned char>> recievedMessages;
-  std::vector<int> lostPacketIDs;
-  std::map<int, std::vector<int>> ackPacketIDs;
+    // temporary buffer for testing
+    char buf[BUFLEN];
+    std::vector<std::vector<unsigned char>> recievedMessages;
+    std::vector<int> lostPacketIDs;
+    std::map<int, std::vector<int>> ackPacketIDs;
 };
 #else
 
 class ConnectionManager : public Singleton<ConnectionManager>
 {
-  virtual void InitializeInternal() override;
-  virtual void ShutdownInternal() override;
+    virtual void InitializeInternal() override;
+    virtual void ShutdownInternal() override;
 
-  bool playerActive[4];
-  std::list<SocketWindowData> serverSockets;
-  std::vector<bool> playersOnline;
-  int players;
+    bool playerActive[4];
+    std::list<SocketWindowData> serverSockets;
+    std::vector<bool> playersOnline;
+    int players;
 
-  u_short startingPort;
+    u_short startingPort;
 
-  char buffer[BUFLEN];
+    char buffer[BUFLEN];
 
-  UDPSocketPtr hostSocket;
+    UDPSocketPtr hostSocket;
 
-  std::map<int, std::vector<std::vector<unsigned char>>> recievedMessages;
-  std::vector<int> lostPacketIDs;
-  std::map<int, std::vector<int>> ackPacketIDs;
+    std::map<int, std::vector<std::vector<unsigned char>>> recievedMessages;
+    std::vector<int> lostPacketIDs;
+    std::map<int, std::vector<int>> ackPacketIDs;
 public:
-  ConnectionManager();
-  ~ConnectionManager();
-  void Update();
-  void RecieveMessage(std::vector<unsigned char> msg, int p);
-  void StoreLostPacketsIDs(int pktid);
-  std::map<int, std::vector<std::vector<unsigned char>>>& GetRecievedMessages();
-  void AddPacket(std::vector<unsigned char> msg, int pktid, int player);
-  std::vector<int>& GetLostPacketIDs();
-  void StoreAckPacketsIDs(int pktid, int p);
-  std::map<int, std::vector<int>>& GetAckPacketIDs();
+    ConnectionManager();
+    ~ConnectionManager();
+    void Update();
+    void RecieveMessage(std::vector<unsigned char> msg, int p);
+    void StoreLostPacketsIDs(int pktid);
+    std::map<int, std::vector<std::vector<unsigned char>>>& GetRecievedMessages();
+    void AddPacket(std::vector<unsigned char> msg, int pktid, int player);
+    std::vector<int>& GetLostPacketIDs();
+    void StoreAckPacketsIDs(int pktid, int p);
+    std::map<int, std::vector<int>>& GetAckPacketIDs();
 };
 
 #endif
