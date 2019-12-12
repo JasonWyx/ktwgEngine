@@ -149,6 +149,32 @@ inline Entity::container_t<T*> Entity::GetAllComponentsOfType()
   return result;
 }
 
+inline BitStream& operator<<(BitStream& stream, const Entity& entity)
+{
+  stream << CI_Entity;
+  stream << entity.GetActive();
+  return stream;
+}
+
+inline BitStream& operator>>(BitStream& stream, Entity& entity)
+{
+  ComponentID dummy;
+  stream >> dummy;
+  bool active;
+  stream >> active;
+  entity.SetActive(active);
+  return stream;
+}
+
+inline BitStream& ReplicateFromStream(BitStream& stream, Entity& entity)
+{
+  bool active;
+  stream >> active;
+  entity.SetActive(active);
+
+  return stream;
+
+}
 
 template<>
 class CustomGhostProperty<Entity> : public GhostProperty
@@ -163,15 +189,12 @@ public:
 
   virtual void WriteStream(BitStream& stream) override
   {
-    bool active = m_Entity.GetActive();
-    stream << active;
+    stream << m_Entity;
   }
 
   virtual void ReadStream(BitStream& stream) override
   {
-    bool active;
-    stream >> active;
-    m_Entity.SetActive(active);
+    stream >> m_Entity;
   }
 
   virtual bool IsPropertyChanged() const override

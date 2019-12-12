@@ -6,5 +6,6 @@ enum ComponentID
 {
     CI_Transform,
     CI_Component,
+    CI_Entity,
     CI_Count
 };
