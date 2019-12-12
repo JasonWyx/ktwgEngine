@@ -50,6 +50,9 @@ void EventManager::ReadStream(const PeerID peerID, BitStream& stream)
     case EventID_GameOver:
       recvEvent = new GameOverEvent;
       break;
+    case EventID_PlayerReady:
+      recvEvent = new PlayerReadyEvent;
+      break;
     default:
       continue;
     }
@@ -332,4 +335,6 @@ void EventManager::RegisterEvents()
 {
   REGISTER_NEW_EVENT(EventID_BulletFire, &BulletFireEvent::BulletFireEventHandler);
   REGISTER_NEW_EVENT(EventID_GameOver, &GameOverEvent::GameOverEventHandler);
+  REGISTER_NEW_EVENT(EventID_GameStart, &GameStartEvent::GameStartEventEventHandler);
+  REGISTER_NEW_EVENT(EventID_PlayerReady, &PlayerReadyEvent::PlayerReadyEventHandler);
 }
