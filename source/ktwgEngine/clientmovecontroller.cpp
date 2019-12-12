@@ -3,6 +3,7 @@
 #include "streammanager.h"
 #include "scene.h"
 #include "gamestatemanagerscript.h"
+#include "time.h"
 
 ClientMoveController::ClientMoveController(Entity & entity)
 :Behaviour{typeid(ClientMoveController), entity}
@@ -65,10 +66,16 @@ void ClientMoveController::Update()
   
   if (Input().OnKeyPress(KTWG_SPACE))
   {
-    PeerID peerID = StreamManager::GetInstance().GetPeerID();
-    BulletFireEvent* bulletFireEvent = new BulletFireEvent;
-    bulletFireEvent->m_SourcePeerID = peerID;
-    StreamManager::GetInstance().GetEventManager().BroadcastEvent(bulletFireEvent, false);
+    if (m_CoolDown <= 0.0f)
+    {
+      PeerID peerID = StreamManager::GetInstance().GetPeerID();
+      BulletFireEvent* bulletFireEvent = new BulletFireEvent;
+      bulletFireEvent->m_SourcePeerID = peerID;
+      StreamManager::GetInstance().GetEventManager().BroadcastEvent(bulletFireEvent, false);
+      m_CoolDown = m_FireRate;
+    }
   }
+
+  m_CoolDown -= (float)Time().GetFixedDeltaTime();
 #endif
 }
