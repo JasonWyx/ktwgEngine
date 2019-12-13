@@ -441,11 +441,6 @@ void SocketWindowData::DeliverMessage()
         ++cumulativePktsSent;
         ++sendedPkt;
         ++totalPkts;
-        // if (sendedPkt > 2)
-        // {
-        //   sendedPkt = 0;
-        //   ++tmp1;
-        // }
         ++sentPkt;
         sentMsg = true;
         checkAckTimer = std::chrono::CLOCK_TYPE::now();
@@ -605,6 +600,7 @@ void SocketWindowData::ReceiveMessage()
         //   --dynamicRecvPkt;
         // }
 
+        ZeroMemory(buffer, BUFLEN);
 
         ZeroMemory(buffer, BUFLEN);
 
