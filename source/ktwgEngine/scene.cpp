@@ -232,6 +232,7 @@ void Scene::CreateStaticScene()
 // #endif
   }
 
+#if SERVER
   {
     // EnemyManager
     Entity* enemyMng = m_GameScene->AddChild();
@@ -240,6 +241,7 @@ void Scene::CreateStaticScene()
     CBehaviour& beh = enemyMng->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     beh.Bind<EnemyManager>();
   }
+#endif
 
   {
     // Game State manager

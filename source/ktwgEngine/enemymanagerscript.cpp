@@ -6,13 +6,15 @@
 #include "randommodule.h"
 #include "inputsystem.h"
 #include "time.h"
+#include "scene.h"
+#include "gamestatemanagerscript.h"
 #include <iostream>
 
 EnemyManager::EnemyManager(Entity& entity)
   : Behaviour{ typeid(EnemyManager), entity},
-    m_SpawnInterval{ 30.0f },
-    m_DeathCount{ 0 },
-    m_AccumulateTime{ 0.0f }
+    m_SpawnInterval{ Random::Range(5.0f, 10.0f) },
+    m_SpawnCount{ Random::Range(1, 5) },
+    m_CurrTime{ 0.0f }
 {
   // Create spawn points around border of the world
   float stride = 17.0f;
@@ -42,19 +44,44 @@ void EnemyManager::Init()
   EnemyPool::Initialize();
 }
 
+void EnemyManager::Start()
+{
+  m_WaveSize = 100;
+  m_EnemiesLeft = 0;
+
+  m_GSManager = Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>();
+}
+
 void EnemyManager::Update()
 {
+#if SERVER
+  if (Input().GetInstance().OnKeyPress(KTWG_P))
+    m_GSManager->SetIsGameStarted(true);
+#endif
+
+  if (!m_GSManager->GetIsGameStarted())
+    return;
+
   if (Input().OnKeyPress(KTWG_0))
-  {
     Spawn(1);
-    std::cout << "Spawn" << std::endl;
+
+  if (m_WaveSize > 0 && m_CurrTime <= 0.0f)
+  {
+    int spawnSize = m_WaveSize - m_SpawnCount;
+    
+    spawnSize = spawnSize < 0 ? m_WaveSize : m_SpawnCount;
+    Spawn(spawnSize);
+    m_EnemiesLeft += spawnSize;
+
+    m_WaveSize -= m_SpawnCount;
+    m_SpawnInterval = spawnSize * Random::Range(1.0f, 2.0f);
+    m_SpawnCount = Random::Range(2, 8);
+    m_CurrTime = m_SpawnInterval;
+
+    std::cout << m_WaveSize << " " << m_EnemiesLeft << std::endl;
   }
 
-
-  m_AccumulateTime += static_cast<float>(Time().GetDeltaTime());
-
-  if (m_AccumulateTime > m_SpawnInterval)
-    Spawn(m_DeathCount * 2);
+  m_CurrTime -= static_cast<float>(Time::GetInstance().GetFixedDeltaTime());
 }
 
 void EnemyManager::Spawn(unsigned size)
