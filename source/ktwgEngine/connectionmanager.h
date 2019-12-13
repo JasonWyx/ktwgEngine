@@ -57,6 +57,7 @@ class SocketWindowData
     std::string		        clientIP;
     bool                    notSentAckYet = true;
     TIME                    checkAckTimer = std::chrono::CLOCK_TYPE::now();
+    int                   pktTimeOutCounter = 0;
 
     void ReadACKS(const long long& acks);
     void SlowStart(const bool& ss);

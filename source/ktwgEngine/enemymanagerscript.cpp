@@ -50,7 +50,7 @@ void EnemyManager::Init()
 
 void EnemyManager::Start()
 {
-  m_WaveSize = 1;
+  m_WaveSize = 10;
   m_EnemiesLeft = 0;
 
   m_GSManager = Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>();

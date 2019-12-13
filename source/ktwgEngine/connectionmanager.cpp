@@ -356,7 +356,7 @@ void SocketWindowData::ReadACKS(const long long& acks)
             windowSize /= 2;
             if (windowSize <= 0) windowSize = 1;
             ss = false;
-            // std::cout << (int)tmpAckPkt << " is Nacked" << std::endl;
+            std::cout << (int)tmpAckPkt << " is Nacked" << std::endl;
         }
         else
         {
@@ -473,6 +473,7 @@ void SocketWindowData::ReceiveMessage()
     int res = 0;
     while ((res = socket->ReceiveFrom(buffer, BUFLEN, sender)) > 0)
     {
+        ++pktTimeOutCounter;
         // ++dynamicRecvPkt;
         if (sPort == 0)
         {
@@ -585,19 +586,21 @@ void SocketWindowData::ReceiveMessage()
         //   --dynamicRecvPkt;
         // }
 
-        // if (!(pktNum != 0 && !(pktNum % 100)))
+        if (pktTimeOutCounter <= 6666)
         {
-            // ackSlip[index] = true;
-            if (!msg.empty() && index < ackSlip.size())
-            {
-                ackSlip[index] = true;
+          // ackSlip[index] = true;
+          if (!msg.empty() && index < ackSlip.size())
+          {
+            ackSlip[index] = true;
 #ifdef CLIENT
-                ConnectionManager::GetInstance().RecieveMessage(msg);
+            ConnectionManager::GetInstance().RecieveMessage(msg);
 #else
-                ConnectionManager::GetInstance().RecieveMessage(msg, player);
+            ConnectionManager::GetInstance().RecieveMessage(msg, player);
 #endif
-            }
+          }
         }
+        else
+          pktTimeOutCounter = 0;
 
         // std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
 
