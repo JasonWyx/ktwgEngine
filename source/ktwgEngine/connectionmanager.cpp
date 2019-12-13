@@ -558,20 +558,20 @@ void SocketWindowData::ReceiveMessage()
 
         if (senderStartPkt != startPkt)
         {
-            // if (notSentAckYet)
-            // {
-            // std::cout << "havent Send Ack yet" << std::endl;
-            // #ifdef CLIENT
-            //   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
-            // #else
-            //   SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
-            // #endif
-            // std::cout << "pack unsent acks" << std::endl;
-            // unsigned char startPkt = sentPkt - cumulativePktsSent;
-            // std::vector<unsigned char> message;
-            // message = PacketMessage(message, startPkt);
-            // socket->SendTo(message.data(), message.size(), *sockAddr);
-            // }
+            if (notSentAckYet)
+            {
+                // std::cout << "havent Send Ack yet" << std::endl;
+                #ifdef CLIENT
+                  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(SERVERIP, std::to_string(sPort));
+                #else
+                  SocketAddressPtr sockAddr = SocketAddressFactory::CreateIPv4FromString(clientIP, std::to_string(sPort));
+                #endif
+                // std::cout << "pack unsent acks" << std::endl;
+                unsigned char startPkt = sentPkt - cumulativePktsSent;
+                std::vector<unsigned char> message;
+                message = PacketMessage(message, startPkt);
+                socket->SendTo(message.data(), message.size(), *sockAddr);
+            }
             notSentAckYet = true;
             senderStartPkt = startPkt;
             ackSlip.clear();
