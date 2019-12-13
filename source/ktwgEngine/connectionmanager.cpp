@@ -441,11 +441,11 @@ void SocketWindowData::DeliverMessage()
         ++cumulativePktsSent;
         ++sendedPkt;
         ++totalPkts;
-        if (sendedPkt > 100)
-        {
-          sendedPkt = 0;
-          ++tmp1;
-        }
+        // if (sendedPkt > 2)
+        // {
+        //   sendedPkt = 0;
+        //   ++tmp1;
+        // }
         ++sentPkt;
         sentMsg = true;
         checkAckTimer = std::chrono::CLOCK_TYPE::now();
@@ -606,10 +606,12 @@ void SocketWindowData::ReceiveMessage()
         // }
 
 
+        ZeroMemory(buffer, BUFLEN);
+
           // ackSlip[index] = true;
           if (!msg.empty() && index < ackSlip.size())
           {
-            if(tmp1 > 0)
+            if(tmp1 == 0)
             {
               ackSlip[index] = true;
 #ifdef CLIENT
@@ -618,7 +620,11 @@ void SocketWindowData::ReceiveMessage()
               ConnectionManager::GetInstance().RecieveMessage(msg, player);
 #endif        
             }
-            else --tmp1;
+            else
+            {
+              --tmp1;
+              continue;
+            }
           }
 
 
@@ -667,8 +673,6 @@ void SocketWindowData::ReceiveMessage()
 
         // std::cout << "MSG QUEUE : " << msgQueue.size() << std::endl;
         // std::cout << std::endl;
-
-        ZeroMemory(buffer, BUFLEN);
     }
 
 }
