@@ -16,7 +16,7 @@ BulletPool::BulletPool()
   m_Object = Scene::GetInstance().CreateEntity("Bullet");
 
   Transform& tf = m_Object->GetTransform();
-  tf.SetScale(Vec3{ 2.0f, 2.0f, 2.0f });
+  tf.SetScale(Vec3{ 0.5f, 0.5f, 2.0f });
 
   CRigidBody& rb = m_Object->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
   rb.SetBodyType(RBT_DYNAMIC);
@@ -31,7 +31,7 @@ BulletPool::BulletPool()
   CRenderable& renderable = m_Object->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
   renderable.SetGraphicObject("Cube");
   renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-  renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.75f, 0.75f, 0.25f, 1.0f);
+  renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
 
   m_Object->SetActive(false);
 }

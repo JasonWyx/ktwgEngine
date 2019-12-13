@@ -5,9 +5,9 @@
 #include "streammanager.h"
 #include "SocketAddressFactory.h"
 
-#define SERVERIP "10.83.33.83"// localhost
-#define PORT 8888 // Port for listen to get new port
-#define PORTSTR "8888"
+#define SERVERIP "localhost"// localhost 10.83.33.83
+#define PORT 6666 // Port for listen to get new port
+#define PORTSTR "6666"
 
 #ifdef CLIENT
 
@@ -179,6 +179,10 @@ void ConnectionManager::Update()
             std::cout << "Server : Max Players" << std::endl;
             return;
         }
+        if (gameStarted)
+        {
+            std::cout << "Server : Game has Started" << std::endl;
+        }
 
         u_short cPort = ntohs(client.GetAsSockAddrIn()->sin_port);
 
@@ -322,15 +326,20 @@ std::map<int, std::vector<int>>& ConnectionManager::GetAckPacketIDs()
 {
     return ackPacketIDs;
 }
+
+void ConnectionManager::ShutTheFuckUp()
+{
+    gameStarted = true;
+}
 #endif
 
-void SocketWindowData::ReadACKS(const int& acks)
+void SocketWindowData::ReadACKS(const long long& acks)
 {
     // if (sentPkt < ackPkt + 1) return; // Duplicate ACKS
     int tmpWindowSize = windowSize;
     // int currWindowSize = windowSize;
-    int bit = 0x1;
-    int ackVal = acks;
+    long long bit = 0x1;
+    long long ackVal = acks;
     unsigned char tmpAckPkt = sentPkt - 1;
     ackPkt = tmpAckPkt;
     bool ss = true;
@@ -488,7 +497,7 @@ void SocketWindowData::ReceiveMessage()
         int startPkt = (int)(std::get<1>(message));
         int pwindowSize = std::get<2>(message);
         int startAckPkt = (int)(std::get<3>(message));
-        int Acks = std::get<4>(message);
+        long long Acks = std::get<4>(message);
         std::vector<unsigned char> msg;
         for (int i = 0; i < res - 8; ++i)
             msg.push_back(std::get<5>(message)[i]);
@@ -713,12 +722,16 @@ std::vector<unsigned char> SocketWindowData::PacketMessage(const std::vector<uns
     // for(int i = 0; i < ackSlip.size(); ++i)
     // std::cout << ackSlip[i];
 
-    int acks = GetAcks();
+    long long acks = GetAcks();
     char* tmp = (char*)(&acks);
     message.push_back(*tmp);
     message.push_back(*(tmp + 1));
     message.push_back(*(tmp + 2));
     message.push_back(*(tmp + 3));
+    message.push_back(*(tmp + 4));
+    message.push_back(*(tmp + 5));
+    message.push_back(*(tmp + 6));
+    message.push_back(*(tmp + 7));
 
     for (int i = 0; i < msg.size(); ++i)
         message.push_back(msg[i]);
@@ -726,14 +739,14 @@ std::vector<unsigned char> SocketWindowData::PacketMessage(const std::vector<uns
     return message;
 }
 
-int SocketWindowData::UpdateRecvAckSlip(int val, int size)
+int SocketWindowData::UpdateRecvAckSlip(long long val, int size)
 {
     int recvPkts = 0;
-    int bit = 0x1;
+    long long bit = 0x1;
     // PktTimer tmp = std::make_tuple(true, std::chrono::CLOCK_TYPE::now(), 0.f);
     for (int i = size - 1; i >= 0; --i)
     {
-        int result = val & bit;
+        long long result = val & bit;
         if (result)
         {
             ++recvPkts;
@@ -760,21 +773,21 @@ int SocketWindowData::UpdateRecvAckSlip(int val, int size)
     return recvPkts;
 }
 
-std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> SocketWindowData::UnPackMessage(char* msg)
+std::tuple<unsigned char, unsigned char, int, unsigned char, long long, char*> SocketWindowData::UnPackMessage(char* msg)
 {
     unsigned char pktNum = (unsigned char)(*msg);
     unsigned char startPkt = (unsigned char)(*(msg + 1));
     int sz = (int)(*(msg + 2));
     unsigned char startAckPkt = (unsigned char)(*(msg + 3));
-    int acks = *((int*)(msg + 4));
-    char* message = msg + 8;
+    long long acks = *((long long*)(msg + 4));
+    char* message = msg + 12;
     return std::make_tuple(pktNum, startPkt, sz, startAckPkt, acks, message);
 }
 
-int SocketWindowData::GetAcks()
+long long SocketWindowData::GetAcks()
 {
-    int ack = 0;
-    int bit = 0x1;
+    long long ack = 0;
+    long long bit = 0x1;
     for (int start = ackSlip.size() - 1; start >= 0; --start)
     {
         if (ackSlip[start]) ack += bit;

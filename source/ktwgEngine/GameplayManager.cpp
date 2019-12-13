@@ -2,6 +2,8 @@
 #include "entity.h"
 #include "playercontroller.h"
 #include "streammanager.h"
+#include "scene.h"
+#include "gamestatemanagerscript.h"
 
 Entity* GameplayManager::GetNearestPlayer(const Vec3 & position)
 {
@@ -70,6 +72,8 @@ void GameplayManager::OnPlayerReady()
     GameStartEvent* evt = new GameStartEvent;
     evt->m_Start = true;
     StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+    Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>()->SetIsGameStarted(true);
+    ConnectionManager::GetInstance().ShutTheFuckUp();
   }
 }
 

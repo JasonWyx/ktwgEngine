@@ -11,8 +11,8 @@ EnemyBehaviour::EnemyBehaviour(Entity & entity)
 :Behaviour{typeid(EnemyBehaviour), entity}
 ,m_CurrentTime{0.0f}
 ,m_PollingInterval{10.0f}
-,m_Speed{5.0f}
-,m_Health{5}
+,m_Speed{2.0f}
+,m_Health{2}
 {
 }
 
@@ -37,11 +37,11 @@ void EnemyBehaviour::Update()
 
   if (m_CurrentTime >= m_PollingInterval)
   {
-    //UpdateTarget(currentPos);
+    UpdateTarget(currentPos);
     m_CurrentTime = 0.0f;
   }
   
-  //ChaseTarget(currentPos);
+  ChaseTarget(currentPos);
 
   m_CurrentTime += dt;
 }
@@ -62,7 +62,7 @@ void EnemyBehaviour::TakeDamage(unsigned damage)
 
 void EnemyBehaviour::Reset()
 {
-  m_Health = 5;
+  m_Health = 2;
 }
 
 void EnemyBehaviour::ChaseTarget(const Vec3 & currentPos)
@@ -75,12 +75,14 @@ void EnemyBehaviour::ChaseTarget(const Vec3 & currentPos)
     const float sqDist = SqLength(dir);
     if (sqDist >= FLT_EPSILON)
     {
-      dir.Normalize();
+      dir /= sqrt(sqDist);
       const Quaternion rot = LookRotation(dir);
-      m_Entity->GetTransform().SetRotation(dir);
-      GetComponent<CRigidBody>()->SetLinearVelocity(dir * m_Speed);
+      m_Entity->GetTransform().SetRotation(rot);
+      Vec3 vel = dir * m_Speed;
+      vel.y_ = GetComponent<CRigidBody>()->GetLinearVelocity().y_;
+      GetComponent<CRigidBody>()->SetLinearVelocity(vel);
       return;
-    }
+    } 
   }
 
   GetComponent<CRigidBody>()->SetLinearVelocity(Vec3{});

@@ -60,8 +60,8 @@ void Scene::CreateNewPlayer(PeerID peerID)
     player->SetName("Player");
 
     Transform& groundTF = player->GetTransform();
-    groundTF.SetPosition(Vec3{ 20.f, 21.0f, 22.0f });
-    groundTF.SetScale(Vec3{ 10.0f, 10.0f, 10.0f });
+    groundTF.SetPosition(Vec3{ (peerID + 1) * 5.f, 5.0f, 0.0f });
+    groundTF.SetScale(Vec3{ 5.0f, 5.0f, 5.0f });
 
     CRigidBody& playerRB = player->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
     playerRB.SetBodyType(RBT_DYNAMIC);
@@ -73,7 +73,21 @@ void Scene::CreateNewPlayer(PeerID peerID)
     CRenderable& renderable = player->AddComponent(CT_RENDERABLE)->Get<CRenderable>();
     renderable.SetGraphicObject("Cube");
     renderable.GetGraphicObjectInstance()->CreateOverrideMaterial();
-    renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(1.0f, 0.0f, 0.0f, 1.0f);
+    switch (peerID)
+    {
+    case (PeerID)0:
+      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.5f, 0.5f, 1.0f);
+      break;
+    case (PeerID)1:
+      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 1.0f, 0.0f, 1.0f);
+      break;
+    case (PeerID)2:
+      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.0f, 1.0f, 1.0f);
+      break;
+    case (PeerID)3:
+      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+      break;
+    }
       
     CBehaviour& playerBeh = player->AddComponent(CT_BEHAVIOUR)->Get<CBehaviour>();
     playerBeh.Bind<PlayerController>();
