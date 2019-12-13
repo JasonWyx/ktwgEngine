@@ -11,8 +11,8 @@ EnemyBehaviour::EnemyBehaviour(Entity & entity)
 :Behaviour{typeid(EnemyBehaviour), entity}
 ,m_CurrentTime{0.0f}
 ,m_PollingInterval{10.0f}
-,m_Speed{2.0f}
-,m_Health{2}
+,m_Speed{10.0f}
+,m_Health{10}
 {
 }
 

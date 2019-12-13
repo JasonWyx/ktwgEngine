@@ -85,7 +85,7 @@ void Scene::CreateNewPlayer(PeerID peerID)
       renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.0f, 1.0f, 1.0f);
       break;
     case (PeerID)3:
-      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+      renderable.GetGraphicObjectInstance()->GetMaterial()->SetColor(0.6f, 0.4f, 0.0f, 1.0f);
       break;
     }
       

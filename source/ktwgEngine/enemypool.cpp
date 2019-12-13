@@ -16,7 +16,7 @@ EnemyPool::EnemyPool()
   m_Object = Scene::GetInstance().CreateEntity("Enemy");
   
   Transform& tf = m_Object->GetTransform();
-  tf.SetScale(Vec3{ 5.0f, 5.0f, 5.0f });
+  tf.SetScale(Vec3{ 10.0f, 5.0f, 10.0f });
   
   CRigidBody& rb = m_Object->AddComponent(CT_RIGIDBODY)->Get<CRigidBody>();
   rb.SetBodyType(RBT_DYNAMIC);
