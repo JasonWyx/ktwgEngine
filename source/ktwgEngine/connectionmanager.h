@@ -28,7 +28,7 @@ using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 class SocketWindowData
 {
     typedef std::tuple<bool, TIME, float, int> PktTimer;
-    float                   rtt = 1.0f;
+    float                   rtt = 0.1f;
     int                     windowSize = 30;
     unsigned char           cumulativePktsSent = 0;
     unsigned char           dynamicRecvPkt = 0;
@@ -39,7 +39,7 @@ class SocketWindowData
     unsigned char           recvPkt = 0;
     const int               ssThres = 30;
     TIME                    timer;
-    float                   devRTT = 1.0f;
+    float                   devRTT = 0.1f;
     u_short                 mPort = 0;
     u_short                 sPort = 0;
     UDPSocketPtr            socket;
@@ -85,6 +85,7 @@ public:
     unsigned long long             totalPkts = 0;
     unsigned long long             droppedPkt = 0;
     unsigned long long             sendedPkt = 0;
+    int tmp1 = 0;
 };
 
 #ifdef CLIENT
