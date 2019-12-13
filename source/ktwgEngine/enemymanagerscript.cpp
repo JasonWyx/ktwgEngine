@@ -98,7 +98,7 @@ void EnemyManager::OnEnemyDeath()
     // Send activate win
     GameOverEvent* evt = new GameOverEvent;
     evt->m_Win = true;
-    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, true);
 #else
     return;
 #endif

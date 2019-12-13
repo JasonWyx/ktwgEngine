@@ -307,7 +307,7 @@ void EventManager::ProcessEvents()
         }
         delete evt;
         m_EventCache.m_NextEventToProcess++;
-        m_EventCache.m_NonGuaranteedEventsToProcess.pop_front();
+        m_EventCache.m_GuaranteedEventsToProcess.pop_front();
     }
 
 #else

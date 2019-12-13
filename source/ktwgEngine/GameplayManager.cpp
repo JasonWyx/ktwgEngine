@@ -53,7 +53,6 @@ void GameplayManager::OnPlayerDisconnected(Entity * player)
   m_ConnectedPlayers.erase(std::remove(m_ConnectedPlayers.begin(), m_ConnectedPlayers.end(), player), m_ConnectedPlayers.end());
 }
 
-#pragma optimize("", off)
 void GameplayManager::OnPlayerReady()
 {
   bool allReady = true;
@@ -101,6 +100,6 @@ void GameplayManager::OnPlayerDeath()
     // Send activate lose
     GameOverEvent* evt = new GameOverEvent;
     evt->m_Win = false;
-    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, true);
   }
 }
