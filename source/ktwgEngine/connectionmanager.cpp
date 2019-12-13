@@ -4,6 +4,7 @@
 #include "windowmanager.h"
 #include "streammanager.h"
 #include "SocketAddressFactory.h"
+#include <fstream>
 
 #define SERVERIP "10.83.33.83"// localhost 10.83.33.83
 #define PORT 8888 // Port for listen to get new port
@@ -18,6 +19,8 @@ ConnectionManager::ConnectionManager()
 
 ConnectionManager::~ConnectionManager()
 {
+  std::cout << "Sent Pkts : " << mySocket.totalPkts << std::endl;
+  std::cout << "Dropped Pkts : " << mySocket.droppedPkt << std::endl;
 }
 
 void ConnectionManager::Update()
@@ -163,6 +166,15 @@ ConnectionManager::ConnectionManager()
 
 ConnectionManager::~ConnectionManager()
 {
+  std::ofstream myFile;
+  myFile.open("ConnectionManagerLog.txt");
+  for (auto s : serverSockets)
+  {
+    myFile << "Socket for Player : " << s.GetPlayer() << std::endl;
+    myFile << "Sent Pkts : " << s.totalPkts << std::endl;
+    myFile << "Dropped Pkts : " << s.droppedPkt << std::endl;
+  }
+  myFile.close();
 }
 
 void ConnectionManager::Update()
@@ -356,6 +368,7 @@ void SocketWindowData::ReadACKS(const long long& acks)
             windowSize /= 2;
             if (windowSize <= 0) windowSize = 1;
             ss = false;
+            ++droppedPkt;
             std::cout << (int)tmpAckPkt << " is Nacked" << std::endl;
         }
         else
@@ -422,10 +435,12 @@ void SocketWindowData::DeliverMessage()
         socket->SendTo(message.data(), message.size(), *sockAddr);
         --currWindowSize;
         float timeOut = rtt + 4 * devRTT;
-        timeOut = timeOut < 1.f ? 1.f : timeOut;
+        timeOut = timeOut < 0.1f ? 0.1f : timeOut;
         PktTimer timer = std::make_tuple(false, std::chrono::CLOCK_TYPE::now(), timeOut, streamPktID);
         timeTracker[cumulativePktsSent] = timer;
         ++cumulativePktsSent;
+        ++sendedPkt;
+        ++totalPkts;
         ++sentPkt;
         sentMsg = true;
         checkAckTimer = std::chrono::CLOCK_TYPE::now();
@@ -473,7 +488,6 @@ void SocketWindowData::ReceiveMessage()
     int res = 0;
     while ((res = socket->ReceiveFrom(buffer, BUFLEN, sender)) > 0)
     {
-        ++pktTimeOutCounter;
         // ++dynamicRecvPkt;
         if (sPort == 0)
         {
@@ -586,21 +600,21 @@ void SocketWindowData::ReceiveMessage()
         //   --dynamicRecvPkt;
         // }
 
-        // if (pktTimeOutCounter <= 6666)
-        {
+
           // ackSlip[index] = true;
           if (!msg.empty() && index < ackSlip.size())
           {
-            ackSlip[index] = true;
+            if ((pktNum == 0) || (pktNum % 100) != 0)
+            {
+              ackSlip[index] = true;
 #ifdef CLIENT
-            ConnectionManager::GetInstance().RecieveMessage(msg);
+              ConnectionManager::GetInstance().RecieveMessage(msg);
 #else
-            ConnectionManager::GetInstance().RecieveMessage(msg, player);
-#endif
+              ConnectionManager::GetInstance().RecieveMessage(msg, player);
+#endif        
+            }
           }
-        }
-        // else
-        //   pktTimeOutCounter = 0;
+
 
         // std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
 
