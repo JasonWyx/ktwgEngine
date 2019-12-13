@@ -73,6 +73,7 @@ void GameplayManager::OnPlayerReady()
     evt->m_Start = true;
     StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
     Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>()->SetIsGameStarted(true);
+    ConnectionManager::GetInstance().ShutTheFuckUp();
   }
 }
 
