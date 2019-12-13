@@ -20,10 +20,10 @@
 
 using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
-#define BUFLEN 512
+#define BUFLEN (1024 + 20)
 #define BETA 0.25f
 #define ALPHA 0.125f
-#define MAX_WINDOW 30
+#define MAX_WINDOW 60
 
 class SocketWindowData
 {
@@ -32,12 +32,12 @@ class SocketWindowData
     int                     windowSize = 30;
     unsigned char           cumulativePktsSent = 0;
     unsigned char           dynamicRecvPkt = 0;
-    int                     recvAckSlip = 0;
+    long long               recvAckSlip = 0;
     unsigned char           senderStartPkt = 0;
     unsigned char           sentPkt = 0;
     unsigned char           ackPkt = 0;
     unsigned char           recvPkt = 0;
-    const int               ssThres = 10;
+    const int               ssThres = 30;
     TIME                    timer;
     float                   devRTT = 1.0f;
     u_short                 mPort = 0;
@@ -54,22 +54,22 @@ class SocketWindowData
     int                     player = -1;
     // to be removed if cause random DCs
     TIME                    timeOutTimer;
-    std::string		          clientIP;
+    std::string		        clientIP;
     bool                    notSentAckYet = true;
     TIME                    checkAckTimer = std::chrono::CLOCK_TYPE::now();
 
-    void ReadACKS(const int& acks);
+    void ReadACKS(const long long& acks);
     void SlowStart(const bool& ss);
 
     void ReceiveMessage();
     void UpdateTimer();
     std::vector<unsigned char> PacketMessage(const std::vector<unsigned char>& msg, const unsigned char& startPkt);
-    int UpdateRecvAckSlip(int val, int size);
-    int GetAcks();
+    int UpdateRecvAckSlip(long long val, int size);
+    long long GetAcks();
     void DeliverMessage();
     int UpdateRecvAckSlipForAcksOnly(int val, int size);
 public:
-    std::tuple<unsigned char, unsigned char, int, unsigned char, int, char*> UnPackMessage(char* msg); // to transfer to private
+    std::tuple<unsigned char, unsigned char, int, unsigned char, long long, char*> UnPackMessage(char* msg); // to transfer to private
     void AddMessage(std::vector<unsigned char>& msg);
     void AddStreamPktID(int id);
     void SetSocket(UDPSocketPtr s);
@@ -135,6 +135,7 @@ class ConnectionManager : public Singleton<ConnectionManager>
     std::map<int, std::vector<std::vector<unsigned char>>> recievedMessages;
     std::vector<int> lostPacketIDs;
     std::map<int, std::vector<int>> ackPacketIDs;
+    bool gameStarted = false;
 public:
     ConnectionManager();
     ~ConnectionManager();
@@ -146,6 +147,7 @@ public:
     std::vector<int>& GetLostPacketIDs();
     void StoreAckPacketsIDs(int pktid, int p);
     std::map<int, std::vector<int>>& GetAckPacketIDs();
+    void ShutTheFuckUp();
 };
 
 #endif
