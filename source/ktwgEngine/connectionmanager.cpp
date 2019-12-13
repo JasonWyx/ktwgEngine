@@ -586,7 +586,7 @@ void SocketWindowData::ReceiveMessage()
         //   --dynamicRecvPkt;
         // }
 
-        if (pktTimeOutCounter <= 6666)
+        // if (pktTimeOutCounter <= 6666)
         {
           // ackSlip[index] = true;
           if (!msg.empty() && index < ackSlip.size())
@@ -599,8 +599,8 @@ void SocketWindowData::ReceiveMessage()
 #endif
           }
         }
-        else
-          pktTimeOutCounter = 0;
+        // else
+        //   pktTimeOutCounter = 0;
 
         // std::cout << "RecvPkt : " << (int)recvPkt << std::endl;
 
