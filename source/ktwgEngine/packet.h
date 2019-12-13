@@ -2,7 +2,7 @@
 #include "bitstream.h"
 #include "netdefs.h"
 
-constexpr size_t MAX_PACKET_SIZE = 1024;
+constexpr size_t MAX_PACKET_SIZE = 400;
 constexpr size_t MAX_PACKET_BIT_SIZE = MAX_PACKET_SIZE * 8;
 
 using PacketID = unsigned char;
@@ -19,10 +19,6 @@ struct Packet
     PacketID m_ID = 0;
     PeerID m_TargetPeerID = 0;
 
-    bool m_HasMove = false;
-    bool m_HasEvent = false;
-    bool m_HasGhost = false;
-
     BitStream m_MoveStream;
     BitStream m_EventStream;
     BitStream m_GhostStream;
@@ -31,17 +27,19 @@ struct Packet
     {
         BitStream result;
 
-        result << m_HasMove << m_HasEvent << m_HasGhost;
+        result << (m_MoveStream.GetByteLength() > 0)
+               << (m_EventStream.GetByteLength() > 0)
+               << (m_GhostStream.GetByteLength() > 0);
 
-        if (m_MoveStream.GetBitLength() > 0)
+        if (m_MoveStream.GetByteLength() > 0)
         {
             result += m_MoveStream;
         }
-        if (m_EventStream.GetBitLength() > 0)
+        if (m_EventStream.GetByteLength() > 0)
         {
             result += m_EventStream;
         }
-        if (m_GhostStream.GetBitLength() > 0)
+        if (m_GhostStream.GetByteLength() > 0)
         {
             result += m_GhostStream;
         }
@@ -51,11 +49,11 @@ struct Packet
 
     size_t GetStreamSize() const
     {
-        return 3 + m_MoveStream.GetBitLength() + m_EventStream.GetBitLength() + m_GhostStream.GetBitLength();
+        return 3 + m_MoveStream.GetBitPosition() + m_EventStream.GetBitPosition() + m_GhostStream.GetBitPosition();
     }
 
     bool HasContents() const
     {
-        return m_HasMove || m_HasGhost || m_HasEvent;
+        return (m_MoveStream.GetByteLength() > 0) && (m_EventStream.GetByteLength() > 0) && (m_GhostStream.GetByteLength() > 0);
     }
 };

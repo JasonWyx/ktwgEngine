@@ -86,26 +86,17 @@ template<typename T>
 BitStream& BitStream::operator<<(const T& value)
 {
     const size_t offset = m_BitPosition / ByteToBits;
-    const size_t shiftRight = m_BitPosition % ByteToBits;
-    const size_t shiftLeft = ByteToBits - shiftRight;
+    const size_t shiftLeft = m_BitPosition % ByteToBits;
+    const size_t shiftRight = ByteToBits - shiftLeft;
 
     // +1 to allow for bit overlap
     uint8_t data[sizeof(T) + 1] = { };
 
     std::memcpy(static_cast<void*>(&data[1]), static_cast<const void*>(&value), sizeof(T));
 
-    T* vp = reinterpret_cast<T*>(&data[1]);
-
     for (size_t i = 0; i <= sizeof(T); i++)
     {
-        if (i == sizeof(T))
-        {
-            data[i] = data[i] << shiftLeft;
-        }
-        else
-        {
-            data[i] = data[i] << shiftLeft | data[i + 1] >> shiftRight;
-        }
+        data[i] = data[i + 1] << shiftLeft | data[i] >> shiftRight;
     }
 
     // Expand if not enough space
@@ -114,7 +105,8 @@ BitStream& BitStream::operator<<(const T& value)
         m_Buffer.resize(m_Buffer.size() + sizeof(T));
     }
 
-    if (shiftRight == 0)
+    // Buffer data is already byte aligned
+    if (shiftLeft == 0)
     {
         std::memcpy(static_cast<void*>(&m_Buffer[offset]), static_cast<void*>(&data[0]), sizeof(T));
     }
@@ -129,15 +121,15 @@ BitStream& BitStream::operator<<(const T& value)
     return *this;
 }
 
-/*
+
 template<>
 BitStream& BitStream::operator<<(const bool& value)
 {
-    const size_t shift = ByteToBits - m_BitPosition % ByteToBits - 1;
+    const size_t shift = m_BitPosition % ByteToBits;
 
     if (m_BitPosition % ByteToBits == 0)
     {
-        m_Buffer.push_back(value ? 1 << shift : 0);
+        m_Buffer.push_back(value ? 1 : 0);
     }
     else
     {
@@ -147,7 +139,6 @@ BitStream& BitStream::operator<<(const bool& value)
 
     return *this;
 }
-*/
 
 template<typename T>
 BitStream& BitStream::Read(T& value, size_t bitCount)
@@ -178,9 +169,10 @@ template<typename T>
 BitStream& BitStream::operator>>(T& output)
 {
     const size_t offset = m_BitPosition / ByteToBits;
-    const size_t shiftLeft = m_BitPosition % ByteToBits;
-    const size_t shiftRight = ByteToBits - shiftLeft;
+    const size_t shiftRight = m_BitPosition % ByteToBits;
+    const size_t shiftLeft = ByteToBits - shiftRight;
 
+    // Starting bit position is byte aligned
     if (shiftRight == 0)
     {
         std::memcpy(static_cast<void*>(&output), static_cast<void*>(&m_Buffer[offset]), sizeof(T));
@@ -193,7 +185,7 @@ BitStream& BitStream::operator>>(T& output)
 
         for (size_t i = 0; i < sizeof(T); i++)
         {
-            data[i] = data[i] << shiftLeft | data[i + 1] >> shiftRight;
+            data[i] = data[i + 1] << shiftLeft | data[i] >> shiftRight;
         }
 
         std::memcpy(static_cast<void*>(&output), static_cast<void*>(data), sizeof(T));
@@ -203,12 +195,11 @@ BitStream& BitStream::operator>>(T& output)
     return *this;
 }
 
-/*
 template<> 
 BitStream& BitStream::operator>>(bool& output)
 {
     const size_t offset = m_BitPosition / ByteToBits;
-    const size_t shift = ByteToBits - m_BitPosition % ByteToBits - 1;
+    const size_t shift = m_BitPosition % ByteToBits;
 
     output = m_Buffer[offset] & (1 << shift);
 
@@ -216,4 +207,3 @@ BitStream& BitStream::operator>>(bool& output)
 
     return *this;
 }
-*/

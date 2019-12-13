@@ -342,55 +342,13 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
     tr.m_TargetPeerID = peerID;
     m_TransmissionRecordMap[packet.m_ID] = &tr;
 
-    // MoveManager
-    size_t packetStreamSize = packet.GetStreamSize();
+    bool didAllSucceed = true;
 
-    if (!m_MoveManager.WritePacket(packet))
-    {
-        if (packet.GetStreamSize() > packetStreamSize)
-        {
-            packet.m_HasMove = true;
-            return false;
-        }
-    }
-    else if (packet.GetStreamSize() > packetStreamSize)
-    {
-        packet.m_HasMove = true;
-    }
+    didAllSucceed = didAllSucceed && m_MoveManager.WritePacket(packet);
+    didAllSucceed = didAllSucceed && m_EventManager.WritePacket(packet, m_PeerTransmissionInfos[peerID].m_TransmissionRecords.back());
+    didAllSucceed = didAllSucceed && m_GhostManager.WritePacket(packet, m_PeerTransmissionInfos[peerID].m_TransmissionRecords.back());
 
-    // EventManager
-    packetStreamSize = packet.GetStreamSize();
-
-    if (!m_EventManager.WritePacket(packet, m_PeerTransmissionInfos[peerID].m_TransmissionRecords.back()))
-    {
-        if (packet.GetStreamSize() > packetStreamSize)
-        {
-            packet.m_HasEvent = true;
-            return false;
-        }
-    }
-    else if (packet.GetStreamSize() > packetStreamSize)
-    {
-        packet.m_HasEvent = true;
-    }
-
-    // GhostManager
-    packetStreamSize = packet.GetStreamSize();
-
-    if (!m_GhostManager.WritePacket(packet, m_PeerTransmissionInfos[peerID].m_TransmissionRecords.back()))
-    {
-        if (packet.GetStreamSize() > packetStreamSize)
-        {
-            packet.m_HasGhost = true;
-            return false;
-        }
-    }
-    else if (packet.GetStreamSize() > packetStreamSize)
-    {
-        packet.m_HasGhost = true;
-    }
-
-    return true;
+    return didAllSucceed;
 }
 
 #endif

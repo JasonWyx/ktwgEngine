@@ -45,6 +45,8 @@ public:
 
 private:
 
+    bool PackGhostObject(const GhostID ghostID, const PeerID peerID, BitStream& stream, GhostTransmissionRecord& gtr);
+
     std::vector<GhostObject*> m_GhostObjects;
     std::map<GhostID, GhostObject*> m_GhostObjectsIDMap;
 
@@ -52,14 +54,12 @@ private:
 
     struct PackingInfo
     {
-        std::vector<std::pair<GhostID, GhostStateMask>> m_ObjectsToPack;
-        unsigned m_LastPackedIndex;
-        BitStream m_CachedObjectStream;
-        GhostTransmissionRecord m_CachedTransmissionRecord;
-        bool m_IsDonePacking = true;
-
         std::set<GhostID> m_GhostsToCreate;
         std::set<GhostID> m_GhostsToDelete; 
+        std::vector<std::pair<GhostTransmissionRecord, BitStream>> m_PackedStreams;
+        size_t m_PackedIndexCache = 0;
+
+        bool m_IsDonePacking = true;
     };
 
 #ifdef CLIENT
