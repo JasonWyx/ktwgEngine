@@ -57,7 +57,6 @@ class SocketWindowData
     std::string		        clientIP;
     bool                    notSentAckYet = true;
     TIME                    checkAckTimer = std::chrono::CLOCK_TYPE::now();
-    int                   pktTimeOutCounter = 0;
 
     void ReadACKS(const long long& acks);
     void SlowStart(const bool& ss);
@@ -83,6 +82,9 @@ public:
     void SetPlayer(int p);
     int  GetPlayer();
     void SetClientIP(std::string s);
+    unsigned long long             totalPkts = 0;
+    unsigned long long             droppedPkt = 0;
+    unsigned long long             sendedPkt = 0;
 };
 
 #ifdef CLIENT
