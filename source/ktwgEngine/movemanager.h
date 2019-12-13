@@ -40,4 +40,11 @@ private:
     std::map<PeerID, MoveStateObject> m_MoveStateObject;
 #endif
 
+    unsigned m_TimesPacked = 0;
+    
+public:
+
+    float m_AverageTimesPacked = 0.0f;
+
+    void PrintLog();
 };

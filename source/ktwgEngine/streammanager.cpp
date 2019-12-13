@@ -1,6 +1,8 @@
 #include "streammanager.h"
 #include "scene.h"
+#include "time.h"
 #include <cassert>
+#include <fstream>
 
 StreamManager::StreamManager()
     : m_LastPacketID(0)
@@ -20,6 +22,30 @@ void StreamManager::Update()
 #else
     UpdateServer();
 #endif
+
+    m_LoggingTime += Time::GetInstance().GetFixedDeltaTime();
+    if (m_LoggingTime > 1.0)
+    {
+        std::cout << "Stream Manager - Logging" << std::endl;
+        std::cout << "  Move Manager    : " << m_TimesPackedInTimeFrame[0] << std::endl;
+        m_MoveManager.PrintLog();
+        std::cout << "  Event Manager   : " << m_TimesPackedInTimeFrame[1] << std::endl;
+        m_EventManager.PrintLog();
+        std::cout << "  Ghost Manager   : " << m_TimesPackedInTimeFrame[2] << std::endl;
+        m_GhostManager.PrintLog();
+        std::cout << std::endl;
+
+        m_AveragePacketsPerSecond = (m_AveragePacketsPerSecond +
+            m_TimesPackedInTimeFrame[0] + 
+            m_TimesPackedInTimeFrame[1] +
+            m_TimesPackedInTimeFrame[2]) / 2;
+
+        m_TimesPackedInTimeFrame[0] = 0;
+        m_TimesPackedInTimeFrame[1] = 0;
+        m_TimesPackedInTimeFrame[2] = 0;
+
+        m_LoggingTime = 0.0;
+    }
 }
 
 Packet StreamManager::CreatePacket()
@@ -136,12 +162,14 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         if (packet.GetStreamSize() > packetStreamSize)
         {
+            m_TimesPackedInTimeFrame[0]++;
             packet.m_HasMove = true;
             return false;
         }
     }
     else if (packet.GetStreamSize() > packetStreamSize)
     {
+        m_TimesPackedInTimeFrame[0]++;
         packet.m_HasMove = true;
     }
 
@@ -152,12 +180,14 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         if (packet.GetStreamSize() > packetStreamSize)
         {
+            m_TimesPackedInTimeFrame[1]++;
             packet.m_HasEvent = true;
             return false;
         }
     }
     else if (packet.GetStreamSize() > packetStreamSize)
     {
+        m_TimesPackedInTimeFrame[1]++;
         packet.m_HasEvent = true;
     }
     
@@ -168,12 +198,14 @@ bool StreamManager::PackPacket(Packet& packet)
     {
         if (packet.GetStreamSize() > packetStreamSize)
         {
+            m_TimesPackedInTimeFrame[2]++;
             packet.m_HasGhost = true;
             return false;
         }
     }
     else if (packet.GetStreamSize() > packetStreamSize)
     {
+        m_TimesPackedInTimeFrame[2]++;
         packet.m_HasGhost = true;
     }
     
@@ -349,12 +381,14 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
     {
         if (packet.GetStreamSize() > packetStreamSize)
         {
+            m_TimesPackedInTimeFrame[0]++;
             packet.m_HasMove = true;
             return false;
         }
     }
     else if (packet.GetStreamSize() > packetStreamSize)
     {
+        m_TimesPackedInTimeFrame[0]++;
         packet.m_HasMove = true;
     }
 
@@ -365,12 +399,14 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
     {
         if (packet.GetStreamSize() > packetStreamSize)
         {
+            m_TimesPackedInTimeFrame[1]++;
             packet.m_HasEvent = true;
             return false;
         }
     }
     else if (packet.GetStreamSize() > packetStreamSize)
     {
+        m_TimesPackedInTimeFrame[1]++;
         packet.m_HasEvent = true;
     }
 
@@ -381,12 +417,14 @@ bool StreamManager::PackPacket(PeerID peerID, Packet& packet)
     {
         if (packet.GetStreamSize() > packetStreamSize)
         {
+            m_TimesPackedInTimeFrame[2]++;
             packet.m_HasGhost = true;
             return false;
         }
     }
     else if (packet.GetStreamSize() > packetStreamSize)
     {
+        m_TimesPackedInTimeFrame[2]++;
         packet.m_HasGhost = true;
     }
 
@@ -423,7 +461,31 @@ void StreamManager::UnpackStream(const PeerID sourcePeerID, BitStream& stream)
 void StreamManager::InitializeInternal()
 {
 }
-
+  
 void StreamManager::ShutdownInternal()
 {
+#ifdef CLIENT
+    std::ofstream outFile("StreamManagerLog - Client.txt");
+#else
+    std::ofstream outFile("StreamManagerLog - Server.txt");
+#endif
+
+    outFile << "Stream Manager - Average Log" << std::endl;
+    outFile << "Packets Sent Per Second: " << m_AveragePacketsPerSecond << std::endl;
+    outFile << std::endl;
+    outFile << "    MoveManager" << std::endl;
+    outFile << "        TimesPacked: " << m_MoveManager.m_AverageTimesPacked << std::endl;
+    outFile << std::endl;
+    outFile << "    EventManager" << std::endl;
+    outFile << "        Times Packed (non-guaranteed): " << m_EventManager.m_AverageTimesPacked[0] << std::endl;
+    outFile << "        Times Packed (guaranteed)    : " << m_EventManager.m_AverageTimesPacked[1] << std::endl;
+    outFile << "        Bytes Used (non-guaranteed)  : " << m_EventManager.m_AverageByteCount[0] << std::endl;
+    outFile << "        Bytes Used (guaranteed)      : " << m_EventManager.m_AverageByteCount[1] << std::endl;
+    outFile << std::endl;
+    outFile << "    GhostManager" << std::endl;
+    outFile << "        Times Packed: " << m_GhostManager.m_AverageTimesPacked << std::endl;
+    outFile << "        Bytes Used  : " << m_GhostManager.m_AverageBytes << std::endl;
+
+    outFile.close();
+
 }

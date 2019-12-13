@@ -45,9 +45,8 @@ public:
 
 private:
 
-    std::vector<GhostObject*> m_GhostObjects;
     std::map<GhostID, GhostObject*> m_GhostObjectsIDMap;
-
+    std::vector<GhostObject*> m_GhostObjects;
     std::queue<GhostID> m_AvailableGhostIDs;
 
     struct PackingInfo
@@ -68,4 +67,14 @@ private:
     std::map<PeerID, PackingInfo> m_PackingInfo;
 #endif
 
+    unsigned m_TimesPackedInFrame = 0;
+    float m_NumberOfBytes = 0.0f;
+
+
+public:
+
+    float m_AverageTimesPacked = 0.0f;
+    float m_AverageBytes = 0.0f;
+
+    void PrintLog();
 };

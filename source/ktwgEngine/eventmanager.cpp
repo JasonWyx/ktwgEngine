@@ -110,6 +110,9 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
                     eventCache.m_NonGuaranteedEventsToBroadcast.pop_front();
                     cumulatedEventStream += eventStream;
                     countEventsInPacket++;
+                    
+                    // Data logging
+                    m_TimesPacked[0]++;
 
                     if (countEventsInPacket >= 8)
                     {
@@ -123,6 +126,7 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         packet.m_EventStream << false;
         packet.m_EventStream.Write(countEventsInPacket - 1, 3);
         packet.m_EventStream += cumulatedEventStream;
+        m_ByteCount[0] += packet.m_EventStream.GetByteLength();
     }
     else if (eventCache.m_EventsToRetransmit.size() > 0)
     {
@@ -143,6 +147,9 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
                     cumulatedEventStream += eventStream;
                     countEventsInPacket++;
 
+                    // Data logging
+                    m_TimesPacked[1]++;
+
                     if (countEventsInPacket >= 8)
                     {
                         break;
@@ -155,6 +162,7 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         packet.m_EventStream << firstSequenceID;
         packet.m_EventStream.Write(countEventsInPacket - 1, 3);
         packet.m_EventStream += cumulatedEventStream;
+        m_ByteCount[1] += packet.m_EventStream.GetByteLength();
     }
     else if (eventCache.m_GuaranteedEventsToBroadcast.size() > 0)
     {
@@ -175,6 +183,9 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
                     cumulatedEventStream += eventStream;
                     countEventsInPacket++;
 
+                    // Data logging
+                    m_TimesPacked[1]++;
+
                     if (countEventsInPacket >= 8)
                     {
                         break;
@@ -187,6 +198,7 @@ bool EventManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         packet.m_EventStream << firstSequenceID;
         packet.m_EventStream.Write(countEventsInPacket - 1, 3);
         packet.m_EventStream += cumulatedEventStream;
+        m_ByteCount[0] += packet.m_EventStream.GetByteLength();
     }
     else
     {
@@ -365,4 +377,27 @@ void EventManager::RegisterEvents()
     REGISTER_NEW_EVENT(EventID_GameOver, &GameOverEvent::GameOverEventHandler);
     REGISTER_NEW_EVENT(EventID_GameStart, &GameStartEvent::GameStartEventEventHandler);
     REGISTER_NEW_EVENT(EventID_PlayerReady, &PlayerReadyEvent::PlayerReadyEventHandler);
+}
+
+void EventManager::PrintLog()
+{
+    std::cout << "    Times Packed (non-guaranteed): " << m_TimesPacked[0] << std::endl;
+    std::cout << "    Times Packed (guaranteed)    : " << m_TimesPacked[1] << std::endl;
+    std::cout << "    Bytes Used (non-guaranteed)  : " << m_ByteCount[0] << std::endl;
+    std::cout << "    Bytes Used (guaranteed)      : " << m_ByteCount[1] << std::endl;
+
+    m_AverageTimesPacked[0] += m_TimesPacked[0];
+    m_AverageTimesPacked[1] += m_TimesPacked[1];
+    m_AverageByteCount[0] += m_ByteCount[0];
+    m_AverageByteCount[1] += m_ByteCount[1];
+
+    m_AverageTimesPacked[0] /= 2;
+    m_AverageTimesPacked[1] /= 2;
+    m_AverageByteCount[0] /= 2;
+    m_AverageByteCount[1] /= 2;
+
+    m_TimesPacked[0] = 0;
+    m_TimesPacked[1] = 0;
+    m_ByteCount[0] = 0;
+    m_ByteCount[1] = 0;
 }

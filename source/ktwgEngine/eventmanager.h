@@ -56,4 +56,15 @@ private:
 
 #endif
     std::map<EventID, std::vector<EventHandler_t>> m_EventListeners;
+
+    unsigned m_TimesPacked[2];
+    float m_ByteCount[2];
+
+
+public:
+
+    float m_AverageTimesPacked[2];
+    float m_AverageByteCount[2];
+
+    void PrintLog();
 };

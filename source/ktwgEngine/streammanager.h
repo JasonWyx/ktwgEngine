@@ -64,14 +64,15 @@ private:
 	EventManager m_EventManager;
 	MoveManager m_MoveManager;
 
+    unsigned m_TimesPackedInTimeFrame[3];
+    double m_LoggingTime;
+
+    float m_AveragePacketsPerSecond = 0.0f;
+
     std::map<PacketID, TransmissionRecord*> m_TransmissionRecordMap;
 
     struct TransmissionInfo
     {
-        //bool m_IsDonePackingGhost = false;
-        //bool m_IsDonePackingEvent = false;
-        //bool m_IsDonePackingMove = false;
-
         std::list<TransmissionRecord> m_TransmissionRecords;
     };
 
@@ -83,5 +84,6 @@ private:
     std::map<PeerID, TransmissionInfo> m_PeerTransmissionInfos;
 #endif
     void UnpackStream(const PeerID sourcePeerID, BitStream& stream);
+
 
 };

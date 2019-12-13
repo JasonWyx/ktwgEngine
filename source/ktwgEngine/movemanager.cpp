@@ -69,43 +69,8 @@ bool MoveManager::WritePacket(Packet& packet)
     {
         packet.m_MoveStream << m_MoveStateObject.m_MoveStateCache[i];
     }
-
+    m_TimesPacked++;
     m_MoveStateObject.m_PacketCount++;
-
-#else
-    //// For each peer, check for state change and send acknowledgement when move state changes
-    //for (auto&[peerID, moveStateObject] : m_MoveStateObject)
-    //{
-    //    if (peerID == packet.m_TargetPeerID)
-    //        if (moveStateObject.m_PacketCount >= 3)
-    //        {
-    //            if (moveStateObject.m_MoveStateCache != moveStateObject.m_MoveControlObject->m_MoveState)
-    //            {
-    //                moveStateObject.m_MoveStateCache = moveStateObject.m_MoveControlObject->m_MoveState;
-    //                moveStateObject.m_PacketCount = 0;
-    //            }
-    //            else
-    //            {
-    //                // No pending moves, successfully packed nothing
-    //                return true;
-    //            }
-    //        }
-
-    //    // Pack state into stream
-    //    for (size_t i = 0; i < MoveStateFlags::Count; i++)
-    //    {
-    //        packet.m_MoveStream << moveStateObject.m_MoveStateCache[i];
-    //    }
-
-    //    if (moveStateObject.m_PacketCount++ < 3)
-    //    {
-    //        return false;
-    //    }
-    //    else
-    //    {
-    //        return true;
-    //    }
-    //}
 #endif
     return true;
 }
@@ -142,3 +107,12 @@ void MoveManager::UnregisterMoveObject(PeerID peerID)
 }
 
 #endif
+
+void MoveManager::PrintLog()
+{
+    std::cout << "    Times Packed : " << m_TimesPacked << std::endl;
+
+    m_AverageTimesPacked = (m_AverageTimesPacked + m_TimesPacked) / 2;
+
+    m_TimesPacked = 0;
+}

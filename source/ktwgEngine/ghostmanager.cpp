@@ -54,12 +54,6 @@ void GhostManager::ReadStream(BitStream& stream)
             stream >> isCreateNew;
             if (isCreateNew)
             {
-                // Create new object with class id, with server as the authority
-
-                // jason todo: create object here with m_IsLocalOwner set to false in ghost object so
-                // that local client does not send updates to server for broadcast
-
-                        // read data here and send to scene to create
 #if CLIENT
                 Scene::GetInstance().CreateGhostEntity(stream);
 #endif
@@ -82,13 +76,7 @@ void GhostManager::ReadStream(BitStream& stream)
                 stream >> stateMask;
                 ghostObject->ReadStream(stream, stateMask);
             }
-            else
-            {
-                // Object not found. Perhaps not created yet?
-                // assert(false);
-            }
         }
-
         countObjectsInPacket--;
     }
 }
@@ -152,8 +140,6 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
     }
     else if (headerSizeInBits + packetSizeInBits + packingInfo.m_CachedObjectStream.GetBitLength() <= MAX_PACKET_BIT_SIZE)
     {
-        // jason todo: check if the current cached object can go into the packet
-        // if not, return false again
         countObjectsInPacket++;
         ghostObjectStream += packingInfo.m_CachedObjectStream;
 
@@ -274,7 +260,9 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
         {
             // Packet what ever we have and notify that we still have more ghost objects to pack
             packet.m_GhostStream << countObjectsInPacket;
-            packet.m_GhostStream += ghostObjectStream;
+            packet.m_GhostStream += ghostObjectStream;       
+            m_TimesPackedInFrame++;
+            m_NumberOfBytes += packet.m_GhostStream.GetByteLength();
             return false;
         }
     }
@@ -286,6 +274,8 @@ bool GhostManager::WritePacket(Packet& packet, TransmissionRecord& tr)
     {
         packet.m_GhostStream << countObjectsInPacket;
         packet.m_GhostStream += ghostObjectStream;
+        m_TimesPackedInFrame++;
+        m_NumberOfBytes += packet.m_GhostStream.GetByteLength();
     }
     return true;
 }
@@ -513,4 +503,17 @@ void GhostManager::UnreplicateAllGhostsToAllPeers()
   }
 }
 
+
 #endif
+
+void GhostManager::PrintLog()
+{
+    std::cout << "    Times Packed: " << m_TimesPackedInFrame << std::endl;
+    std::cout << "    Bytes Used  : " << m_NumberOfBytes << std::endl;
+
+    m_AverageTimesPacked = (m_AverageTimesPacked + m_TimesPackedInFrame) / 2;
+    m_AverageBytes = (m_AverageBytes + m_NumberOfBytes) / 2;
+
+    m_TimesPackedInFrame = 0;
+    m_NumberOfBytes = 0.0f;
+}
