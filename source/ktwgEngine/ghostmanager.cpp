@@ -279,17 +279,11 @@ void GhostManager::SyncAllObjectProperties()
 void GhostManager::DropPendingData()
 {
 #ifdef CLIENT
-    m_PackingInfo.m_CachedObjectStream.Clear();
     m_PackingInfo.m_IsDonePacking = true;
-    m_PackingInfo.m_LastPackedIndex = 0;
-    m_PackingInfo.m_ObjectsToPack.clear();
 #else
     for (auto&[peerID, packingInfo] : m_PackingInfo)
     {
-        packingInfo.m_CachedObjectStream.Clear();
         packingInfo.m_IsDonePacking = true;
-        packingInfo.m_LastPackedIndex = 0;
-        packingInfo.m_ObjectsToPack.clear();
     }
 #endif
 }
@@ -457,8 +451,8 @@ bool GhostManager::PackGhostObject(const GhostID ghostID, const PeerID peerID, B
             return false;
         }
         // No status change, send states as per normal
-        packingInfo.m_CachedObjectStream << false;
-        packingInfo.m_CachedObjectStream << gtr.m_StateMask;
+        stream << false;
+        stream << gtr.m_StateMask;
 #ifdef CLIENT
         ghostObject->WriteStream(stream, gtr.m_StateMask);
 #else
