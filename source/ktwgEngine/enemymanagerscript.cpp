@@ -8,7 +8,7 @@
 #include "time.h"
 #include "scene.h"
 #include "gamestatemanagerscript.h"
-//#include <iostream>
+#include <iostream>
 
 #if SERVER
 #include "event.h"
@@ -25,19 +25,19 @@ EnemyManager::EnemyManager(Entity& entity)
   float stride = 17.0f;
   float s = -85.0f;
   for (unsigned i = 0; i < 11; ++i, s += stride)
-    m_SpawnPosition.emplace_back(Vec3{ s, 1.0f, -85.0f });
+    m_SpawnPosition.emplace_back(Vec3{ s, 5.0f, -85.0f });
   
   s = -85.0f;
   for (unsigned i = 0; i < 11; ++i, s += stride)
-    m_SpawnPosition.emplace_back(Vec3{ s, 1.0f, 85.0f });
+    m_SpawnPosition.emplace_back(Vec3{ s, 5.0f, 85.0f });
   
   s = -85.0f + stride;
   for (unsigned i = 2; i < 11; ++i, s += stride)
-    m_SpawnPosition.emplace_back(Vec3{ -85.0f, 1.0f, s });
+    m_SpawnPosition.emplace_back(Vec3{ -85.0f, 5.0f, s });
 
   s = -85.0f + stride;
   for (unsigned i = 2; i < 11; ++i, s += stride)
-    m_SpawnPosition.emplace_back(Vec3{ 85.0f, 1.0f, s });
+    m_SpawnPosition.emplace_back(Vec3{ 85.0f, 5.0f, s });
 }
 
 EnemyManager::~EnemyManager()
@@ -51,7 +51,7 @@ void EnemyManager::Init()
 
 void EnemyManager::Start()
 {
-  m_WaveSize = 100;
+  m_WaveSize = 1;
   m_EnemiesLeft = 0;
 
   m_GSManager = Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>();
@@ -70,6 +70,7 @@ void EnemyManager::Update()
   if (Input().OnKeyPress(KTWG_0))
     Spawn(1);
 
+  std::cout << "SPAWN" << std::endl;
   if (m_WaveSize > 0 && m_CurrTime <= 0.0f)
   {
     int spawnSize = m_WaveSize - m_SpawnCount;
@@ -110,6 +111,8 @@ void EnemyManager::Spawn(unsigned size)
     
     Transform& tf = obj->GetTransform();
     tf.SetPosition(m_SpawnPosition[Random::Range(0, static_cast<int>(m_SpawnPosition.size() - 1))]);
+
+    obj->GetComponent<EnemyBehaviour>()->Start();
 
     obj->SetActive(true);
   }
