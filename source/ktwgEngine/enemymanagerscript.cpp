@@ -95,10 +95,14 @@ void EnemyManager::OnEnemyDeath()
 
   if (m_EnemiesLeft <= 0)
   {
+#if SERVER
     // Send activate win
     GameOverEvent* evt = new GameOverEvent;
     evt->m_Win = true;
     StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+#else
+    return;
+#endif
   }
 }
 
