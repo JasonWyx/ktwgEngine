@@ -8,7 +8,6 @@
 #include "time.h"
 #include "scene.h"
 #include "gamestatemanagerscript.h"
-#include <iostream>
 
 #if SERVER
 #include "event.h"
@@ -70,7 +69,6 @@ void EnemyManager::Update()
   if (Input().OnKeyPress(KTWG_0))
     Spawn(1);
 
-  std::cout << "SPAWN" << std::endl;
   if (m_WaveSize > 0 && m_CurrTime <= 0.0f)
   {
     int spawnSize = m_WaveSize - m_SpawnCount;
