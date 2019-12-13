@@ -1,6 +1,11 @@
 #include "enemybehaviourscript.h"
 #include "gameplaymanager.h"
 #include "time.h"
+#include "scene.h"
+
+#if SERVER
+#include "enemymanagerscript.h"
+#endif
 
 EnemyBehaviour::EnemyBehaviour(Entity & entity)
 :Behaviour{typeid(EnemyBehaviour), entity}
@@ -19,6 +24,10 @@ void EnemyBehaviour::Start()
 {
   const Vec3 currentPos = m_Entity->GetTransform().GetPosition();
   UpdateTarget(currentPos);
+
+#if SERVER
+  m_Manager = Scene::GetInstance().FindEntityByName("enemyMng")->GetComponent<EnemyManager>();
+#endif
 }
 
 void EnemyBehaviour::Update()
@@ -42,7 +51,13 @@ void EnemyBehaviour::TakeDamage(unsigned damage)
   m_Health -= damage;
 
   if (m_Health <= 0)
+  {
     m_Entity->SetActive(false);
+
+#if SERVER
+    m_Manager->OnEnemyDeath();
+#endif
+  }
 }
 
 void EnemyBehaviour::Reset()

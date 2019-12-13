@@ -84,6 +84,17 @@ void EnemyManager::Update()
   m_CurrTime -= static_cast<float>(Time::GetInstance().GetFixedDeltaTime());
 }
 
+void EnemyManager::OnEnemyDeath()
+{
+  m_EnemiesLeft -= 1;
+
+  if (m_EnemiesLeft <= 0)
+  {
+    // Display win
+    return;
+  }
+}
+
 void EnemyManager::Spawn(unsigned size)
 {
   for (unsigned i = 0; i < size; ++i)

@@ -2,6 +2,10 @@
 
 #include "behaviour.h"
 
+#if SERVER
+class EnemyManager;
+#endif
+
 class EnemyBehaviour : public Behaviour
 {
 public:
@@ -15,7 +19,6 @@ public:
   void Reset();
 
 private:
-
   void ChaseTarget(const Vec3& currentPos);
   void UpdateTarget(const Vec3& currentPos);
 
@@ -24,4 +27,8 @@ private:
   float m_PollingInterval;
   float m_Speed;
   unsigned m_Health;
+
+#if SERVER
+  EnemyManager* m_Manager;
+#endif
 };
