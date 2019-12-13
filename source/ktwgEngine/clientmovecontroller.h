@@ -17,6 +17,6 @@ private:
   GameStateManager* m_GSManager;
 
   bool m_ShouldSend;
-  float m_FireRate = 1.5f;
+  float m_FireRate = 0.5f;
   float m_CoolDown = 0.0;
 };
