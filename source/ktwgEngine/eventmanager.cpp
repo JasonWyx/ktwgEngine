@@ -67,6 +67,7 @@ void EventManager::ReadStream(const PeerID peerID, BitStream& stream)
             }
             else
             {
+                recvEvent->m_EventSequenceID = sequence;
                 eventCache.m_GuaranteedEventsToProcess.emplace_back(recvEvent);
             }
             ++sequence;

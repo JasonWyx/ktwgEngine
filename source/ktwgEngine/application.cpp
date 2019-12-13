@@ -176,7 +176,7 @@ void Application::Run()
       
       streamSys.Update();
       conSys.Update();
-      conSys.Update();
+      // conSys.Update();
 
       behSys.Update();
 

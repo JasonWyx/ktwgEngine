@@ -53,9 +53,11 @@ void GameplayManager::OnPlayerDisconnected(Entity * player)
   m_ConnectedPlayers.erase(std::remove(m_ConnectedPlayers.begin(), m_ConnectedPlayers.end(), player), m_ConnectedPlayers.end());
 }
 
+#pragma optimize("", off)
 void GameplayManager::OnPlayerReady()
 {
   bool allReady = true;
+  int count = 0;
   for (auto& player : m_ConnectedPlayers)
   {
     PlayerController* playerBeh = player->GetComponent<PlayerController>();
@@ -64,6 +66,7 @@ void GameplayManager::OnPlayerReady()
       allReady = false;
       break;
     }
+    ++count;
   }
 
   if (allReady)
@@ -71,9 +74,9 @@ void GameplayManager::OnPlayerReady()
     // Send start game
     GameStartEvent* evt = new GameStartEvent;
     evt->m_Start = true;
-    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, true);
     Scene::GetInstance().FindEntityByName("gameStateMng")->GetComponent<GameStateManager>()->SetIsGameStarted(true);
-
+    std::cout << "We are all ready" << std::endl;
 #ifdef SERVER
     ConnectionManager::GetInstance().ShutTheFuckUp();
 #endif

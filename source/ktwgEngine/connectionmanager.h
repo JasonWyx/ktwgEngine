@@ -20,7 +20,7 @@
 
 using TIME = std::chrono::time_point<std::chrono::CLOCK_TYPE>;
 
-#define BUFLEN (1024 + 20)
+#define BUFLEN 512 //(1024 + 20)
 #define BETA 0.25f
 #define ALPHA 0.125f
 #define MAX_WINDOW 60
