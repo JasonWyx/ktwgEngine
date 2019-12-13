@@ -10,6 +10,11 @@
 #include "gamestatemanagerscript.h"
 //#include <iostream>
 
+#if SERVER
+#include "event.h"
+#include "streammanager.h"
+#endif
+
 EnemyManager::EnemyManager(Entity& entity)
   : Behaviour{ typeid(EnemyManager), entity},
     m_SpawnInterval{ Random::Range(5.0f, 10.0f) },
@@ -90,8 +95,10 @@ void EnemyManager::OnEnemyDeath()
 
   if (m_EnemiesLeft <= 0)
   {
-    // Display win
-    return;
+    // Send activate win
+    GameOverEvent* evt = new GameOverEvent;
+    evt->m_Win = true;
+    StreamManager::GetInstance().GetEventManager().BroadcastEvent(evt, false);
   }
 }
 
