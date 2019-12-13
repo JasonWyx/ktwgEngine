@@ -70,10 +70,8 @@ bool MoveManager::WritePacket(Packet& packet)
         packet.m_MoveStream << m_MoveStateObject.m_MoveStateCache[i];
     }
 
-    if (m_MoveStateObject.m_PacketCount++ < 3)
-    {
-        return false;
-    }
+    m_MoveStateObject.m_PacketCount++;
+
 #else
     //// For each peer, check for state change and send acknowledgement when move state changes
     //for (auto&[peerID, moveStateObject] : m_MoveStateObject)
@@ -125,7 +123,7 @@ void MoveManager::DropData()
 void MoveManager::PushMoveState(const MoveState& moveState)
 {
     // Don't need to dupliate moves
-    if (m_MoveStateObject.m_MoveStateCache != moveState)
+    if (m_MoveStateBuffer.back() != moveState)
     {
         m_MoveStateBuffer.push(moveState);
     }
