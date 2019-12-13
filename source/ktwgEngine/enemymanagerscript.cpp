@@ -8,7 +8,7 @@
 #include "time.h"
 #include "scene.h"
 #include "gamestatemanagerscript.h"
-#include <iostream>
+//#include <iostream>
 
 EnemyManager::EnemyManager(Entity& entity)
   : Behaviour{ typeid(EnemyManager), entity},
@@ -78,7 +78,7 @@ void EnemyManager::Update()
     m_SpawnCount = Random::Range(2, 8);
     m_CurrTime = m_SpawnInterval;
 
-    std::cout << m_WaveSize << " " << m_EnemiesLeft << std::endl;
+    //std::cout << m_WaveSize << " " << m_EnemiesLeft << std::endl;
   }
 
   m_CurrTime -= static_cast<float>(Time::GetInstance().GetFixedDeltaTime());
