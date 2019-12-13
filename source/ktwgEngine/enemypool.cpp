@@ -54,8 +54,10 @@ void EnemyPool::IncreasePool(unsigned size)
 		m_Pool.emplace_back(clone);
 
     clone->MarkEntityForGhost();
+#if SERVER
     GhostID ghostID = clone->GetGhostObject()->GetGhostID();
     StreamManager::GetInstance().GetGhostManager().ReplicateForAllPeer(ghostID);
+#endif
 	}
 }
 
