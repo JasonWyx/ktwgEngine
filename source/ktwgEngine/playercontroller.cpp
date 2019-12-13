@@ -117,7 +117,7 @@ void PlayerController::UpdateAction()
 
 void PlayerController::UpdateMovement()
 {
-  float dt = static_cast<float>(Time().GetDeltaTime());
+  float dt = static_cast<float>(Time().GetFixedDeltaTime());
   Vec3 movement;
   Vec3 direction;
   Quaternion rotation;

@@ -32,7 +32,7 @@ void EnemyBehaviour::Start()
 
 void EnemyBehaviour::Update()
 {
-  const float dt = (float)Time().GetDeltaTime();
+  const float dt = (float)Time().GetFixedDeltaTime();
   const Vec3 currentPos = m_Entity->GetTransform().GetPosition();
 
   if (m_CurrentTime >= m_PollingInterval)
