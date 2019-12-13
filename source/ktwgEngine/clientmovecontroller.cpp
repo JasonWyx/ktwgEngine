@@ -36,7 +36,7 @@ void ClientMoveController::Update()
       PeerID peerID = StreamManager::GetInstance().GetPeerID();
       PlayerReadyEvent* playerReadyEvent = new PlayerReadyEvent;
       playerReadyEvent->m_SourcePeerID = peerID;
-      PlayerReadyEvent->m_Ready = true;
+      playerReadyEvent->m_Ready = true;
       StreamManager::GetInstance().GetEventManager().BroadcastEvent(playerReadyEvent, true);
       m_GSManager->SetReadyActive(!m_GSManager->GetReadyActive());
     }
